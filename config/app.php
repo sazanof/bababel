@@ -5,8 +5,8 @@ use Illuminate\Support\ServiceProvider;
 
 return [
 
-    'bbb_secret'=> env('BBB_SECRET','none'),
-    'bbb_base_url'=>env('BBB_SERVER_BASE_URL','http://localhost'),
+    'bbb_secret' => env('BBB_SECRET', 'none'),
+    'bbb_base_url' => env('BBB_SERVER_BASE_URL', 'http://localhost'),
 
     /*
     |--------------------------------------------------------------------------
@@ -45,7 +45,7 @@ return [
     |
     */
 
-    'debug' => (bool) env('APP_DEBUG', false),
+    'debug' => (bool)env('APP_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -86,7 +86,7 @@ return [
     |
     */
 
-    'locale' => 'en',
+    'locale' => 'ru',
 
     /*
     |--------------------------------------------------------------------------

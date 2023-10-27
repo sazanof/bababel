@@ -1,13 +1,48 @@
 <template>
     <div
-        id="conference-wrapper">
-        ...
+        v-if="loaded"
+        id="conference-wrapper"
+        class="container">
+        <Login v-if="!authenticated" />
+        <Index
+            v-else
+            :user="user" />
     </div>
 </template>
 
 <script>
+import Index from './pages/Index.vue'
+import Login from './pages/Login.vue'
+
 export default {
-    name: 'App'
+    name: 'App',
+    components: {
+        Login,
+        Index
+    },
+    data() {
+        return {
+            loaded: false
+        }
+    },
+    computed: {
+        authenticated() {
+            return this.$store.getters['isAuthenticated']
+        },
+        user() {
+            return this.$store.getters['getUser']
+        }
+    },
+    async created() {
+        await this.checkAuth().finally(() => {
+            this.loaded = true
+        })
+    },
+    methods: {
+        async checkAuth() {
+            await this.$store.dispatch('checkAuth')
+        }
+    }
 }
 </script>
 

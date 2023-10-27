@@ -60,9 +60,43 @@ return [
     */
 
     'providers' => [
-        'users' => [
+        /*'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
+        ],*/
+
+        'users' => [
+            'driver' => 'ldap',
+            'model' => \App\Ldap\LdapUser::class,
+            'rules' => [
+
+            ],
+            'database' => [
+                'model' => \App\Models\User::class,
+                'sync_passwords' => true,
+                'sync_attributes' => [
+                    'email' => 'mail',
+                    'username' => 'samaccountname',
+                    'firstname' => 'givenname',
+                    'lastname' => 'sn',
+                    'phone' => 'telephonenumber',
+                    'department' => 'department',
+                    'position' => 'title',
+                    'dn' => 'distinguishedName',
+                    'organization' => 'company'
+                ],
+                'sync_existing' => [
+                    'email' => 'mail',
+                    'username' => 'samaccountname',
+                    'firstname' => 'givenname',
+                    'lastname' => 'sn',
+                    'phone' => 'telephonenumber',
+                    'department' => 'department',
+                    'position' => 'title',
+                    'dn' => 'distinguishedName',
+                    'organization' => 'company'
+                ],
+            ],
         ],
 
         // 'users' => [
