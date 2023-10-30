@@ -59,6 +59,8 @@ use LdapRecord\Laravel\Auth\LdapAuthenticatable;
  * @property int $is_admin
  * @method static \Illuminate\Database\Eloquent\Builder|User whereIsAdmin($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereUsername($value)
+ * @property string|null $photo
+ * @method static \Illuminate\Database\Eloquent\Builder|User wherePhoto($value)
  * @mixin \Eloquent
  */
 class User extends Authenticatable implements LdapAuthenticatable

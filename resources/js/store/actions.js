@@ -35,5 +35,24 @@ export default {
         return await axios.get(`${PANEL}search/users?term=${term}`).then(res => {
             return res.data
         })
+    },
+
+    async addMeeting({ _ }, data) {
+        return await axios.post(`${PANEL}meetings`, data, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        }).then(res => {
+            return res.data
+        })
+    },
+    async editMeeting({ _ }, data) {
+        return await axios.put(`${PANEL}meetings/${data.id}`, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        }).then(res => {
+            return res.data
+        })
     }
 }

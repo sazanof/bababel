@@ -5,14 +5,13 @@
             :open-on-click="true"
             :close-on-content-click="false"
             :max-height="300">
-            <template #activator="{ props, on }">
+            <template #activator="{ props }">
                 <v-text-field
                     v-bind="props"
                     v-model="query"
                     :hide-details="true"
                     prepend-icon="mdi-account-group"
                     :loading="loading"
-                    v-on="on"
                     @click="menu = true"
                     @close="menu = false"
                     @keyup="debounceOnSearchUsers" />
@@ -77,7 +76,7 @@
                         :class="user.isModerator ? 'text-yellow-accent-4' : 'text-blue-grey-lighten-4'"
                         :icon="user.isModerator ? 'mdi-crown' : 'mdi-crown-outline' "
                         variant="plain"
-                        @click="user.isModerator = !user.isModerator" />
+                        @click="setModerator(user)" />
 
                     <v-btn
                         color="red"
@@ -99,6 +98,7 @@ export default {
     components: {
         Avatar
     },
+    emits: [ 'update:participants' ],
     data() {
         return {
             loading: false,
@@ -133,9 +133,18 @@ export default {
             if (!this.selectedUsers.find(user => u.id === user.id)) {
                 this.selectedUsers.push(u)
             }
+            this.onUpdateParticipants()
         },
         deleteUser(user) {
             this.selectedUsers = this.selectedUsers.filter(u => u.id !== user.id)
+            this.onUpdateParticipants()
+        },
+        setModerator(user) {
+            user.isModerator = !user.isModerator
+            this.$emit('update:participants', this.selectedUsers)
+        },
+        onUpdateParticipants() {
+            this.$emit('update:participants', this.selectedUsers)
         }
     }
 }

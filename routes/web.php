@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MeetingsController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,6 +18,10 @@ Route
     ::prefix('panel')->group(function () {
         Route::prefix('search')->group(function () {
             Route::get('users', [UsersController::class, 'searchUsers']);
+        });
+        Route::prefix('meetings')->group(function () {
+            Route::post('', [MeetingsController::class, 'addMeeting']);
+            Route::post('id', [MeetingsController::class, 'editMeeting'])->where('id', '[0-9]+');
         });
     });
 Route::get('/', [AuthController::class, 'index']);

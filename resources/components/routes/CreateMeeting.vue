@@ -10,8 +10,14 @@
                             {{ $t('Meeting parameters') }}
                             <v-divider />
                         </div>
+                        <v-text-field
+                            v-model="name"
+                            prepend-icon="mdi-text-shadow"
+                            class="mb-6"
+                            hide-details
+                            :label="$t('Meeting name')" />
                         <v-select
-                            v-model="layout"
+                            v-model="meetingLayout"
                             :label="$t('Style')"
                             :items="layoutOptions"
                             prepend-icon="mdi-palette-swatch-variant"
@@ -26,14 +32,6 @@
                                     prepend-icon="mdi-calendar" />
                             </template>
                         </vue-date-picker>
-
-
-                        <v-text-field
-                            v-model="name"
-                            prepend-icon="mdi-text-shadow"
-                            class="mb-6"
-                            hide-details
-                            :label="$t('Meeting name')" />
                         <v-textarea
                             v-model="welcome"
                             prepend-icon="mdi-text-long"
@@ -47,9 +45,10 @@
                             prepend-icon="mdi-paperclip"
                             :chips="true"
                             :multiple="true"
-                            :label="$t('Files')" />
+                            :label="$t('Files')"
+                            @update:modelValue="addFiles" />
 
-                        <UsersSearch />
+                        <UsersSearch @update:participants="participants = $event" />
                     </v-col>
                     <v-col cols="4">
                         <div
@@ -119,11 +118,13 @@
 </template>
 
 <script>
+import { useToast } from 'vue-toastification'
 import UsersSearch from '../chunks/UsersSearch.vue'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import moment from 'moment'
 
 const m = moment
+const toast = useToast()
 
 export default {
     name: 'CreateMeeting',
@@ -145,6 +146,8 @@ export default {
             lockSettingsDisableMic: false,
             allowModsToUnmuteUsers: true,
             allowModsToEjectCameras: true,
+            participants: [],
+            files: null,
             layoutOptions: [
                 {
                     title: this.$t('Custom'),
@@ -163,17 +166,20 @@ export default {
                     value: 'VIDEO_FOCUS'
                 }
             ],
-            layout: null,
+            meetingLayout: null,
             query: null,
             showDateMenu: false
         }
     },
     computed: {
         id() {
-            return this.$roure.params.id
+            return this.$route.params.id ?? null
         },
         formattedDate() {
             return this.date ? m(this.date).format('DD.MM.YYYY HH:mm') : m().format('DD.MM.YYYY HH:mm')
+        },
+        user() {
+            return this.$store.getters['getUser']
         }
     },
     watch: {
@@ -185,7 +191,7 @@ export default {
     },
     created() {
         this.caption = this.$t('New meeting')
-        this.layout = {
+        this.meetingLayout = {
             title: this.$t('Smart'),
             value: 'SMART_LAYOUT'
         }
@@ -193,13 +199,49 @@ export default {
     methods: {
         async saveMeeting(event) {
             this.loading = true
-            setTimeout(() => {
-                this.loading = false
-            }, 2000)
             // todo post data
+            const data = {
+                id: this.id,
+                userId: parseInt(this.user.id),
+                date: this.date,
+                name: this.name,
+                welcome: this.welcome,
+                record: this.record,
+                autoStartRecording: this.autoStartRecording,
+                webcamsOnlyForModerator: this.webcamsOnlyForModerator,
+                muteOnStart: this.muteOnStart,
+                lockSettingsDisableMic: this.lockSettingsDisableMic,
+                allowModsToUnmuteUsers: this.allowModsToUnmuteUsers,
+                allowModsToEjectCameras: this.allowModsToEjectCameras,
+                meetingLayout: this.meetingLayout.value,
+                participants: this.participants.map(p => {
+                    return {
+                        id: p.id,
+                        isModerator: p.isModerator ?? false
+                    }
+                }),
+                files: this.files
+            }
+            console.log(data)
+
+            if (this.id === null) {
+                this.$store.dispatch('addMeeting', data).catch(e => {
+                    toast.error(e.response.data.message)
+                }).finally(() => {
+                    this.loading = false
+                })
+            } else {
+                this.$store.dispatch('editMeeting', data).catch(e => {
+                    toast.error(e.response.data.message)
+                }).finally(() => {
+                    this.loading = false
+                })
+            }
+
+
         },
-        async onSearchUser(e) {
-            console.log(e.target.value)
+        addFiles(e) {
+            this.files = e
         }
     }
 

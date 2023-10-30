@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->integer('userId');
             $table->timestamp('date');
             $table->string('name');
-            $table->string('meetingID');
+            $table->string('meetingID')->nullable();
             $table->string('attendeePW');
             $table->string('moderatorPW');
             $table->string('welcome');
@@ -24,7 +24,7 @@ return new class extends Migration {
             $table->integer('voiceBridge')->nullable();
             $table->integer('maxParticipants')->default(0);
             $table->string('logoutURL')->nullable();
-            $table->boolean('record');
+            $table->boolean('record')->default(true);
             $table->integer('duration')->default(0);
             $table->boolean('isBreakout')->default(false);
             $table->string('parentMeetingID')->nullable();
