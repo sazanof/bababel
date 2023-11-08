@@ -139,6 +139,12 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Meeting whereVoiceBridge($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Meeting whereWebcamsOnlyForModerator($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Meeting whereWelcome($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $participants
+ * @property-read int|null $participants_count
+ * @method static \Database\Factories\MeetingFactory factory($count = null, $state = [])
+ * @property-read \App\Models\User|null $owner
+ * @property int|null $hookId
+ * @method static \Illuminate\Database\Eloquent\Builder|Meeting whereHookId($value)
  * @mixin \Eloquent
  */
 class Meeting extends Model
@@ -210,6 +216,11 @@ class Meeting extends Model
      * preUploadedPresentationName
      **/
 
+    public const STATUS_NEW = 0;
+    public const STATUS_CREATED = 1;
+    public const STATUS_PENDING = 2;
+    public const STATUS_CLOSED = 3;
+
     protected $fillable = [
         'userId',
         'meetingID',
@@ -226,5 +237,80 @@ class Meeting extends Model
         'allowModsToUnmuteUsers',
         'allowModsToEjectCameras',
         'meetingLayout',
+        'status'
     ];
+
+    protected $casts = [
+        'record' => 'boolean',
+        'autoStartRecording' => 'boolean',
+        'webcamsOnlyForModerator' => 'boolean',
+        'muteOnStart' => 'boolean',
+        'lockSettingsDisableMic' => 'boolean',
+        'allowModsToUnmuteUsers' => 'boolean',
+        'allowModsToEjectCameras' => 'boolean',
+    ];
+
+    public static array $selectableFields = [
+        'meetings.id',
+        'meetings.userId',
+        'meetings.meetingID',
+        'meetings.date',
+        'meetings.name',
+        'meetings.welcome',
+        'meetings.record',
+        'meetings.autoStartRecording',
+        'meetings.webcamsOnlyForModerator',
+        'meetings.muteOnStart',
+        'meetings.lockSettingsDisableMic',
+        'meetings.allowModsToUnmuteUsers',
+        'meetings.allowModsToEjectCameras',
+        'meetings.meetingLayout',
+        'meetings.status'
+    ];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function participants()
+    {
+        return $this->hasManyThrough(
+            User::class,
+            Participant::class,
+            'meetingId',
+            'id',
+            'id',
+            'userId'
+        )
+            ->select([
+                'participants.isModerator',
+                'participants.isOrganizer',
+                'participants.link',
+                'users.id',
+                'users.firstname',
+                'users.lastname',
+                'users.email',
+                'users.photo',
+                'users.phone',
+                'users.position',
+                'users.department'
+            ])
+            ->selectRaw('participants.id as participants_tid')
+            ->orderBy('isOrganizer', 'DESC')
+            ->orderBy('isModerator', 'DESC')
+            ->orderBy('users.lastname');
+    }
+
+    public function owner()
+    {
+        return $this->hasOne(User::class, 'id', 'userId')->select([
+            'users.id',
+            'users.firstname',
+            'users.lastname',
+            'users.photo',
+            'users.phone',
+            'users.email',
+            'users.position',
+            'users.department'
+        ]);
+    }
 }

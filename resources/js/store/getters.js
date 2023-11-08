@@ -4,5 +4,14 @@ export default {
     },
     getUser(state) {
         return state.user
+    },
+    getSettings(state) {
+        return state.settings
+    },
+    getMeeting(state) {
+        return state.meeting
+    },
+    getMeetings(state) {
+        return state.meetings
     }
 }

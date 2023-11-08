@@ -57,7 +57,7 @@ return new class extends Migration {
             $table->string('meetingLayout')->default('SMART_LAYOUT');
             $table->integer('learningDashboardCleanupDelayInMinutes')->default(2);
             $table->boolean('allowModsToEjectCameras')->default(false);
-            $table->boolean('allowRequestsWithoutSession')->default(false);
+            $table->boolean('allowRequestsWithoutSession')->default(true);
             $table->integer('userCameraCap')->default(3);
             $table->integer('meetingCameraCap')->default(0);
             $table->integer('meetingExpireIfNoUserJoinedInMinutes')->default(30);

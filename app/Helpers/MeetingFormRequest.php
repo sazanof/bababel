@@ -5,7 +5,8 @@ namespace App\Helpers;
 use App\Exceptions\MeetingsException;
 use App\Http\Requests\MeetingRequest;
 use App\Models\Meeting;
-use App\Models\Participants;
+use App\Models\Participant;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
@@ -22,13 +23,18 @@ class MeetingFormRequest
     protected array $meeting;
     /** @var array|UploadedFile|UploadedFile[] */
     protected null|array|UploadedFile $files;
+    protected ?User $owner;
+    protected MeetingRequest $request;
+    protected ?int $id = null;
 
     public function __construct(MeetingRequest $request)
     {
+        $this->request = $request;
+        $this->owner = $request->user();
         $this->participants = null;
         $this->files = null;
         $this->meeting = [];
-        $this->prepareRequest($request);
+        $this->prepareRequest();
         return $this;
     }
 
@@ -61,16 +67,14 @@ class MeetingFormRequest
      */
     public function setParticipants(array $participants): void
     {
-        $this->participants = $participants;
+        $this->participants = array_map(function ($item) {
+            return [
+                'id' => (int)$item['id'],
+                'isModerator' => in_array($item['isModerator'], ['true', '1', 1])
+            ];
+        }, $participants);
     }
 
-    /**
-     * @return string
-     */
-    public function generateMeetingId(): string
-    {
-        return 'conf_' . Meeting::count('id') . '_' . uniqid();
-    }
 
     /**
      * @return ?array
@@ -89,24 +93,24 @@ class MeetingFormRequest
     }
 
     /**
-     * @param MeetingRequest $request
+     * @return void
      */
-    protected function prepareRequest(MeetingRequest $request): void
+    protected function prepareRequest(): void
     {
-        $data = $request->all();
+        $data = $this->request->all();
         foreach ($data as $key => $item) {
-            if ($item === "true" || $item === "false") {
+            if (in_array($item, ['true', 'false'])) {
                 $data[$key] = $item === "true";
             }
         }
-        if ($request->has('participants') && !empty($request->get('participants'))) {
-            $this->setParticipants($request->get('participants')); // set participants data for db
+        if ($this->request->has('participants') && !empty($this->request->get('participants'))) {
+            $this->setParticipants($this->request->get('participants')); // set participants data for db
         }
-        if ($request->has('files')) {
-            $this->setFiles($request->file('files'));
+        if ($this->request->has('files')) {
+            $this->setFiles($this->request->file('files'));
         }
         unset($data['participants']);
-        $data['userId'] = intval($data['userId']);
+        $data['userId'] = $this->owner->id;
         $data['date'] = Carbon::parse($data['date']);
         $data['attendeePW'] = !empty($data['attendeePW'])
             ? Crypt::encrypt($data['attendeePW'])
@@ -127,7 +131,7 @@ class MeetingFormRequest
         foreach ($this->getParticipants() as $participant) {
             $ar[$i]['userId'] = intval($participant['id']);
             $ar[$i]['meetingId'] = $meeting->id;
-            $ar[$i]['isModerator'] = Auth::id() === intval($participant['id']) || $participant['isModerator'] === "true";
+            $ar[$i]['isModerator'] = Auth::id() === intval($participant['id']) || $participant['isModerator'];
             $ar[$i]['isOrganizer'] = intval($participant['id']) === $meeting->userId;
             $ar[$i]['redirect'] = !empty($participant['redirect']) && $participant['redirect'] === "true";
             $ar[$i]['errorRedirectUrl'] = $participant['errorRedirectUrl'] ?? null;
@@ -166,8 +170,57 @@ class MeetingFormRequest
         }
         return DB::transaction(function () {
             $meeting = Meeting::create($this->getMeeting());
-            Participants::insertOrIgnore($this->prepareParticipantsToDb($meeting));
+            Participant::insertOrIgnore($this->prepareParticipantsToDb($meeting));
             return $meeting;
         });
+    }
+
+    /**
+     * @return mixed
+     * @throws \Throwable
+     */
+    public function edit()
+    {
+        $this->id = $this->request->has('id') ? (int)$this->request->get('id') : null;
+        $meeting = Meeting::find($this->id);
+        $clearDeletedUsersIDs = null;
+        $participants = $meeting->participants();
+        $postParticipants = $this->getParticipants();
+        if ($postParticipants !== null) {
+            $userIDSs = $participants->exists() ? $participants->get()->map(function (User|Participant $p) {
+                return $p->id;
+            }) : [];
+            $postUserIDs = array_map(function ($item) {
+                return (int)$item['id'];
+            }, $postParticipants);
+            // Находим удаленных из формы на фронтэнде пользователей - участников
+            $deletedUsersIDs = array_diff($userIDSs->toArray(), $postUserIDs);
+            // Фильтруем массив удаленных пользователей. Оставляем организатора встречи.
+            $clearDeletedUsersIDs = array_filter($deletedUsersIDs, function ($id) use ($meeting) {
+                return $id !== $meeting->userId;
+            });
+            //$ids идентификаторы текущих участников
+        }
+        return DB::transaction(function () use ($meeting, $clearDeletedUsersIDs) {
+            /** @var Carbon $d */
+            //dd($this->id, $clearDeletedUsersIDs, $this->getMeeting(), $this->prepareParticipantsToDb($meeting));
+            $meeting->update($this->getMeeting());
+            foreach ($this->prepareParticipantsToDb($meeting) as $p) {
+                Participant::updateOrCreate([
+                    'userId' => $p['userId'],
+                    'meetingId' => $p['meetingId']
+                ], $p);
+                if (!empty($clearDeletedUsersIDs)) {
+                    Participant
+                        ::whereIn('userId', $clearDeletedUsersIDs)
+                        ->where('meetingId', $meeting->id)
+                        ->delete();
+                }
+            }
+            $meeting->refresh();
+            return $meeting;
+        });
+
+
     }
 }

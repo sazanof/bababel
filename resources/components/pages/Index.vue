@@ -30,7 +30,7 @@
                     <v-list-item
                         :value="1"
                         prepend-icon="mdi-video-account"
-                        @click="$router.push({name: 'create_meeting'})">
+                        @click="openCreateMeeting">
                         <v-list-item-title>{{ $t('Create meeting') }}</v-list-item-title>
                     </v-list-item>
                 </v-list>
@@ -58,6 +58,12 @@ export default {
     data() {
         return {
             drawer: true
+        }
+    },
+    methods: {
+        openCreateMeeting() {
+            this.$store.commit('clearMeetingState')
+            this.$router.push({ name: 'create_meeting' })
         }
     }
 

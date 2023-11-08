@@ -98,6 +98,12 @@ export default {
     components: {
         Avatar
     },
+    props: {
+        participants: {
+            type: Object,
+            default: null
+        }
+    },
     emits: [ 'update:participants' ],
     data() {
         return {
@@ -114,6 +120,14 @@ export default {
         selectedUsersIDs() {
             return this.selectedUsers.map(u => u.id)
         }
+    },
+    watch: {
+        participants() {
+            if (this.participants !== null) {
+                this.selectedUsers = this.participants
+            }
+        }
+
     },
     methods: {
         async onSearchUsers() {

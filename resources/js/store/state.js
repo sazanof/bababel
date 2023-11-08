@@ -1,4 +1,12 @@
+import Meeting from '../../js/models/meeting.js'
+
 export default {
     authenticated: false,
-    user: null
+    user: null,
+    settings: {
+        dateFormat: 'DD.MM.YYYY',
+        timeFormat: 'HH:mm'
+    },
+    meeting: new Meeting(),
+    meetings: []
 }

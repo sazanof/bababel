@@ -7,7 +7,7 @@
             :loading="loading"
             :title="card.title"
             :subtitle="card.subtitle">
-            <v-list :lines="3">
+            <v-list>
                 <template
                     v-for="n in 3"
                     :key="n">

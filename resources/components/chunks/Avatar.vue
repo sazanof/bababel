@@ -37,7 +37,7 @@ export default {
             return `${this.user.firstname[0]}${this.user.lastname[0]}`
         },
         color() {
-            return `#${this.intToRGB(this.hashCode(this.user.username))}`
+            return `#${this.intToRGB(this.hashCode(this.user.email))}`
         }
     },
     methods: {
@@ -62,7 +62,7 @@ export default {
 
 <style lang="scss" scoped>
 .avatar {
-    
+
 }
 
 .initials {
