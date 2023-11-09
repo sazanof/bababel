@@ -50,6 +50,7 @@ class AlreadyJoined
                     }
                 }
             }
+            return $next($request);
         }
         throw new Exception(__('exceptions.join.error'));
 

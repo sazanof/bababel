@@ -4,7 +4,7 @@
 
 /**
  * A helper file for Laravel, to provide autocomplete information to your IDE
- * Generated for Laravel 10.28.0.
+ * Generated for Laravel 10.31.0.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -435,6 +435,18 @@
         {
                         /** @var \Illuminate\Foundation\Application $instance */
                         return $instance->runningInConsole();
+        }
+                    /**
+         * Determine if the application is running any of the given console commands.
+         *
+         * @param string|array $commands
+         * @return bool 
+         * @static 
+         */ 
+        public static function runningConsoleCommand(...$commands)
+        {
+                        /** @var \Illuminate\Foundation\Application $instance */
+                        return $instance->runningConsoleCommand(...$commands);
         }
                     /**
          * Determine if the application is running unit tests.
@@ -1976,7 +1988,7 @@
                     /**
          * Get the currently authenticated user.
          *
-         * @return \App\Models\User|null 
+         * @return \App\Ldap\LdapUser|null 
          * @static 
          */ 
         public static function user()
@@ -2011,7 +2023,7 @@
          * Log the given user ID into the application without sessions or cookies.
          *
          * @param mixed $id
-         * @return \App\Models\User|false 
+         * @return \App\Ldap\LdapUser|false 
          * @static 
          */ 
         public static function onceUsingId($id)
@@ -2091,7 +2103,7 @@
          *
          * @param mixed $id
          * @param bool $remember
-         * @return \App\Models\User|false 
+         * @return \App\Ldap\LdapUser|false 
          * @static 
          */ 
         public static function loginUsingId($id, $remember = false)
@@ -2143,7 +2155,7 @@
          *
          * @param string $password
          * @param string $attribute
-         * @return \App\Models\User|null 
+         * @return \App\Ldap\LdapUser|null 
          * @throws \Illuminate\Auth\AuthenticationException
          * @static 
          */ 
@@ -2167,7 +2179,7 @@
                     /**
          * Get the last user we attempted to authenticate.
          *
-         * @return \App\Models\User 
+         * @return \App\Ldap\LdapUser 
          * @static 
          */ 
         public static function getLastAttempted()
@@ -2281,7 +2293,7 @@
                     /**
          * Return the currently cached user.
          *
-         * @return \App\Models\User|null 
+         * @return \App\Ldap\LdapUser|null 
          * @static 
          */ 
         public static function getUser()
@@ -2338,7 +2350,7 @@
                     /**
          * Determine if the current user is authenticated. If not, throw an exception.
          *
-         * @return \App\Models\User 
+         * @return \App\Ldap\LdapUser 
          * @throws \Illuminate\Auth\AuthenticationException
          * @static 
          */ 
@@ -5550,6 +5562,18 @@
                         return $instance->pretend($callback);
         }
                     /**
+         * Execute the given callback without "pretending".
+         *
+         * @param \Closure $callback
+         * @return mixed 
+         * @static 
+         */ 
+        public static function withoutPretending($callback)
+        {            //Method inherited from \Illuminate\Database\Connection         
+                        /** @var \Illuminate\Database\MySqlConnection $instance */
+                        return $instance->withoutPretending($callback);
+        }
+                    /**
          * Bind values to their parameters in the given statement.
          *
          * @param \PDOStatement $statement
@@ -6475,6 +6499,18 @@
         {
                         /** @var \Illuminate\Events\Dispatcher $instance */
                         return $instance->setQueueResolver($resolver);
+        }
+                    /**
+         * Set the database transaction manager resolver implementation.
+         *
+         * @param callable $resolver
+         * @return \Illuminate\Events\Dispatcher 
+         * @static 
+         */ 
+        public static function setTransactionManagerResolver($resolver)
+        {
+                        /** @var \Illuminate\Events\Dispatcher $instance */
+                        return $instance->setTransactionManagerResolver($resolver);
         }
                     /**
          * Gets the raw, unprepared listeners.
@@ -14482,16 +14518,16 @@
                         return $instance->hasTable($table);
         }
                     /**
-         * Get the column listing for a given table.
+         * Get the columns for a given table.
          *
          * @param string $table
          * @return array 
          * @static 
          */ 
-        public static function getColumnListing($table)
+        public static function getColumns($table)
         {
                         /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
-                        return $instance->getColumnListing($table);
+                        return $instance->getColumns($table);
         }
                     /**
          * Drop all tables from the database.
@@ -14650,13 +14686,26 @@
          *
          * @param string $table
          * @param string $column
+         * @param bool $fullDefinition
          * @return string 
          * @static 
          */ 
-        public static function getColumnType($table, $column)
+        public static function getColumnType($table, $column, $fullDefinition = false)
         {            //Method inherited from \Illuminate\Database\Schema\Builder         
                         /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
-                        return $instance->getColumnType($table, $column);
+                        return $instance->getColumnType($table, $column, $fullDefinition);
+        }
+                    /**
+         * Get the column listing for a given table.
+         *
+         * @param string $table
+         * @return array 
+         * @static 
+         */ 
+        public static function getColumnListing($table)
+        {            //Method inherited from \Illuminate\Database\Schema\Builder         
+                        /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+                        return $instance->getColumnListing($table);
         }
                     /**
          * Modify a table on the schema.
@@ -14844,6 +14893,28 @@
         {
                         /** @var \Illuminate\Session\SessionManager $instance */
                         return $instance->blockDriver();
+        }
+                    /**
+         * Get the maximum number of seconds the session lock should be held for.
+         *
+         * @return int 
+         * @static 
+         */ 
+        public static function defaultRouteBlockLockSeconds()
+        {
+                        /** @var \Illuminate\Session\SessionManager $instance */
+                        return $instance->defaultRouteBlockLockSeconds();
+        }
+                    /**
+         * Get the maximum number of seconds to wait while attempting to acquire a route block session lock.
+         *
+         * @return int 
+         * @static 
+         */ 
+        public static function defaultRouteBlockWaitSeconds()
+        {
+                        /** @var \Illuminate\Session\SessionManager $instance */
+                        return $instance->defaultRouteBlockWaitSeconds();
         }
                     /**
          * Get the session configuration.
@@ -18357,7 +18428,312 @@
      
 }
 
-        namespace Spatie\LaravelIgnition\Facades { 
+        namespace Laravolt\Avatar { 
+            /**
+     * 
+     *
+     */ 
+        class Facade {
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function setGenerator($generator)
+        {
+                        /** @var \Laravolt\Avatar\Avatar $instance */
+                        return $instance->setGenerator($generator);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function create($name)
+        {
+                        /** @var \Laravolt\Avatar\Avatar $instance */
+                        return $instance->create($name);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function applyTheme($config)
+        {
+                        /** @var \Laravolt\Avatar\Avatar $instance */
+                        return $instance->applyTheme($config);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function addTheme($name, $config)
+        {
+                        /** @var \Laravolt\Avatar\Avatar $instance */
+                        return $instance->addTheme($name, $config);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function toBase64()
+        {
+                        /** @var \Laravolt\Avatar\Avatar $instance */
+                        return $instance->toBase64();
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function save($path, $quality = 90)
+        {
+                        /** @var \Laravolt\Avatar\Avatar $instance */
+                        return $instance->save($path, $quality);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function toSvg()
+        {
+                        /** @var \Laravolt\Avatar\Avatar $instance */
+                        return $instance->toSvg();
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function toGravatar($param = null)
+        {
+                        /** @var \Laravolt\Avatar\Avatar $instance */
+                        return $instance->toGravatar($param);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function getInitial()
+        {
+                        /** @var \Laravolt\Avatar\Avatar $instance */
+                        return $instance->getInitial();
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function getImageObject()
+        {
+                        /** @var \Laravolt\Avatar\Avatar $instance */
+                        return $instance->getImageObject();
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function buildAvatar()
+        {
+                        /** @var \Laravolt\Avatar\Avatar $instance */
+                        return $instance->buildAvatar();
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function getAttribute($key)
+        {
+                        /** @var \Laravolt\Avatar\Avatar $instance */
+                        return $instance->getAttribute($key);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function setTheme($theme)
+        {
+                        /** @var \Laravolt\Avatar\Avatar $instance */
+                        return $instance->setTheme($theme);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function setBackground($hex)
+        {
+                        /** @var \Laravolt\Avatar\Avatar $instance */
+                        return $instance->setBackground($hex);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function setForeground($hex)
+        {
+                        /** @var \Laravolt\Avatar\Avatar $instance */
+                        return $instance->setForeground($hex);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function setDimension($width, $height = null)
+        {
+                        /** @var \Laravolt\Avatar\Avatar $instance */
+                        return $instance->setDimension($width, $height);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function setFontSize($size)
+        {
+                        /** @var \Laravolt\Avatar\Avatar $instance */
+                        return $instance->setFontSize($size);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function setFontFamily($font)
+        {
+                        /** @var \Laravolt\Avatar\Avatar $instance */
+                        return $instance->setFontFamily($font);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function setBorder($size, $color, $radius = 0)
+        {
+                        /** @var \Laravolt\Avatar\Avatar $instance */
+                        return $instance->setBorder($size, $color, $radius);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function setBorderRadius($radius)
+        {
+                        /** @var \Laravolt\Avatar\Avatar $instance */
+                        return $instance->setBorderRadius($radius);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function setShape($shape)
+        {
+                        /** @var \Laravolt\Avatar\Avatar $instance */
+                        return $instance->setShape($shape);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function setChars($chars)
+        {
+                        /** @var \Laravolt\Avatar\Avatar $instance */
+                        return $instance->setChars($chars);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function setFont($font)
+        {
+                        /** @var \Laravolt\Avatar\Avatar $instance */
+                        return $instance->setFont($font);
+        }
+         
+    }
+     
+}
+
+    namespace Intervention\Image\Facades { 
+            /**
+     * 
+     *
+     */ 
+        class Image {
+                    /**
+         * Overrides configuration settings
+         *
+         * @param array $config
+         * @return self 
+         * @static 
+         */ 
+        public static function configure($config = [])
+        {
+                        /** @var \Intervention\Image\ImageManager $instance */
+                        return $instance->configure($config);
+        }
+                    /**
+         * Initiates an Image instance from different input types
+         *
+         * @param mixed $data
+         * @return \Intervention\Image\Image 
+         * @static 
+         */ 
+        public static function make($data)
+        {
+                        /** @var \Intervention\Image\ImageManager $instance */
+                        return $instance->make($data);
+        }
+                    /**
+         * Creates an empty image canvas
+         *
+         * @param int $width
+         * @param int $height
+         * @param mixed $background
+         * @return \Intervention\Image\Image 
+         * @static 
+         */ 
+        public static function canvas($width, $height, $background = null)
+        {
+                        /** @var \Intervention\Image\ImageManager $instance */
+                        return $instance->canvas($width, $height, $background);
+        }
+                    /**
+         * Create new cached image and run callback
+         * (requires additional package intervention/imagecache)
+         *
+         * @param \Closure $callback
+         * @param int $lifetime
+         * @param boolean $returnObj
+         * @return \Image 
+         * @static 
+         */ 
+        public static function cache($callback, $lifetime = null, $returnObj = false)
+        {
+                        /** @var \Intervention\Image\ImageManager $instance */
+                        return $instance->cache($callback, $lifetime, $returnObj);
+        }
+         
+    }
+     
+}
+
+    namespace Spatie\LaravelIgnition\Facades { 
             /**
      * 
      *
@@ -22794,6 +23170,8 @@ namespace  {
             class Validator extends \Illuminate\Support\Facades\Validator {}
             class View extends \Illuminate\Support\Facades\View {}
             class Vite extends \Illuminate\Support\Facades\Vite {}
+            class Avatar extends \Laravolt\Avatar\Facade {}
+            class Image extends \Intervention\Image\Facades\Image {}
             class Flare extends \Spatie\LaravelIgnition\Facades\Flare {}
      
 }

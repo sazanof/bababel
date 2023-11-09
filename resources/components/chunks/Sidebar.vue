@@ -3,7 +3,7 @@
         v-model="opened"
         @update:modelValue="$emit('on-update-drawer', $event)">
         <v-sheet
-            color="blue-grey-darken-1"
+            color="deep-orange"
             class="pa-4">
             <Avatar
                 class="mb-4"

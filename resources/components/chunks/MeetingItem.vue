@@ -8,6 +8,14 @@
                 <div class="position text-caption text-grey-darken-1">
                     {{ owner.position }}, {{ owner.department }}
                 </div>
+                <v-btn
+                    v-if="meeting.status === 1 || meeting.status === 2"
+                    prepend-icon="mdi-account-voice"
+                    color="deep-orange"
+                    class="mt-4"
+                    @click="$emit('on-join-click', meeting)">
+                    {{ $t('Join') }}
+                </v-btn>
             </div>
         </template>
         <template #icon>
@@ -17,9 +25,15 @@
         </template>
 
         <v-card
-            :class="isPast ? 'text-blue-grey-lighten-2' : ''"
+            :class="{'text-blue-grey-lighten-2': isPast, 'text-grey bg-grey-lighten-4': !isPast && meeting.status === 3}"
             :color="isPast ? 'blue-grey-lighten-5': isUpcoming ? 'yellow-accent-1' : ''">
             <template #title>
+                <div class="status mb-1">
+                    <v-chip
+                        :color="color">
+                        {{ status }}
+                    </v-chip>
+                </div>
                 <div
                     v-if="isPast"
                     class="is-past text-caption">
@@ -40,22 +54,14 @@
             </v-card-text>
             <v-card-actions>
                 <v-btn
-                    v-if="meeting.status === 1 || meeting.status === 2"
-                    :disabled="loading"
-                    prepend-icon="mdi-account-voice"
-                    color="deep-orange"
-                    variant="flat"
-                    :text="$t('Join')"
-                    @click="preJoinMeeting" />
-                <v-btn
                     v-if="participantsCount > 0"
                     prepend-icon="mdi-account-multiple"
-                    @click="showMore = true">
+                    @click="$emit('info-dialog-open', meeting)">
                     {{ $tc('{count} participants', {count: participantsCount}) }}
                 </v-btn>
                 <v-btn
                     prepend-icon="mdi-eye"
-                    @click="showMore = true">
+                    @click="$emit('info-dialog-open', meeting)">
                     {{ $t('More') }}
                 </v-btn>
                 <v-btn
@@ -66,113 +72,11 @@
                 </v-btn>
             </v-card-actions>
         </v-card>
-        <v-dialog
-            v-model="showMore"
-            transition="dialog-bottom-transition">
-            <template #default="{ isActive }">
-                <v-card>
-                    <v-card-title>{{ meeting.name }}</v-card-title>
-                    <v-card-text class="pa-4">
-                        {{ meeting.welcome }}
-                        <ParticipantsList
-                            :meeting="meeting"
-                            :participants="participants" />
-                    </v-card-text>
-
-                    <v-card-actions>
-                        <v-spacer />
-                        <div class="pa-4 d-flex justify-space-between">
-                            <div>
-                                <v-btn
-                                    v-if="meeting.status === 0 || meeting.status === 3"
-                                    :disabled="loading"
-                                    prepend-icon="mdi-play"
-                                    color="deep-orange"
-                                    variant="flat"
-                                    :text="$t('Start')"
-                                    @click="startMeeting" />
-                                <v-btn
-                                    v-else-if="meeting.status === 1 || meeting.status === 2"
-                                    :disabled="loading"
-                                    prepend-icon="mdi-account-voice"
-                                    color="deep-orange"
-                                    variant="flat"
-                                    :text="$t('Join')"
-                                    @click="preJoinMeeting" />
-                                <v-btn
-                                    v-if="meeting.status === 2"
-                                    :disabled="loading"
-                                    prepend-icon="mdi-stop"
-                                    color="primary"
-                                    variant="flat"
-                                    :text="$t('Stop')"
-                                    @click="stopMeeting" />
-                                <v-btn
-                                    v-if="meeting.status !== 2"
-                                    :disabled="loading"
-                                    prepend-icon="mdi-trash-can"
-                                    color="red"
-                                    variant="flat"
-                                    :text="$t('Delete')"
-                                    @click="deleteMeeting" />
-                            </div>
-                            <div>
-                                <v-btn
-                                    :disabled="loading"
-                                    class="ml-2"
-                                    prepend-icon="mdi-close"
-                                    :text="$t('Close')"
-                                    @click="isActive.value = false" />
-                            </div>
-                        </div>
-                    </v-card-actions>
-                </v-card>
-            </template>
-        </v-dialog>
-        <v-dialog
-            v-model="showPreJoin"
-            width="400">
-            <template #default="{isActive}">
-                <v-card :title="$t('Join to meeting')">
-                    <v-card-text>
-                        <v-text-field
-                            v-model="visibleName"
-                            :label="$t('Enter visible name')" />
-                        <v-btn
-                            v-if="link && duplicate"
-                            color="deep-orange"
-                            prepend-icon="mdi-link"
-                            width="100%"
-                            :href="link"
-                            target="_blank">
-                            {{ $t('Previous link') }}
-                        </v-btn>
-                    </v-card-text>
-
-                    <v-card-actions>
-                        <v-spacer />
-                        <v-btn
-                            color="deep-orange"
-                            variant="flat"
-                            :loading="joinLoader"
-                            :disabled="joinLoader"
-                            prepend-icon="mdi-check"
-                            :text="$t('Join')"
-                            @click="joinMeeting" />
-                        <v-btn
-                            prepend-icon="mdi-close"
-                            :text="$t('Cancel')"
-                            @click="isActive.value = false" />
-                    </v-card-actions>
-                </v-card>
-            </template>
-        </v-dialog>
     </v-timeline-item>
 </template>
 
 <script>
 import moment from 'moment'
-import ParticipantsList from './ParticipantsList.vue'
 import Avatar from './Avatar.vue'
 import { useToast } from 'vue-toastification'
 
@@ -181,8 +85,7 @@ const toast = useToast()
 export default {
     name: 'MeetingItem',
     components: {
-        Avatar,
-        ParticipantsList
+        Avatar
     },
     props: {
         meeting: {
@@ -194,15 +97,13 @@ export default {
             required: true
         }
     },
+    emits: [ 'info-dialog-open', 'info-dialog-close', 'on-join-click' ],
     data() {
         return {
-            link: null,
             duplicate: false,
-            joinLoader: false,
             loading: false,
             showMore: false,
-            showPreJoin: false,
-            visibleName: null
+            showPreJoin: false
         }
     },
     computed: {
@@ -211,11 +112,6 @@ export default {
         },
         owner() {
             return this.meeting.owner
-        },
-        currentParticipant() {
-            return this.meeting.participants.find(p => {
-                return p.id === this.user.id
-            })
         },
         isOwner() {
             return this.user.id === this.meeting.userId
@@ -241,77 +137,40 @@ export default {
             const min = moment(now).subtract(8, 'hours').toDate()
             const max = moment(now).add(8, 'hours').toDate()
             return moment(now).isBetween(min, new Date(date)) && moment(date).isBefore(max)
-        }
-    },
-    watch: {
-        async showMore() {
-            if (this.showMore) {
-                await this.$store.dispatch('getMeetingInfo', this.meeting.id)
-                    .catch(e => {
-                        alert(e.response.data.message)
-                    })
-                    .finally(() => {
-                        this.loading = false
-                    })
+        },
+        status() {
+            switch (this.meeting.status) {
+                case 0:
+                    return this.$t('New')
+                case 1:
+                    return this.$t('Created')
+                case 2:
+                    return this.$t('Pending')
+                case 3:
+                    return this.$t('Closed')
+                default:
+                    return ''
+            }
+        },
+        color() {
+            switch (this.meeting.status) {
+                case 0:
+                    return 'green'
+                case 1:
+                    return 'deep-orange'
+                case 2:
+                    return 'info'
+                case 3:
+                    return 'grey'
+                default:
+                    return ''
             }
         }
     },
-    created() {
-        this.visibleName = `${this.user.lastname} ${this.user.firstname}`
-    },
+    watch: {},
     methods: {
-        async startMeeting() {
-            this.loading = true
-            await this.$store.dispatch('startMeeting', this.meeting.id)
-                .catch(e => {
-                    alert(e.response.data.message)
-                })
-                .finally(() => {
-                    this.loading = false
-                })
-        },
         preJoinMeeting() {
             this.showPreJoin = true
-        },
-        async joinMeeting() {
-            this.duplicate = false
-            this.link = null
-            this.loading = true
-            this.joinLoader = true
-            const joinInfo = await this.$store.dispatch('joinMeeting', {
-                id: this.meeting.id,
-                visibleName: this.visibleName
-            })
-                .catch(e => {
-                    this.duplicate = true
-                    this.link = e.response.data.link
-                    toast.error(e.response.data.message)
-                })
-                .finally(() => {
-                    this.loading = false
-                    this.joinLoader = false
-                })
-            if (joinInfo) {
-                this.showPreJoin = false
-                const url = joinInfo.join.url
-                window.open(url, '_blank').focus()
-            }
-        },
-        async stopMeeting() {
-            this.loading = true
-            await this.$store.dispatch('stopMeeting', this.meeting.id)
-                .then(() => {
-                    this.joinLoader = true
-                })
-                .catch(e => {
-                    alert(e.response.data.message)
-                })
-                .finally(() => {
-                    this.loading = false
-                })
-        },
-        deleteMeeting() {
-
         }
     }
 }

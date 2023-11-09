@@ -18,7 +18,7 @@ Route
         Route::post('login', 'login');
         Route::get('logout', 'logout');
     });
-Route::prefix('user')->group(function () {
+Route::prefix('users')->group(function () {
     Route::get('{id}/avatar/{size?}', [UsersController::class, 'getAvatar'])->name('avatar');
 });
 /** PANEL ROUTES (ACCESS ONLY AUTHENTICATED USERS AND ADMINS) */
@@ -28,6 +28,10 @@ Route
     ->group(function () {
         Route::prefix('search')->group(function () {
             Route::get('users', [UsersController::class, 'searchUsers']);
+        });
+        Route::prefix('dashboard')->group(function () {
+            Route::get('meetings', [MeetingsController::class, 'getDashboardMeetings']);
+
         });
         Route::prefix('meetings')->group(function () {
             /** ADMIN ROUTES TO START, STOP, END, CREATE MEETING */
@@ -44,9 +48,6 @@ Route
                     ->where('id', '[0-9]+');
                 Route::get('{id}/running', [BababelController::class, 'isRunning'])
                     ->where('id', '[0-9]+');
-                Route::middleware(AlreadyJoined::class)
-                    ->post('{id}/join', [BababelController::class, 'joinMeeting'])
-                    ->where('id', '[0-9]+');
                 Route::get('{id}/logout', function (int $id) {
                     return 'this is a logout page. meeting id: ' . $id;
                 })
@@ -58,6 +59,9 @@ Route
                     ->name('join_error')
                     ->where('id', '[0-9]+');
             });
+            Route::middleware(AlreadyJoined::class)
+                ->post('{id}/join', [BababelController::class, 'joinMeeting'])
+                ->where('id', '[0-9]+');
             Route::get('{id}/info', [BababelController::class, 'getInfo'])
                 ->where('id', '[0-9]+');
         });

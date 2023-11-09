@@ -40,7 +40,7 @@ class BababelController extends Controller
         $meeting = Meeting::select(Meeting::$selectableFields)->find($id);
         $info = BababelHelper::getMeetingInfo($meeting);
         $data = $info->getData();
-        if (!$data->success && $meeting->status === 1) { // meeting not found, status must be changed
+        if (!$data->success && ($meeting->status === 1 || $meeting->status === 2)) { // meeting not found, status must be changed
             $meeting->status = 0;
             $meeting->save();
         }
@@ -63,6 +63,7 @@ class BababelController extends Controller
     {
         /** @var User $user */
         $user = $request->user();
+        /** @var Meeting $meeting */
         $meeting = Meeting::select(Meeting::$selectableFields)->find($id);
         $res = BababelHelper::joinMeeting($meeting, $request->get('visibleName'));
         if ($res->isSuccessful()) {
@@ -71,6 +72,8 @@ class BababelController extends Controller
             $participant = Participant::where('meetingId', $meeting->id)->where('userId', $user->id)->first();
             $participant->link = $url;
             $participant->save();
+            $meeting->status = $meeting::STATUS_PENDING;
+            $meeting->save();
             return $res;
         }
         throw new JoinMeetingException($res);

@@ -12,6 +12,7 @@ use BigBlueButton\Parameters\HooksCreateParameters;
 use BigBlueButton\Parameters\IsMeetingRunningParameters;
 use BigBlueButton\Parameters\JoinMeetingParameters;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Crypt;
@@ -61,6 +62,7 @@ class BababelHelper
         $response = $inst->bbb->createMeeting($parameters);
         if ($response->success()) {
             $meeting->status = $meeting::STATUS_CREATED;
+            $meeting->date = Carbon::createFromTimeString($response->getCreationDate());
             $meeting->save();
         }
         return BigBlueButtonApiResponse::output($response)->merge($meeting);

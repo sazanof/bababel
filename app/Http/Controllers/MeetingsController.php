@@ -78,11 +78,11 @@ class MeetingsController extends Controller
         $user = $request->user();
         switch ($criteria) {
             case 'my':
-                $meetings->whereDate('date', '>=', Carbon::now()->format('Y-m-d H:i:s'));
+                $meetings->where('date', '>=', Carbon::now());
                 $meetings->where('userId', $user->id);
                 break;
             case 'invitations':
-                $meetings->whereDate('date', '>=', Carbon::now()->format('Y-m-d H:i:s'));
+                $meetings->where('date', '>=', Carbon::now());
                 $meetings->whereNot('userId', $user->id);
                 $meetings->whereHas('participants', function (Builder $builder) use ($user) {
                     return $builder->where('userId', $user->id);
@@ -90,12 +90,56 @@ class MeetingsController extends Controller
                 break;
 
             case 'past':
-                $meetings->whereDate('date', '<', Carbon::now()->format('Y-m-d H:i:s'));
+                $meetings->where('date', '<', Carbon::now());
                 $meetings->whereHas('participants', function (Builder $builder) use ($user) {
                     return $builder->where('userId', $user->id);
                 });
                 break;
         }
         return $meetings->orderBy('date', 'ASC')->paginate($limit, [], 'page', $page);
+    }
+
+    public function getDashboardMeetings(Request $request)
+    {
+
+        /** @var User $user */
+        $user = $request->user();
+        $today = Meeting
+            ::with(['owner', 'participants'])
+            ->select(Meeting::$selectableFields);
+        $today->whereBetween(
+            'date',
+            [
+                Carbon::now(),
+                Carbon::now()->add('1 day')->format('Y-m-d')
+            ]
+        );
+        $today->where(function (Builder $builder) {
+        });
+        $today->whereHas('participants', function (Builder $builder) use ($user) {
+            return $builder->where('userId', $user->id);
+        });
+
+        $recent = Meeting
+            ::with(['owner', 'participants'])
+            ->select(Meeting::$selectableFields);
+        $ids = $today->get()->map(function (Meeting $meeting) {
+            return $meeting->id;
+        })->toArray();
+        $recent->whereHas('participants', function (Builder $builder) use ($user) {
+            return $builder->where('userId', $user->id);
+        });
+        $recent->whereNotIn('id', $ids)->orderBy('date', 'ASC');
+        $recent->where('date', '>=', Carbon::now());
+        return [
+            'today' => [
+                'items' => $today->get(),
+                'count' => $today->count()
+            ],
+            'recent' => [
+                'items' => $recent->limit(5)->get(),
+                'count' => $recent->count()
+            ]
+        ];
     }
 }

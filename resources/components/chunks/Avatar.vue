@@ -1,17 +1,13 @@
 <template>
     <v-avatar
         class="avatar"
-        :color="color"
         :size="size">
         <v-img
             v-if="user.photo !== null"
             :src="user.photo" />
-        <div
+        <v-img
             v-else
-            :style="`font-size: ${size / 2.2}px`"
-            class="initials">
-            {{ initials }}
-        </div>
+            :src="`users/${user.id}/avatar/${size}`" />
     </v-avatar>
 </template>
 
