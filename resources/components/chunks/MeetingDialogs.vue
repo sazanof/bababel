@@ -19,6 +19,7 @@
                             <div>
                                 <v-btn
                                     v-if="canStart"
+                                    :loading="startLoading"
                                     :disabled="loading"
                                     prepend-icon="mdi-play"
                                     color="deep-orange"
@@ -137,7 +138,9 @@ export default {
             link: null,
             show: false,
             showJoin: false,
-            loading: false
+            loading: false,
+            startLoading: false,
+            joinLoading: false
         }
     },
     computed: {
@@ -176,6 +179,7 @@ export default {
             if (!this.canStart) {
                 return false
             }
+            this.startLoading = true
             this.loading = true
             await this.$store.dispatch('startMeeting', this.meeting.id)
                 .then(() => {
@@ -186,6 +190,7 @@ export default {
                 })
                 .finally(() => {
                     this.loading = false
+                    this.startLoading = false
                 })
         },
         async joinMeeting() {

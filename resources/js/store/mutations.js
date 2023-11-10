@@ -8,11 +8,14 @@ export default {
         state.user = null
     },
     setMeeting(state, data) {
-        state.meetings.data.find(meeting => {
-            if (meeting.id === data.id) {
-                Object.assign(meeting, data)
-            }
-        })
+        if (state.meetings.hasOwnProperty('data')) {
+            state.meetings.data.find(meeting => {
+                if (meeting.id === data.id) {
+                    Object.assign(meeting, data)
+                }
+            })
+        }
+
         state.meeting.update(data)
     },
     setMeetings(state, meetings) {

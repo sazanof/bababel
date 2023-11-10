@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Models\Document;
 use App\Models\Meeting;
 use App\Models\Participant;
 use App\Models\User;
@@ -9,6 +10,7 @@ use BigBlueButton\Parameters\CreateMeetingParameters;
 use BigBlueButton\Parameters\EndMeetingParameters;
 use BigBlueButton\Parameters\GetMeetingInfoParameters;
 use BigBlueButton\Parameters\HooksCreateParameters;
+use BigBlueButton\Parameters\InsertDocumentParameters;
 use BigBlueButton\Parameters\IsMeetingRunningParameters;
 use BigBlueButton\Parameters\JoinMeetingParameters;
 use Illuminate\Http\Request;
@@ -17,6 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
@@ -62,7 +65,7 @@ class BababelHelper
         $response = $inst->bbb->createMeeting($parameters);
         if ($response->success()) {
             $meeting->status = $meeting::STATUS_CREATED;
-            $meeting->date = Carbon::createFromTimeString($response->getCreationDate());
+            //$meeting->date = Carbon::createFromTimeString($response->getCreationDate());
             $meeting->save();
         }
         return BigBlueButtonApiResponse::output($response)->merge($meeting);
@@ -106,6 +109,29 @@ class BababelHelper
         return BigBlueButtonApiResponse::output($response);
     }
 
+    public function insertDocumentParameters(Meeting $meeting)
+    {
+        $params = new InsertDocumentParameters();
+        $params->setMeetingId($meeting->id);
+        $documents = Document::where('meetingId', $meeting->id)->get();
+        if ($documents->isNotEmpty()) {
+            foreach ($documents as $document) {
+                $params->addPresentation(URL::to(Storage::url($document->path)));
+            }
+        } else {
+            //Upload default presentation
+            //$params->addPresentation();
+        }
+        return $params;
+    }
+
+    public static function insertDocument(Meeting $meeting)
+    {
+        $inst = self::getInstance();
+        $response = $inst->bbb->insertDocument($inst->insertDocumentParameters($meeting));
+        return BigBlueButtonApiResponse::output($response)->merge($meeting);
+    }
+
     /**
      * @param Meeting $meeting
      * @return CreateMeetingParameters
@@ -127,6 +153,13 @@ class BababelHelper
         $params->setMeetingLayout($meeting->meetingLayout);
         $params->setEndWhenNoModeratorDelayInMinutes($meeting->endWhenNoModeratorDelayInMinutes);
 
+
+        $documents = Document::where('meetingId', $meeting->id)->get();
+        if ($documents->isNotEmpty()) {
+            foreach ($documents as $document) {
+                $params->addPresentation(str_replace('http', 'https', URL::to(Storage::url($document->path))));
+            }
+        }
         $logoutUrl = URL::route('meeting_logout', ['id' => $meeting->id]);
         $params->setLogoutUrl(Str::replace('http', 'https', $logoutUrl));
 

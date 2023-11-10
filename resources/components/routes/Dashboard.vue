@@ -15,6 +15,7 @@
                         <v-list-item>
                             <v-list-item-title>
                                 <v-chip
+                                    class="mb-2"
                                     :color="color(meeting)">
                                     {{ status(meeting) }}
                                 </v-chip>
@@ -38,10 +39,7 @@
                             </template>
                         </v-list-item>
 
-                        <!--                    <v-divider
-                                                v-if="n !== 3"
-                                                :key="`divider-${n}`"
-                                                inset />-->
+                        <v-divider class="my-2" />
                     </template>
                 </v-list>
                 <v-card-actions>

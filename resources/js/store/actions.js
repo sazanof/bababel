@@ -103,5 +103,10 @@ export default {
         return await axios.get(`${PANEL}dashboard/meetings/`).then(res => {
             return res.data
         })
+    },
+    async removeDocument({ commit }, id) {
+        return await axios.delete(`${PANEL}documents/${id}`).then(res => {
+            return res.data
+        })
     }
 }

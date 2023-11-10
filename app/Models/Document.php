@@ -25,6 +25,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Document wherePath($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Document whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Document whereUserId($value)
+ * @property string|null $mime
+ * @method static \Illuminate\Database\Eloquent\Builder|Document whereMime($value)
  * @mixin \Eloquent
  */
 class Document extends Model

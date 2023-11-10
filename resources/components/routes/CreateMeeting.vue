@@ -42,13 +42,24 @@
                             :label="$t('Welcome message or description')" />
 
                         <v-file-input
-                            class="mb-6"
                             hide-details
                             prepend-icon="mdi-paperclip"
                             :chips="true"
                             :multiple="true"
                             :label="$t('Files')"
                             @update:modelValue="addFiles" />
+
+                        <v-chip-group
+                            v-if="documents"
+                            class="mb-6 ml-10">
+                            <v-chip
+                                v-for="doc in documents"
+                                :key="doc.id"
+                                :closable="true"
+                                @click:close="removeDocument(doc.id)">
+                                {{ doc.name }}
+                            </v-chip>
+                        </v-chip-group>
 
                         <UsersSearch
                             :participants="meeting.participants"
@@ -180,6 +191,9 @@ export default {
         },
         record() {
             return this.meeting.record
+        },
+        documents() {
+            return this.meeting.documents
         }
     },
     watch: {
@@ -196,6 +210,7 @@ export default {
         this.meeting.id = this.id
         if (this.meeting.id > 0) {
             await this.getMeeting().catch(e => {
+                console.log(e)
                 alert('Error getting meeting')
             })
         } else {
@@ -247,6 +262,11 @@ export default {
         cancelCreateMeeting() {
             this.$store.commit('clearMeetingState')
             this.$router.push('/meetings')
+        },
+        async removeDocument(id) {
+            await this.$store.dispatch('removeDocument', id).then(() => {
+                toast.success(this.$t('Document deleted'))
+            })
         }
     }
 

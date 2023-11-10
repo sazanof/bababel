@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use App\Exceptions\MeetingsException;
 use App\Http\Requests\MeetingRequest;
+use App\Models\Document;
 use App\Models\Meeting;
 use App\Models\Participant;
 use App\Models\User;
@@ -12,6 +13,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class MeetingFormRequest
@@ -26,6 +28,7 @@ class MeetingFormRequest
     protected ?User $owner;
     protected MeetingRequest $request;
     protected ?int $id = null;
+    const PATH = 'public/meeting/';
 
     public function __construct(MeetingRequest $request)
     {
@@ -165,12 +168,14 @@ class MeetingFormRequest
      */
     public function add()
     {
+
         if (empty($this->getMeeting())) {
             throw new MeetingsException();
         }
         return DB::transaction(function () {
             $meeting = Meeting::create($this->getMeeting());
             Participant::insertOrIgnore($this->prepareParticipantsToDb($meeting));
+            $this->addFiles($meeting);
             return $meeting;
         });
     }
@@ -217,10 +222,42 @@ class MeetingFormRequest
                         ->delete();
                 }
             }
+            $this->addFiles($meeting);
             $meeting->refresh();
             return $meeting;
         });
+    }
 
+    public function addFiles(Meeting $meeting)
+    {
+        $files = $this->getFiles();
+        if (!is_null($files)) {
+            foreach ($files as $file) {
+                $name = $file->getClientOriginalName();
+                $basename = pathinfo($name);
+                $filePath = self::PATH .
+                    $meeting->id .
+                    DIRECTORY_SEPARATOR .
+                    Str::slug($basename['filename']) .
+                    '.' .
+                    $basename['extension'];
+                $id = Document::updateOrCreate(
+                    [
+                        'userId' => $meeting->userId,
+                        'meetingId' => $meeting->id,
+                        'path' => $filePath,
+                    ],
+                    [
+                        'mime' => $file->getClientMimeType(),
+                        'path' => $filePath,
+                        'name' => $file->getClientOriginalName()
+                    ]
+                );
+                if ($id) {
+                    Storage::put($filePath, $file->getContent());
+                }
+            }
+        }
 
     }
 }

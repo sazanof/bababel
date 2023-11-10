@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exceptions\MeetingsException;
 use App\Helpers\MeetingFormRequest;
 use App\Http\Requests\MeetingRequest;
+use App\Models\Document;
 use App\Models\Meeting;
 use App\Models\User;
 use Carbon\Carbon;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class MeetingsController extends Controller
 {
@@ -55,7 +57,7 @@ class MeetingsController extends Controller
      */
     public function getMeeting(int $id)
     {
-        $meeting = Meeting::select(Meeting::$selectableFields)->find($id)->load(['participants', 'owner']);
+        $meeting = Meeting::select(Meeting::$selectableFields)->find($id)->load(['participants', 'owner', 'documents']);
         if (Auth::id() === $meeting->userId) {
             return $meeting;
         }
@@ -70,7 +72,7 @@ class MeetingsController extends Controller
     public function getMeetings(string $criteria, Request $request): LengthAwarePaginator
     {
         $meetings = Meeting
-            ::with(['owner', 'participants'])
+            ::with(['owner', 'participants', 'documents'])
             ->select(Meeting::$selectableFields);
         $limit = $request->get('limit') ?? 25;
         $page = $request->get('page') ?? 1;
@@ -105,7 +107,7 @@ class MeetingsController extends Controller
         /** @var User $user */
         $user = $request->user();
         $today = Meeting
-            ::with(['owner', 'participants'])
+            ::with(['owner', 'participants', 'documents'])
             ->select(Meeting::$selectableFields);
         $today->whereBetween(
             'date',
@@ -121,7 +123,7 @@ class MeetingsController extends Controller
         });
 
         $recent = Meeting
-            ::with(['owner', 'participants'])
+            ::with(['owner', 'participants', 'documents'])
             ->select(Meeting::$selectableFields);
         $ids = $today->get()->map(function (Meeting $meeting) {
             return $meeting->id;
@@ -141,5 +143,16 @@ class MeetingsController extends Controller
                 'count' => $recent->count()
             ]
         ];
+    }
+
+    public function removeDocument(int $id)
+    {
+        $doc = Document::find($id);
+        if ($doc instanceof Document) {
+            if (Storage::delete($doc->path)) {
+                // TODO check if folder is empty?
+                $doc->delete();
+            }
+        }
     }
 }

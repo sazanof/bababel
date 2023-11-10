@@ -65,6 +65,7 @@ Route
             Route::get('{id}/info', [BababelController::class, 'getInfo'])
                 ->where('id', '[0-9]+');
         });
+        Route::delete('documents/{id}', [MeetingsController::class, 'removeDocument']);
     });
 /** CALLBACKS */
 Route

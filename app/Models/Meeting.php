@@ -145,6 +145,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \App\Models\User|null $owner
  * @property int|null $hookId
  * @method static \Illuminate\Database\Eloquent\Builder|Meeting whereHookId($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Document> $documents
+ * @property-read int|null $documents_count
  * @mixin \Eloquent
  */
 class Meeting extends Model
@@ -312,5 +314,10 @@ class Meeting extends Model
             'users.position',
             'users.department'
         ]);
+    }
+
+    public function documents()
+    {
+        return $this->hasMany(Document::class, 'meetingId', 'id');
     }
 }
