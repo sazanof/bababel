@@ -157,17 +157,17 @@ class BababelHelper
         $documents = Document::where('meetingId', $meeting->id)->get();
         if ($documents->isNotEmpty()) {
             foreach ($documents as $document) {
-                $params->addPresentation(str_replace('http', 'https', URL::to(Storage::url($document->path))));
+                $params->addPresentation(URL::to(Storage::url($document->path)));
             }
         }
         $logoutUrl = URL::route('meeting_logout', ['id' => $meeting->id]);
-        $params->setLogoutUrl(Str::replace('http', 'https', $logoutUrl));
+        $params->setLogoutUrl($logoutUrl);
 
         $recordUrl = URL::route('callback_end', ['id' => $meeting->id]);
-        $params->setEndCallbackUrl(Str::replace('http', 'https', $recordUrl));
+        $params->setEndCallbackUrl($recordUrl);
 
         $recordUrl = URL::route('callback_record_ready', ['id' => $meeting->id]);
-        $params->setRecordingReadyCallbackUrl(Str::replace('http', 'https', $recordUrl));
+        $params->setRecordingReadyCallbackUrl($recordUrl);
         return $params;
     }
 

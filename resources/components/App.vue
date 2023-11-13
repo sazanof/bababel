@@ -3,10 +3,19 @@
         v-if="loaded"
         id="conference-wrapper"
         class="container">
-        <Login v-if="!authenticated" />
-        <Index
+        <div
+            v-if="$route.name === 'meeting_page'"
+            class="app-wrapper single-meeting-view">
+            <router-view />
+        </div>
+        <div
             v-else
-            :user="user" />
+            class="app-wrapper">
+            <Login v-if="!authenticated" />
+            <Index
+                v-else
+                :user="user" />
+        </div>
     </div>
 </template>
 

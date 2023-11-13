@@ -19,6 +19,20 @@
                                     :color="color(meeting)">
                                     {{ status(meeting) }}
                                 </v-chip>
+                                <v-chip
+                                    :color="meeting.copied ? 'primary' : 'default'"
+                                    class="ml-4 mb-2"
+                                    :prepend-icon="meeting.copied ? 'mdi-check' : 'mdi-link'"
+                                    @click="copyLink(meeting)">
+                                    {{ meeting.copied ? $t('Copied') : $t('Copy link') }}
+                                </v-chip>
+                                <v-chip
+                                    color="info"
+                                    class="ml-4 mb-2"
+                                    prepend-icon="mdi-send"
+                                    @click="goTo(meeting)">
+                                    {{ $t('Go') }}
+                                </v-chip>
                                 <div class="datetime blue-grey-lighten-1">
                                     <span>{{ formattedDate(meeting.date) }}</span>
                                 </div>
@@ -67,6 +81,7 @@ export default {
     components: { MeetingDialogs },
     data() {
         return {
+            copied: false,
             showDialog: false,
             dialogMeeting: null,
             loading: false,
@@ -106,6 +121,26 @@ export default {
         }
     },
     methods: {
+        async copyLink(m) {
+            try {
+                const link = `${document.location.protocol}://${document.location.host}/meetings/${m.id}/view`
+                await navigator.clipboard.writeText(link)
+                m.copied = true
+                setTimeout(() => {
+                    m.copied = false
+                }, 1500)
+
+            } catch (e) {
+                console.error(e)
+            }
+        },
+        goTo(m) {
+            this.$router.push({
+                name: 'meeting_page', params: {
+                    id: m.id
+                }
+            })
+        },
         formattedDate(date) {
             return m(date).format('DD.MM.YYYY HH:mm')
         },

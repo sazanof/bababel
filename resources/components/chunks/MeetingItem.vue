@@ -33,6 +33,13 @@
                         :color="color">
                         {{ status }}
                     </v-chip>
+                    <v-chip
+                        :color="copied ? 'primary' : 'default'"
+                        class="ml-4"
+                        :prepend-icon="copied ? 'mdi-check' : 'mdi-link'"
+                        @click="copyLink">
+                        {{ copied ? $t('Copied') : $t('Copy link') }}
+                    </v-chip>
                 </div>
                 <div
                     v-if="isPast"
@@ -103,7 +110,8 @@ export default {
             duplicate: false,
             loading: false,
             showMore: false,
-            showPreJoin: false
+            showPreJoin: false,
+            copied: false
         }
     },
     computed: {
@@ -171,6 +179,19 @@ export default {
     methods: {
         preJoinMeeting() {
             this.showPreJoin = true
+        },
+        async copyLink() {
+            try {
+                const link = `${document.location.protocol}://${document.location.host}/meetings/${this.meeting.id}/view`
+                await navigator.clipboard.writeText(link)
+                this.copied = true
+                setTimeout(() => {
+                    this.copied = false
+                }, 1500)
+
+            } catch (e) {
+                console.error(e)
+            }
         }
     }
 }

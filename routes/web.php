@@ -82,6 +82,8 @@ Route
             ->name('callback_hooks');
     });
 Route::get('/', [AuthController::class, 'index']);
+Route::get('/panel/meetings/{id}/view', [MeetingsController::class, 'viewMeeting'])->where('id', '[0-9]+');
+
 
 
 

@@ -3,6 +3,7 @@ import Dashboard from '../components/routes/Dashboard.vue'
 import CreateMeeting from '../components/routes/CreateMeeting.vue'
 import MeetingsPage from '../components/routes/MeetingsPage.vue'
 import BbbWindow from '../components/pages/BbbWindow.vue'
+import MeetingPage from '../components/routes/MeetingPage.vue'
 
 const routes = [
     {
@@ -56,6 +57,11 @@ const routes = [
                 path: ':id(\\d+)',
                 name: 'edit_meeting',
                 component: CreateMeeting
+            },
+            {
+                path: ':id(\\d+)/view',
+                name: 'meeting_page',
+                component: MeetingPage
             }
         ]
     }

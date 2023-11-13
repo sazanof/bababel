@@ -67,6 +67,11 @@ export default {
             return commit('setMeeting', res.data)
         })
     },
+    async viewMeeting({ commit }, id) {
+        return await axios.get(`${PANEL}meetings/${id}/view`).then(res => {
+            return res.data
+        })
+    },
     async startMeeting({ commit }, id) {
         return await axios.get(`${PANEL}meetings/${id}/start`).then(res => {
             if (res.data.meeting) {

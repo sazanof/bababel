@@ -55,7 +55,8 @@ export default {
     watch: {
         async criteria() {
             this.filter.criteria = this.criteria
-            this.meetings = null
+            this.$store.commit('setMeetings', {})
+            this.$store.commit('clearMeetingState')
             await this.getMeetings()
         }
     },

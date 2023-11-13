@@ -7,6 +7,7 @@ use App\Helpers\MeetingFormRequest;
 use App\Http\Requests\MeetingRequest;
 use App\Models\Document;
 use App\Models\Meeting;
+use App\Models\Participant;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -154,5 +155,72 @@ class MeetingsController extends Controller
                 $doc->delete();
             }
         }
+    }
+
+    /**
+     * @param int $id
+     * @param Request $request
+     * @return array
+     * @throws \Exception
+     */
+    public function viewMeeting(int $id, Request $request)
+    {
+        /** @var User $user */
+        $user = $request->user();
+        $guest = false;
+        $success = false;
+
+        $meeting = Meeting::find($id);
+
+        switch ($meeting->guestPolicy) {
+            case 'ALWAYS_ACCEPT':
+                $guest = true;
+                $success = true;
+                break;
+            case 'ALWAYS_DENY':
+                if (is_null($user)) {
+                    throw new \Exception('Access denied to meeting');
+                }
+                $success = true;
+                break;
+            case 'ASK_MODERATOR':
+                $success = true;
+                break;
+        }
+
+        /** @var ?Participant $participant */
+        $participant = null;
+        if ($user instanceof User) {
+            $participant =
+                $meeting
+                    ->participants()
+                    ->where('userId', $user->id)
+                    ->first();
+        }
+        $isParticipant = $user instanceof User && $participant instanceof Participant;
+        $canJoin = ($meeting->status === 2 || $meeting->status === 1) && ($isParticipant || $success); // PENDING or STARTED
+        $isStarted = $meeting->status === 1; // STARTED ON SERVER
+        $isOwner = $meeting instanceof Meeting && $user instanceof User && $meeting->userId = $user->id;
+        $isModerator = $meeting instanceof Meeting && $participant instanceof Participant && $participant->isModerator;
+
+        if ($success) {
+            $m = [
+                'name' => $meeting->name,
+                'welcome' => $meeting->welcome,
+                'date' => $meeting->date
+            ];
+        } else {
+            $m = null;
+        }
+        return [
+            'isModerator' => $isModerator,
+            'isParticipant' => $isParticipant,
+            'isOwner' => $isOwner,
+            'isStarted' => $isStarted,
+            'canJoin' => $canJoin,
+            'isGuest' => $guest,
+            'success' => $success,
+            'meeting' => $m
+        ];
     }
 }
