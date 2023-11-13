@@ -160,6 +160,8 @@ export default {
             await this.$store.dispatch('startMeeting', this.id).then(() => {
                 this.loading = false
                 this.joinLoader = false
+                this.meeting.canJoin = true
+                this.meeting.meeting.status = 1
             })
         },
         async joinMeeting() {

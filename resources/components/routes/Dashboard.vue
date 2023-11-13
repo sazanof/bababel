@@ -1,72 +1,76 @@
 <template>
-    <div class="dashboard">
-        <v-col
-            v-for="card in cards"
-            :key="card"
-            cols="12">
-            <v-card
-                :loading="loading"
-                :title="card.title"
-                :subtitle="card.subtitle">
-                <v-list>
-                    <template
-                        v-for="meeting in card.items.items"
-                        :key="meeting.id">
-                        <v-list-item lines="three">
-                            <v-list-item-title>
-                                <v-chip
-                                    class="mb-2"
-                                    :color="color(meeting)">
-                                    {{ status(meeting) }}
-                                </v-chip>
-                                <v-chip
-                                    :color="meeting.copied ? 'primary' : 'default'"
-                                    class="ml-4 mb-2"
-                                    :prepend-icon="meeting.copied ? 'mdi-check' : 'mdi-link'"
-                                    @click="copyLink(meeting)">
-                                    {{ meeting.copied ? $t('Copied') : $t('Copy link') }}
-                                </v-chip>
-                                <v-chip
-                                    color="info"
-                                    class="ml-4 mb-2"
-                                    prepend-icon="mdi-send"
-                                    @click="goTo(meeting)">
-                                    {{ $t('Go') }}
-                                </v-chip>
-                                <div class="datetime blue-grey-lighten-1 font-weight-black">
-                                    <span>{{ formattedDate(meeting.date) }}</span>
+    <v-col class="dashboard">
+        <v-row>
+            <v-col
+                v-for="card in cards"
+                :key="card"
+                cols="12">
+                <v-card
+                    width="100%"
+                    :loading="loading"
+                    :title="card.title"
+                    :subtitle="card.subtitle">
+                    <v-list width="100%">
+                        <template
+                            v-for="meeting in card.items.items"
+                            :key="meeting.id">
+                            <v-list-item lines="three">
+                                <v-list-item-title>
+                                    <v-chip
+                                        class="mb-2"
+                                        :color="color(meeting)">
+                                        {{ status(meeting) }}
+                                    </v-chip>
+                                    <v-chip
+                                        :color="meeting.copied ? 'primary' : 'default'"
+                                        class="ml-4 mb-2"
+                                        :prepend-icon="meeting.copied ? 'mdi-check' : 'mdi-link'"
+                                        @click="copyLink(meeting)">
+                                        {{ meeting.copied ? $t('Copied') : $t('Copy link') }}
+                                    </v-chip>
+                                    <v-chip
+                                        color="info"
+                                        class="ml-4 mb-2"
+                                        prepend-icon="mdi-send"
+                                        @click="goTo(meeting)">
+                                        {{ $t('Go') }}
+                                    </v-chip>
+                                    <div class="datetime blue-grey-lighten-1 font-weight-black">
+                                        <span>{{ formattedDate(meeting.date) }}</span>
+                                    </div>
+                                    <div class="title mb-1">
+                                        {{ meeting.name }}
+                                    </div>
+                                </v-list-item-title>
+                                <v-list-item-subtitle>
+                                    <div class="subtitle mb-2">
+                                        {{ meeting.welcome }}
+                                    </div>
+                                </v-list-item-subtitle>
+                                <div class="organizer">
+                                    <span class="mr-1 text-caption">{{ $t('Invites you') }}</span>
+                                    <span class="text-caption font-weight-bold">{{ meeting.owner.lastname }} {{
+                                        meeting.owner.firstname
+                                    }}</span>
                                 </div>
-                                <div class="title mb-1">
-                                    {{ meeting.name }}
-                                </div>
-                            </v-list-item-title>
-                            <v-list-item-subtitle>
-                                <div class="subtitle mb-2">
-                                    {{ meeting.welcome }}
-                                </div>
-                            </v-list-item-subtitle>
-                            <div class="organizer">
-                                <span class="mr-1 text-caption">{{ $t('Invites you') }}</span>
-                                <span class="text-caption font-weight-bold">{{ meeting.owner.lastname }} {{
-                                    meeting.owner.firstname
-                                }}</span>
-                            </div>
-                            <template #append>
-                                <v-btn
-                                    variant="text"
-                                    icon="mdi-chevron-right"
-                                    @click="onDialogOpen(meeting)" />
-                            </template>
-                        </v-list-item>
+                                <template #append>
+                                    <v-btn
+                                        variant="text"
+                                        icon="mdi-chevron-right"
+                                        @click="onDialogOpen(meeting)" />
+                                </template>
+                            </v-list-item>
 
-                        <v-divider class="my-2" />
-                    </template>
-                </v-list>
-                <v-card-actions>
-                    <v-btn>{{ $t('More') }}</v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-col>
+                            <v-divider class="my-2" />
+                        </template>
+                    </v-list>
+                    <v-card-actions>
+                        <v-btn>{{ $t('More') }}</v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-col>
+        </v-row>
+
         <MeetingDialogs
             v-if="dialogMeeting"
             key="dashboard"
@@ -75,7 +79,7 @@
             :show-more="dialogInfoOpen"
             :meeting="dialogMeeting"
             @on-info-change="onInfoDialogClose($event)" />
-    </div>
+    </v-col>
 </template>
 
 <script>
@@ -114,11 +118,13 @@ export default {
         }
     },
     async created() {
+        this.loading = true
         const all = await this.$store.dispatch('getDashboardMeetings')
             .catch(() => {
 
             })
             .finally(() => {
+                this.loading = false
             })
         if (all) {
             this.today = all.today

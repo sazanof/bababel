@@ -5,6 +5,9 @@
         <template #append>
             <v-btn icon="mdi-magnify" />
             <v-btn
+                icon="mdi-account"
+                @click="account" />
+            <v-btn
                 icon="mdi-logout"
                 :disabled="loading.logout"
                 :loading="loading.logout"
@@ -37,6 +40,9 @@ export default {
             this.$store.dispatch('logOut').finally(() => {
                 this.loading.logout = false
             })
+        },
+        account() {
+            this.$router.push({ name: 'account' })
         }
     }
 }

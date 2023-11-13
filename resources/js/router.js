@@ -5,13 +5,18 @@ import MeetingsPage from '../components/routes/MeetingsPage.vue'
 import BbbWindow from '../components/pages/BbbWindow.vue'
 import MeetingPage from '../components/routes/MeetingPage.vue'
 import MeetingLogoutPage from '../components/routes/MeetingLogoutPage.vue'
+import Account from '../components/routes/Account.vue'
 
 const routes = [
     {
         path: '/',
         component: Dashboard
     },
-
+    {
+        path: '/account',
+        component: Account,
+        name: 'account'
+    },
     {
         path: '/bbb',
         name: 'BBB',
