@@ -223,11 +223,13 @@ class Meeting extends Model
     public const STATUS_PENDING = 2;
     public const STATUS_CLOSED = 3;
 
+    public const ALWAYS_ACCEPT = 'ALWAYS_ACCEPT';
+    public const ALWAYS_DENY = 'ALWAYS_DENY';
+    public const ASK_MODERATOR = 'ASK_MODERATOR';
+
     protected $fillable = [
         'userId',
         'meetingID',
-        'attendeePW',
-        'moderatorPW',
         'date',
         'name',
         'welcome',
@@ -239,7 +241,13 @@ class Meeting extends Model
         'allowModsToUnmuteUsers',
         'allowModsToEjectCameras',
         'meetingLayout',
-        'status'
+        'status',
+        'guestPolicy'
+    ];
+
+    protected $hidden = [
+        'attendeePW',
+        'moderatorPW',
     ];
 
     protected $casts = [
@@ -267,7 +275,8 @@ class Meeting extends Model
         'meetings.allowModsToUnmuteUsers',
         'meetings.allowModsToEjectCameras',
         'meetings.meetingLayout',
-        'meetings.status'
+        'meetings.status',
+        'meetings.guestPolicy'
     ];
 
     /**

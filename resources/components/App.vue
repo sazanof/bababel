@@ -4,7 +4,7 @@
         id="conference-wrapper"
         class="container">
         <div
-            v-if="$route.name === 'meeting_page'"
+            v-if="$route.name === 'meeting_page' || $route.name === 'meeting_logout_page'"
             class="app-wrapper single-meeting-view">
             <router-view />
         </div>

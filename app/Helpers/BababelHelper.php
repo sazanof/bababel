@@ -152,6 +152,7 @@ class BababelHelper
         $params->setAllowModsToEjectCameras($meeting->allowModsToEjectCameras);
         $params->setMeetingLayout($meeting->meetingLayout);
         $params->setEndWhenNoModeratorDelayInMinutes($meeting->endWhenNoModeratorDelayInMinutes);
+        $params->setBannerText(env('APP_NAME'));
 
 
         $documents = Document::where('meetingId', $meeting->id)->get();
@@ -159,8 +160,10 @@ class BababelHelper
             foreach ($documents as $document) {
                 $params->addPresentation(URL::to(Storage::url($document->path)));
             }
+        } else {
+            $params->addPresentation(URL::route('make_cover', ['id' => $meeting->id, 'format' => 'jpg']));
         }
-        $logoutUrl = URL::route('meeting_logout', ['id' => $meeting->id]);
+        $logoutUrl = URL::to('/#/meetings/' . $meeting->id . '/logout');
         $params->setLogoutUrl($logoutUrl);
 
         $recordUrl = URL::route('callback_end', ['id' => $meeting->id]);
@@ -204,22 +207,27 @@ class BababelHelper
         if ($user === null) {
             $user = Auth::user();
         }
+
         /** @var Participant $participant */
-        $participant = $meeting->participants()->where('userId', $user->id)->first();
+        $participant = $user instanceof User ? $meeting->participants()->where('userId', $user->id)->first() : null;
         //MODERATOR or VIEWER
-        $role = $participant->isModerator ? 'MODERATOR' : 'VIEWER';
+        $role = !is_null($participant) && $participant->isModerator ? 'MODERATOR' : 'VIEWER';
         $fullName = $visibleName ?? $user->lastname . ' ' . $user->firstname;
 
         $parameters = new JoinMeetingParameters($meeting->id);
-        $parameters->setUserId($user->id);
-        $parameters->setAvatarURL(URL::route('avatar', ['id' => $user->id, 'size' => 64]));
+
+        if ($user instanceof User) {
+            $parameters->setUserId($user->id);
+            $parameters->setAvatarURL(URL::route('avatar', ['id' => $user->id, 'size' => 128]));
+            $parameters->setCustomParameter('errorRedirectUrl', URL::route('join_error', ['id' => $meeting->id, 'userId' => $user->id]));
+        }
         $parameters->setRole($role);
-        $parameters->setDefaultLayout($participant->defaultLayout); // TODO change from frontend
-        $parameters->setExcludeFromDashboard($participant->excludeFromDashboard);
-        $parameters->setGuest($participant->guest);
+        $parameters->setDefaultLayout(!is_null($participant) ? $participant->defaultLayout : $meeting->meetingLayout); // TODO change from frontend
+        $parameters->setExcludeFromDashboard(!is_null($participant) ? $participant->excludeFromDashboard : false);
+        // TODO - denied GUEST (is_guest)
+        $parameters->setGuest(!is_null($participant) ? $participant->guest : true);
         $parameters->setUsername($fullName);
         $parameters->setRedirect(false);
-        $parameters->setCustomParameter('errorRedirectUrl', URL::route('join_error', ['id' => $meeting->id, 'userId' => $user->id]));
         return $parameters;
     }
 

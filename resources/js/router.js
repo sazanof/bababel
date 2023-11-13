@@ -4,6 +4,7 @@ import CreateMeeting from '../components/routes/CreateMeeting.vue'
 import MeetingsPage from '../components/routes/MeetingsPage.vue'
 import BbbWindow from '../components/pages/BbbWindow.vue'
 import MeetingPage from '../components/routes/MeetingPage.vue'
+import MeetingLogoutPage from '../components/routes/MeetingLogoutPage.vue'
 
 const routes = [
     {
@@ -62,6 +63,11 @@ const routes = [
                 path: ':id(\\d+)/view',
                 name: 'meeting_page',
                 component: MeetingPage
+            },
+            {
+                path: ':id(\\d+)/logout',
+                name: 'meeting_logout_page',
+                component: MeetingLogoutPage
             }
         ]
     }

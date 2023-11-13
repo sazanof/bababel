@@ -17,6 +17,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
+use Intervention\Image\Gd\Font;
+use Intervention\Image\Gd\Shapes\RectangleShape;
 
 class MeetingsController extends Controller
 {
@@ -207,7 +210,8 @@ class MeetingsController extends Controller
             $m = [
                 'name' => $meeting->name,
                 'welcome' => $meeting->welcome,
-                'date' => $meeting->date
+                'date' => $meeting->date,
+                'status' => $meeting->status
             ];
         } else {
             $m = null;
@@ -222,5 +226,51 @@ class MeetingsController extends Controller
             'success' => $success,
             'meeting' => $m
         ];
+    }
+
+    /**
+     * makes cover only from meeting owner
+     * @param int $id
+     * @param string $format
+     * @param Request $request
+     * @return mixed
+     * @throws MeetingsException
+     */
+    public static function makeCover(int $id, string $format, Request $request)
+    {
+        $quality = $request->get('quality') ?? 90;
+        $meeting = Meeting::find($id);
+        if ($meeting instanceof Meeting) {
+            $img = Image::make(resource_path('img/meeting-bg.jpg'))->widen(1400);
+            $img->rectangle(0, 0, 1400, $img->getHeight(), function (RectangleShape $rectangleShape) {
+                // TODO - color from settings
+                $rectangleShape->background('rgba(191, 54, 12, 0.7)');
+            });
+
+            $lines = explode("\n", wordwrap($meeting->name, 60)); // break line after 120 characters
+            for ($i = 0; $i < count($lines); $i++) {
+                $offset = 300 + ($i * 50); // 50 is line height
+                $img->text($lines[$i], 700, $offset, function (Font $font) {
+                    $font->file(resource_path('fonts/Roboto.ttf'));
+                    $font->color = "#FFFFFF";
+                    $font->align('center');
+                    $font->size = 44;
+                });
+            }
+
+            $description_lines = explode("\n", wordwrap($meeting->welcome, 130)); // break line after 120 characters
+            for ($i = 0; $i < count($description_lines); $i++) {
+                $offset = 400 + ($i * 33); // 50 is line height
+                $img->text($description_lines[$i], 700, $offset, function (Font $font) {
+                    $font->file(resource_path('fonts/Roboto.ttf'));
+                    $font->color = "#FFFFFF";
+                    $font->align('center');
+                    $font->size = 20;
+                });
+            }
+
+            return $img->response($format, $quality);
+        }
+        throw  new MeetingsException();
     }
 }

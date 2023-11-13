@@ -12,7 +12,7 @@
                     <template
                         v-for="meeting in card.items.items"
                         :key="meeting.id">
-                        <v-list-item>
+                        <v-list-item lines="three">
                             <v-list-item-title>
                                 <v-chip
                                     class="mb-2"
@@ -33,7 +33,7 @@
                                     @click="goTo(meeting)">
                                     {{ $t('Go') }}
                                 </v-chip>
-                                <div class="datetime blue-grey-lighten-1">
+                                <div class="datetime blue-grey-lighten-1 font-weight-black">
                                     <span>{{ formattedDate(meeting.date) }}</span>
                                 </div>
                                 <div class="title mb-1">
@@ -45,6 +45,12 @@
                                     {{ meeting.welcome }}
                                 </div>
                             </v-list-item-subtitle>
+                            <div class="organizer">
+                                <span class="mr-1 text-caption">{{ $t('Invites you') }}</span>
+                                <span class="text-caption font-weight-bold">{{ meeting.owner.lastname }} {{
+                                    meeting.owner.firstname
+                                }}</span>
+                            </div>
                             <template #append>
                                 <v-btn
                                     variant="text"
@@ -66,8 +72,9 @@
             key="dashboard"
             ref="dashboardDialog"
             :user="user"
-            :show-more="showDialog"
-            :meeting="dialogMeeting" />
+            :show-more="dialogInfoOpen"
+            :meeting="dialogMeeting"
+            @on-info-change="onInfoDialogClose($event)" />
     </div>
 </template>
 
@@ -82,8 +89,8 @@ export default {
     data() {
         return {
             copied: false,
-            showDialog: false,
             dialogMeeting: null,
+            dialogInfoOpen: false,
             loading: false,
             cards: [
                 {
@@ -123,7 +130,7 @@ export default {
     methods: {
         async copyLink(m) {
             try {
-                const link = `${document.location.protocol}://${document.location.host}/meetings/${m.id}/view`
+                const link = `${document.location.protocol}://${document.location.host}/#/meetings/${m.id}/view`
                 await navigator.clipboard.writeText(link)
                 m.copied = true
                 setTimeout(() => {
@@ -176,8 +183,24 @@ export default {
             console.log('open')
             this.dialogMeeting = meeting
             this.$nextTick(() => {
-                this.showDialog = true
+                this.dialogInfoOpen = true
             })
+        },
+        async onInfoDialogClose(state) {
+            if (state === false) {
+                setTimeout(() => {
+                    this.dialogInfoOpen = false
+                    this.dialogMeeting = null
+                }, 400)
+            } else {
+                await this.$store.dispatch('getMeetingInfo', this.dialogMeeting.id)
+                    .catch(e => {
+                        alert(e.response.data.message)
+                    })
+                    .finally(() => {
+                        this.loading = false
+                    })
+            }
         }
     }
 }
@@ -193,5 +216,9 @@ export default {
     font-size: 12px;
     display: flex;
     align-items: center;
+}
+
+.organizer {
+    font-weight: bold;
 }
 </style>

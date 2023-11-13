@@ -94,6 +94,12 @@ export default {
             //return commit('setMeeting', res.data)
         })
     },
+    async joinMeetingAsGuest({ commit }, data) {
+        return await axios.post(`${PANEL}meetings/${data.id}/join-as-guest`, data).then(res => {
+            return res.data
+            //return commit('setMeeting', res.data)
+        })
+    },
     async getMeetingInfo({ commit }, id) {
         return await axios.get(`${PANEL}meetings/${id}/info`).then(res => {
             return commit('setMeeting', res.data)

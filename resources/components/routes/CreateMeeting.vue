@@ -17,7 +17,7 @@
                             hide-details
                             :label="$t('Meeting name')" />
                         <v-select
-                            v-model="meeting.layout"
+                            v-model="layout"
                             :label="$t('Style')"
                             :items="layoutOptions"
                             prepend-icon="mdi-palette-swatch-variant"
@@ -71,6 +71,12 @@
                             {{ $t('Advanced settings') }}
                             <v-divider />
                         </div>
+                        <v-select
+                            v-model="guestPolicy"
+                            :label="$t('Guest access')"
+                            :items="guestPolicyOptions"
+                            prepend-icon="mdi-incognito"
+                            :item-props="true" />
                         <v-switch
                             v-model="meeting.record"
                             color="deep-orange"
@@ -150,10 +156,26 @@ export default {
     },
     data() {
         return {
+            layout: null,
+            guestPolicy: null,
             date: null,
             loading: false,
             caption: null,
             files: null,
+            guestPolicyOptions: [
+                {
+                    title: this.$t('Allow'),
+                    value: 'ALWAYS_ACCEPT'
+                },
+                {
+                    title: this.$t('Deny'),
+                    value: 'ALWAYS_DENY'
+                },
+                {
+                    title: this.$t('Ask moderator'),
+                    value: 'ASK_MODERATOR'
+                }
+            ],
             layoutOptions: [
                 {
                     title: this.$t('Custom'),
@@ -216,16 +238,15 @@ export default {
         } else {
             this.$store.commit('clearMeetingState')
         }
+        this.layout = this.meeting.meetingLayout
+        this.guestPolicy = this.meeting.guestPolicy
         this.date = this.meeting.date
-        this.meeting.layout = {
-            title: this.$t('Smart'),
-            value: 'SMART_LAYOUT'
-        }
-
     },
     methods: {
         async saveMeeting(event) {
             this.loading = true
+            this.meeting.guestPolicy = this.guestPolicy
+            this.meeting.meetingLayout = this.layout
             const data = this.meeting.toObject()
             if (this.id === null) {
                 this.$store.dispatch('addMeeting', data)

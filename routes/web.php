@@ -48,11 +48,6 @@ Route
                     ->where('id', '[0-9]+');
                 Route::get('{id}/running', [BababelController::class, 'isRunning'])
                     ->where('id', '[0-9]+');
-                Route::get('{id}/logout', function (int $id) {
-                    return 'this is a logout page. meeting id: ' . $id;
-                })
-                    ->name('meeting_logout')
-                    ->where('id', '[0-9]+');
                 Route::get('{id}/error-join-meeting', function (int $id, int $userId) {
                     return 'this is a join error page. meeting id: ' . $id . ' , userId ' . $userId;
                 })
@@ -80,9 +75,14 @@ Route
         Route::post('{id}/callback/hooks', [BababelController::class, 'callbackHooks'])
             ->where('id', '[0-9]+')
             ->name('callback_hooks');
+        Route::get('{id}/cover.{format?}', [MeetingsController::class, 'makeCover'])
+            ->where('id', '[0-9]+')
+            ->name('make_cover');
     });
 Route::get('/', [AuthController::class, 'index']);
 Route::get('/panel/meetings/{id}/view', [MeetingsController::class, 'viewMeeting'])->where('id', '[0-9]+');
+// No middleware, case we do not know user`s id
+Route::post('/panel/meetings/{id}/join-as-guest', [BababelController::class, 'joinMeetingAsGuest'])->where('id', '[0-9]+');
 
 
 

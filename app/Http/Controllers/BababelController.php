@@ -70,14 +70,33 @@ class BababelController extends Controller
             $data = $res->getData();
             $url = $data->join->url;
             $participant = Participant::where('meetingId', $meeting->id)->where('userId', $user->id)->first();
-            $participant->link = $url;
-            $participant->save();
+            if (!is_null($participant)) {
+                $participant->link = $url;
+                $participant->save();
+            }
+
             $meeting->status = $meeting::STATUS_PENDING;
             $meeting->save();
             return $res;
         }
         throw new JoinMeetingException($res);
         //dd($res->getData(), $id, $request->get('visibleName'));
+    }
+
+    public function joinMeetingAsGuest(int $id, Request $request)
+    {
+        /** @var Meeting $meeting */
+        $meeting = Meeting::select(Meeting::$selectableFields)->find($id);
+        if (in_array($meeting->guestPolicy, [Meeting::ALWAYS_ACCEPT, Meeting::ASK_MODERATOR])) {
+            $res = BababelHelper::joinMeeting($meeting, $request->get('visibleName'));
+            if ($res->isSuccessful()) {
+                $meeting->status = $meeting::STATUS_PENDING;
+                $meeting->save();
+                return $res;
+            }
+        }
+        
+        throw new JoinMeetingException($res);
     }
 
     /**

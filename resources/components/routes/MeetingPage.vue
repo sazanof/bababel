@@ -17,12 +17,18 @@
                         indeterminate
                         color="white">
                         <template #default>
-                            <div class="icon-empty">
+                            <div
+                                v-if="user ===null"
+                                class="icon-empty">
                                 <v-icon
                                     color="blue-grey-darken-1"
                                     icon="mdi-account"
                                     :size="100" />
                             </div>
+                            <Avatar
+                                v-else
+                                :user="user"
+                                :size="130" />
                         </template>
                     </v-progress-circular>
                 </div>
@@ -31,9 +37,14 @@
                     class="join-info">
                     <div class="icon-empty">
                         <v-icon
+                            v-if="user === null"
                             color="blue-grey-darken-1"
                             icon="mdi-account"
                             :size="100" />
+                        <Avatar
+                            v-else
+                            :user="user"
+                            :size="130" />
                     </div>
                     <v-text-field
                         v-model="fullName"
@@ -52,13 +63,17 @@
             <v-divider class="mb-4" />
             <v-btn
                 v-if="canJoin && !loading"
-                :disabled="fullName === null || fullName.length < 3"
+                :disabled="(fullName === null || fullName.length < 3) || joinLoader"
+                :loading="joinLoader"
                 color="deep-orange"
-                prepend-icon="mdi-send">
+                prepend-icon="mdi-send"
+                @click="joinMeeting">
                 {{ $t('Join') }}
             </v-btn>
             <v-btn
-                v-if="canStart && !loading"
+                v-if="canStart"
+                color="deep-orange"
+                prepend-icon="mdi-send"
                 @click="startMeeting">
                 {{ $t('Start') }}
             </v-btn>
@@ -71,6 +86,9 @@
 </template>
 
 <script>
+import { useToast } from 'vue-toastification'
+
+const toast = useToast()
 import Avatar from '../chunks/Avatar.vue'
 
 export default {
@@ -81,6 +99,7 @@ export default {
     data() {
         return {
             loading: true,
+            joinLoader: false,
             meeting: null,
             refreshHandle: null,
             fullName: null
@@ -106,13 +125,19 @@ export default {
             return this.meeting.canJoin
         },
         canStart() {
-            return this.meeting.status === 0 && this.isOwner || this.isModerator
+            return this.meeting.meeting.status === 0 && (this.isOwner || this.isModerator)
         },
         authenticated() {
             return this.$store.getters['isAuthenticated']
         }
     },
     async created() {
+        if (this.user !== null) {
+            await this.$store.dispatch('getMeetingInfo', this.id).catch(e => {
+                console.log(e)
+            })
+        }
+
         if (this.user !== null) {
             this.fullName = `${this.user?.lastname} ${this.user?.firstname}`
         }
@@ -132,7 +157,31 @@ export default {
             }
         },
         async startMeeting() {
-            await this.$store.dispatch('startMeeting', this.id)
+            await this.$store.dispatch('startMeeting', this.id).then(() => {
+                this.loading = false
+                this.joinLoader = false
+            })
+        },
+        async joinMeeting() {
+            this.joinLoader = true
+            const method = this.user !== null ? 'joinMeeting' : 'joinMeetingAsGuest'
+            const joinInfo = await this.$store.dispatch(method, {
+                id: this.id,
+                visibleName: this.fullName
+            })
+                .catch(e => {
+                    this.duplicate = true
+                    this.link = e.response.data.link
+                    toast.error(e.response.data.message)
+                })
+                .finally(() => {
+                    this.loading = false
+                    this.joinLoader = false
+                })
+            if (joinInfo) {
+                const url = joinInfo.join.url
+                window.open(url, '_blank').focus()
+            }
         }
     }
 }

@@ -51,7 +51,7 @@ class UsersController extends Controller
             }
 
             $name = $user->lastname . ' ' . $user->firstname;
-            $color = dechex(crc32($name));
+            $color = dechex(crc32($name . $id));
             $color = substr($color, 0, 6);
             return Avatar::create($name)
                 ->setDimension($size)

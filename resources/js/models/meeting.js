@@ -13,7 +13,8 @@ export default class Meeting {
         this.allowModsToEjectCameras = true
         this.participants = []
         this.files = null
-        this.layout = null
+        this.meetingLayout = null
+        this.guestPolicy = 'ASK_MODERATOR'
     }
 
     reset() {
@@ -31,7 +32,7 @@ export default class Meeting {
         this.participants = []
         this.files = null
         this.meetingLayout = null
-        this.layout = null
+        this.guestPolicy = 'ASK_MODERATOR'
     }
 
     update(data) {
@@ -58,7 +59,8 @@ export default class Meeting {
                 }
             }),
             files: this.files,
-            meetingLayout: this.meetingLayout
+            meetingLayout: this.meetingLayout,
+            guestPolicy: this.guestPolicy
         }
     }
 }
