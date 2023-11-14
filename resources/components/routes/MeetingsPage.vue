@@ -13,7 +13,10 @@
 </template>
 
 <script>
+import { useToast } from 'vue-toastification'
 import Meetings from '../chunks/Meetings.vue'
+
+const toast = useToast()
 
 export default {
     name: 'MeetingsPage',
@@ -68,10 +71,13 @@ export default {
     methods: {
         async getMeetings() {
             this.loading = true
-            await this.$store.dispatch('getMeetings', this.filter).finally(() => {
-                this.loading = false
-
-            })
+            await this.$store.dispatch('getMeetings', this.filter)
+                .catch((e) => {
+                    toast.error(e.response.data.message)
+                })
+                .finally(() => {
+                    this.loading = false
+                })
         }
     }
 }
