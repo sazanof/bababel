@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BababelController;
 use App\Http\Controllers\MeetingsController;
+use App\Http\Controllers\UserNotificationsController;
 use App\Http\Controllers\UsersController;
 use App\Http\Middleware\AlreadyJoined;
 use App\Http\Middleware\BbbAllowedHosts;
@@ -26,12 +27,16 @@ Route
     ::middleware('auth')
     ->prefix('panel')
     ->group(function () {
+        Route::prefix('account')->group(function () {
+            Route::get('notifications', [UserNotificationsController::class, 'getNotificationSettings']);
+            Route::post('notifications/{id}', [UserNotificationsController::class, 'addNotification']);
+            Route::delete('notifications/{id}', [UserNotificationsController::class, 'removeNotification']);
+        });
         Route::prefix('search')->group(function () {
             Route::get('users', [UsersController::class, 'searchUsers']);
         });
         Route::prefix('dashboard')->group(function () {
             Route::get('meetings', [MeetingsController::class, 'getDashboardMeetings']);
-
         });
         Route::prefix('meetings')->group(function () {
             /** ADMIN ROUTES TO START, STOP, END, CREATE MEETING */

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Notification;
 use App\Models\User;
+use App\Models\UserNotification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Intervention\Image\Exception\NotFoundException;

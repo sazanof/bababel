@@ -119,5 +119,20 @@ export default {
         return await axios.delete(`${PANEL}documents/${id}`).then(res => {
             return res.data
         })
+    },
+    async getNotificationSettings() {
+        return await axios.get(`${PANEL}account/notifications`).then(res => {
+            return res.data
+        })
+    },
+    async addNotification({ _ }, id) {
+        return await axios.post(`${PANEL}account/notifications/${id}`).then(res => {
+            return res.data
+        })
+    },
+    async deleteNotification({ _ }, id) {
+        return await axios.delete(`${PANEL}account/notifications/${id}`).then(res => {
+            return res.data
+        })
     }
 }
