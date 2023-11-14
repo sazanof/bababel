@@ -36,7 +36,7 @@ class MeetingRequest extends FormRequest
             'name' => __('validation.meeting.name'),
             'welcome' => __('validation.meeting.description'),
             'files.*.mimes' => __('validation.meeting.files.mimes'),
-            'files.*.max' => __('validation.meeting.files.')
+            'files.*.max' => __('validation.meeting.files.max')
         ];
     }
 }
