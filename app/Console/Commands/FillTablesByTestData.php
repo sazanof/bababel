@@ -6,6 +6,7 @@ use App\Models\Meeting;
 use App\Models\Participant;
 use Illuminate\Console\Command;
 use Illuminate\Database\UniqueConstraintViolationException;
+use Illuminate\Support\Facades\DB;
 
 class FillTablesByTestData extends Command
 {
@@ -30,6 +31,8 @@ class FillTablesByTestData extends Command
     {
         Participant::truncate();
         Meeting::truncate();
+        $statement = "ALTER TABLE `meetings` AUTO_INCREMENT = 10;";
+        DB::unprepared($statement);
         $this->error('THIS WILL DESTROY ALL DATA IN SYSTEM');
         if ($this->confirm('Fill tables with test data?')) {
             if ($this->confirm('Are you sure?')) {
