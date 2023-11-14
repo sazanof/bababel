@@ -17,8 +17,8 @@ return new class extends Migration {
             $table->timestamp('date');
             $table->string('name');
             $table->string('meetingID')->nullable();
-            $table->string('attendeePW');
-            $table->string('moderatorPW');
+            $table->string('attendeePW')->nullable();
+            $table->string('moderatorPW')->nullable();
             $table->string('welcome');
             $table->string('dialNumber')->nullable();
             $table->integer('voiceBridge')->nullable();
