@@ -1,6 +1,7 @@
 <template>
     <v-col>
         <v-card
+            :loading="loading"
             :title="title"
             :subtitle="$t('New and failed meetings organized by you are shown here')">
             <Meetings
@@ -27,6 +28,7 @@ export default {
     },
     data() {
         return {
+            loading: false,
             filter: {
                 criteria: this.criteria,
                 page: 1,
@@ -65,7 +67,11 @@ export default {
     },
     methods: {
         async getMeetings() {
-            await this.$store.dispatch('getMeetings', this.filter)
+            this.loading = true
+            await this.$store.dispatch('getMeetings', this.filter).finally(() => {
+                this.loading = false
+
+            })
         }
     }
 }
