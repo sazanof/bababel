@@ -9,6 +9,7 @@
                 <v-text-field
                     v-bind="props"
                     v-model="query"
+                    class="mt-6"
                     :hide-details="true"
                     prepend-icon="mdi-account-group"
                     :loading="loading"
@@ -22,6 +23,7 @@
                 <v-list-item
                     v-for="(user, i) in users"
                     :key="user.id"
+                    lines="three"
                     :value="user.id"
                     @click="onClick(user, i)">
                     <template #title>
@@ -32,6 +34,11 @@
                     <template #subtitle>
                         <div class="position">
                             {{ user.department }}, {{ user.position }}
+                        </div>
+                        <div
+                            v-if="user.email"
+                            class="email font-italic">
+                            {{ user.email }}
                         </div>
                     </template>
                     <template #prepend>
@@ -54,6 +61,7 @@
             <v-list-item
                 v-for="user in selectedUsers"
                 :key="user.id"
+                lines="three"
                 class="mb-2">
                 <template #title>
                     <div class="fullname">
@@ -63,6 +71,11 @@
                 <template #subtitle>
                     <div class="position">
                         {{ user.department }}, {{ user.position }}
+                    </div>
+                    <div
+                        v-if="user.email"
+                        class="email font-italic">
+                        {{ user.email }}
                     </div>
                 </template>
                 <template #prepend>
