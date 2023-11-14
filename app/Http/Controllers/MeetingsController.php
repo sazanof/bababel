@@ -97,9 +97,13 @@ class MeetingsController extends Controller
 
             case 'past':
                 $meetings->where('date', '<', Carbon::now());
-                $meetings->whereHas('participants', function (Builder $builder) use ($user) {
-                    return $builder->where('userId', $user->id);
+                $meetings->where(function (Builder $meetingsBuilder) use ($user) {
+                    $meetingsBuilder->orWhere('userId', $user->id);
+                    $meetingsBuilder->orWhereHas('participants', function (Builder $builder) use ($user) {
+                        return $builder->where('userId', $user->id);
+                    });
                 });
+
                 break;
         }
         return $meetings->orderBy('date', 'ASC')->paginate($limit, [], 'page', $page);
