@@ -73,7 +73,7 @@ class MeetingFormRequest
         $this->participants = array_map(function ($item) {
             return [
                 'id' => (int)$item['id'],
-                'isModerator' => in_array($item['isModerator'], ['true', '1', 1])
+                'isModerator' => in_array($item['isModerator'], ['true', '1', 1, true])
             ];
         }, $participants);
     }
@@ -165,6 +165,20 @@ class MeetingFormRequest
     }
 
     /**
+     * @return void
+     */
+    private function addOwnerAsModerator()
+    {
+        $this->setParticipants(
+            [
+                [
+                    'id' => $this->owner->id,
+                    'isModerator' => true
+                ]
+            ]);
+    }
+
+    /**
      * @return mixed
      * @throws MeetingsException
      * @throws \Throwable
@@ -177,6 +191,9 @@ class MeetingFormRequest
         }
         return DB::transaction(function () {
             $meeting = Meeting::create($this->getMeeting());
+            if (is_null($this->getParticipants())) {
+                $this->addOwnerAsModerator();
+            }
             Participant::insertOrIgnore($this->prepareParticipantsToDb($meeting));
             $this->addFiles($meeting);
             return $meeting;
@@ -208,6 +225,8 @@ class MeetingFormRequest
                 return $id !== $meeting->userId;
             });
             //$ids идентификаторы текущих участников
+        } else {
+            $this->addOwnerAsModerator();
         }
         return DB::transaction(function () use ($meeting, $clearDeletedUsersIDs) {
             /** @var Carbon $d */
