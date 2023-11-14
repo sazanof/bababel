@@ -131,17 +131,20 @@ class MeetingFormRequest
     {
         $ar = [];
         $i = 0;
-        foreach ($this->getParticipants() as $participant) {
-            $ar[$i]['userId'] = intval($participant['id']);
-            $ar[$i]['meetingId'] = $meeting->id;
-            $ar[$i]['isModerator'] = Auth::id() === intval($participant['id']) || $participant['isModerator'];
-            $ar[$i]['isOrganizer'] = intval($participant['id']) === $meeting->userId;
-            $ar[$i]['redirect'] = !empty($participant['redirect']) && $participant['redirect'] === "true";
-            $ar[$i]['errorRedirectUrl'] = $participant['errorRedirectUrl'] ?? null;
-            $ar[$i]['guest'] = !empty($participant['guest']) && $participant['guest'] === "true";
-            $ar[$i]['excludeFromDashboard'] = !empty($participant['excludeFromDashboard']) && $participant['excludeFromDashboard'] === "true";
-            $i++;
+        if (!is_null($this->getParticipants())) {
+            foreach ($this->getParticipants() as $participant) {
+                $ar[$i]['userId'] = intval($participant['id']);
+                $ar[$i]['meetingId'] = $meeting->id;
+                $ar[$i]['isModerator'] = Auth::id() === intval($participant['id']) || $participant['isModerator'];
+                $ar[$i]['isOrganizer'] = intval($participant['id']) === $meeting->userId;
+                $ar[$i]['redirect'] = !empty($participant['redirect']) && $participant['redirect'] === "true";
+                $ar[$i]['errorRedirectUrl'] = $participant['errorRedirectUrl'] ?? null;
+                $ar[$i]['guest'] = !empty($participant['guest']) && $participant['guest'] === "true";
+                $ar[$i]['excludeFromDashboard'] = !empty($participant['excludeFromDashboard']) && $participant['excludeFromDashboard'] === "true";
+                $i++;
+            }
         }
+
         return $ar;
     }
 
