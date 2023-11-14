@@ -202,7 +202,7 @@ class MeetingFormRequest
                 return (int)$item['id'];
             }, $postParticipants);
             // Находим удаленных из формы на фронтэнде пользователей - участников
-            $deletedUsersIDs = array_diff($userIDSs->toArray(), $postUserIDs);
+            $deletedUsersIDs = array_diff(is_array($userIDSs) ? $userIDSs : $userIDSs->toArray(), $postUserIDs);
             // Фильтруем массив удаленных пользователей. Оставляем организатора встречи.
             $clearDeletedUsersIDs = array_filter($deletedUsersIDs, function ($id) use ($meeting) {
                 return $id !== $meeting->userId;
