@@ -260,6 +260,11 @@ class Meeting extends Model
         'allowModsToEjectCameras' => 'boolean',
     ];
 
+    protected $attributes = [
+        'moderatorPW' => '',
+        'attendeePW' => '',
+    ];
+
     public static array $selectableFields = [
         'meetings.id',
         'meetings.userId',
