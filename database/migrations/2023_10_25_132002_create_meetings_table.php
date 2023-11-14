@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('meetings', function (Blueprint $table) {
-            $table->id();
+            $table->id()->startingValue(10); // meetingID must be between 2 and 256 characters long and cannot contain commas
             $table->integer('status')->default(0);
             $table->integer('userId');
             $table->timestamp('date');
