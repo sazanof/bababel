@@ -40,6 +40,13 @@
                         @click="copyLink">
                         {{ copied ? $t('Copied') : $t('Copy link') }}
                     </v-chip>
+                    <v-chip
+                        color="info"
+                        class="ml-4"
+                        prepend-icon="mdi-send"
+                        @click="goTo(meeting)">
+                        {{ $t('Go') }}
+                    </v-chip>
                 </div>
                 <div
                     v-if="isPast"
@@ -192,6 +199,13 @@ export default {
             } catch (e) {
                 console.error(e)
             }
+        },
+        goTo(m) {
+            this.$router.push({
+                name: 'meeting_page', params: {
+                    id: m.id
+                }
+            })
         }
     }
 }
