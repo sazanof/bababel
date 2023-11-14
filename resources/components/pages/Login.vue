@@ -84,7 +84,7 @@ export default {
         left: 0;
         bottom: 0;
         z-index: 11;
-        background-image: url("../../img/bg.jpg");
+        background-image: url("../../img/meeting-bg.jpg");
         background-position: center;
         background-size: cover;
         overflow: hidden;
