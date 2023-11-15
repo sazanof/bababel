@@ -39,7 +39,7 @@ class NotificationHelper
             $user = Auth::user();
         }
         $notification = Notification::where('key', $key)->first();
-        if ($notification->exists()) {
+        if (!is_null($notification)) {
             return UserNotification
                     ::where('notificationId', $notification->id)
                     ->where('userId', $user->id)
