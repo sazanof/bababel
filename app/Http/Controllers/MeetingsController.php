@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\MeetingsException;
 use App\Helpers\MeetingFormRequest;
+use App\Helpers\NotificationHelper;
 use App\Http\Requests\MeetingRequest;
 use App\Models\Document;
 use App\Models\Meeting;
@@ -33,7 +34,11 @@ class MeetingsController extends Controller
     {
         $payload = $request->getPayload();
         if (is_null($payload->get('id'))) {
-            return (new MeetingFormRequest($request))->add();
+            $meeting = (new MeetingFormRequest($request))->add();
+            /** NOTIFY USERS */
+            NotificationHelper::sendNotificationsOnMeetingCreate($meeting);
+
+            return $meeting;
         }
         throw new MeetingsException();
     }

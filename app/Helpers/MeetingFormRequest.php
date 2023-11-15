@@ -78,6 +78,11 @@ class MeetingFormRequest
         }, $participants);
     }
 
+    public function addParticipant(array $participant): void
+    {
+        $this->participants = array_merge_recursive($this->getParticipants(), [$participant]);
+    }
+
 
     /**
      * @return ?array
@@ -135,7 +140,7 @@ class MeetingFormRequest
             foreach ($this->getParticipants() as $participant) {
                 $ar[$i]['userId'] = intval($participant['id']);
                 $ar[$i]['meetingId'] = $meeting->id;
-                $ar[$i]['isModerator'] = Auth::id() === intval($participant['id']) || $participant['isModerator'];
+                $ar[$i]['isModerator'] = $participant['isModerator'];
                 $ar[$i]['isOrganizer'] = intval($participant['id']) === $meeting->userId;
                 $ar[$i]['redirect'] = !empty($participant['redirect']) && $participant['redirect'] === "true";
                 $ar[$i]['errorRedirectUrl'] = $participant['errorRedirectUrl'] ?? null;
@@ -169,13 +174,12 @@ class MeetingFormRequest
      */
     private function addOwnerAsModerator()
     {
-        $this->setParticipants(
+        $this->addParticipant(
             [
-                [
-                    'id' => $this->owner->id,
-                    'isModerator' => true
-                ]
-            ]);
+                'id' => $this->owner->id,
+                'isModerator' => true
+            ]
+        );
     }
 
     /**
@@ -191,9 +195,8 @@ class MeetingFormRequest
         }
         return DB::transaction(function () {
             $meeting = Meeting::create($this->getMeeting());
-            if (is_null($this->getParticipants())) {
-                $this->addOwnerAsModerator();
-            }
+
+            $this->addOwnerAsModerator();
             Participant::insertOrIgnore($this->prepareParticipantsToDb($meeting));
             $this->addFiles($meeting);
             return $meeting;

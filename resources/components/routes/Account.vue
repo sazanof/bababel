@@ -19,6 +19,9 @@
                     <div class="mb-4 text-grey text-h6">
                         {{ user.position }}, {{ user.department }}
                     </div>
+                    <div class="mb-4 text-deep-orange text-h6">
+                        {{ user.email }}
+                    </div>
                     <v-btn
                         variant="flat"
                         color="deep-orange"

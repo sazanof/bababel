@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BababelController;
+use App\Http\Controllers\MailController;
 use App\Http\Controllers\MeetingsController;
 use App\Http\Controllers\UserNotificationsController;
 use App\Http\Controllers\UsersController;
@@ -84,7 +85,37 @@ Route
             ->where('id', '[0-9]+')
             ->name('make_cover');
     });
+Route::get('/test', function () {
+    /*return view('mail.meeting-create', [
+        'meeting' => \App\Models\Meeting::all()->random(),
+        'subject' => fake()->realText(),
+        'msg' => fake()->randomElement(
+            [
+                'Михаил, вас пригласили на встречу',
+                //'Михаил, встреча отменена'
+            ]
+        )
+    ]);*/
+    $m = \App\Models\Meeting::find(9132);
+    $r = \App\Helpers\NotificationHelper::getMeetingRecipientsByNotificationKey($m, \App\Helpers\NotificationHelper::NOTY_MEETING_CREATE);
+    dd($r);
+
+    if ($r !== null) {
+        /** @var \Illuminate\Mail\Mailables\Address $recipient */
+        foreach ($r as $recipient) {
+            $user = \App\Models\User::where('email', $recipient->address)->first();
+            \Illuminate\Support\Facades\Mail
+                ::to($recipient)
+                ->queue(new \App\Mail\NewMeetingMail($m, $user));
+            dump($user->firstname . ' ' . $user->lastname . ' -> ' . $recipient->address);
+        }
+    }
+});
 Route::get('/', [AuthController::class, 'index']);
+Route::prefix('mail')->group(function () {
+    Route::get('logo', [MailController::class, 'getLogo']);
+    Route::get('header', [MailController::class, 'getHeader']);
+});
 Route::get('/panel/meetings/{id}/view', [MeetingsController::class, 'viewMeeting'])->where('id', '[0-9]+');
 // No middleware, case we do not know user`s id
 Route::post('/panel/meetings/{id}/join-as-guest', [BababelController::class, 'joinMeetingAsGuest'])->where('id', '[0-9]+');

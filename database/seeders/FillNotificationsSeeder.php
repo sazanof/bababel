@@ -19,7 +19,7 @@ class FillNotificationsSeeder extends Seeder
                 'transKey' => 'notifications.caption.meeting_create'
             ],
             [
-                'key' => 'meeting.update_date',
+                'key' => 'meeting.update.date',
                 'transKey' => 'notifications.caption.meeting_update_date'
             ],
             [
