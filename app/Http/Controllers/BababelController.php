@@ -7,6 +7,7 @@ use App\Helpers\BababelHelper;
 use App\Models\Meeting;
 use App\Models\Participant;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -95,7 +96,7 @@ class BababelController extends Controller
                 return $res;
             }
         }
-        
+
         throw new JoinMeetingException($res);
     }
 
@@ -109,11 +110,17 @@ class BababelController extends Controller
     {
         $meeting = Meeting::find($id);
         //if (BababelHelper::deleteHooks($meeting)) {
-        $meeting->status = $meeting::STATUS_CLOSED;
+        // change meeting state only if callback date > meeting date
+        $currentDate = Carbon::now();
+        if ($currentDate > $meeting->date) {
+            $meeting->status = $meeting::STATUS_CLOSED;
+            $meeting->save();
+        }
+
         Participant::where('meetingId', $meeting->id)->update([
             'link' => null
         ]);
-        $meeting->save();
+
         Log::info('[BBB CALLBACK ' . $id . '] ' . __METHOD__ . ':' . $request->getQueryString());
         //}
         //throw new HookDeleteException();
