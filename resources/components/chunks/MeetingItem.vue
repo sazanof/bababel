@@ -2,6 +2,13 @@
     <v-timeline-item>
         <template #opposite>
             <div class="info">
+                <div class="text-overline date text-deep-orange">
+                    <v-icon icon="mdi-clock" />
+                    <span>{{ dateMod }}</span>
+                </div>
+                <div class="position text-caption text-grey-darken-1">
+                    {{ $t('Organizer') }}:
+                </div>
                 <div class="user text-button">
                     {{ owner.lastname }} {{ owner.firstname }}
                 </div>
@@ -55,12 +62,6 @@
                 </div>
                 {{ meeting.name }}
             </template>
-            <v-card-subtitle>
-                <div class="text-overline date">
-                    <v-icon icon="mdi-clock" />
-                    <span>{{ dateMod }}</span>
-                </div>
-            </v-card-subtitle>
             <v-card-text>
                 <p>
                     {{ meeting.welcome }}
@@ -224,10 +225,12 @@ export default {
 }
 
 .date {
-    line-height: 16px;
+    text-align: right;
     font-weight: bold;
     display: flex;
     align-items: center;
+    justify-content: end;
+    margin-bottom: 10px;
 
     span {
         display: inline-block;
