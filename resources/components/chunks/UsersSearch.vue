@@ -92,6 +92,7 @@
                         @click="setModerator(user)" />
 
                     <v-btn
+                        v-if="meeting?.owner?.id !== user.id"
                         color="red"
                         icon="mdi-close"
                         variant="plain"
@@ -113,6 +114,10 @@ export default {
     },
     props: {
         participants: {
+            type: Object,
+            default: null
+        },
+        meeting: {
             type: Object,
             default: null
         }

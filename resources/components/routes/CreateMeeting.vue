@@ -63,6 +63,7 @@
 
                         <UsersSearch
                             :participants="meeting.participants"
+                            :meeting="meeting"
                             @update:participants="meeting.participants = $event" />
                     </v-col>
                     <v-col cols="4">
