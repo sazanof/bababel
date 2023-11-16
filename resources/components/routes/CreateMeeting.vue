@@ -24,6 +24,7 @@
                             :item-props="true" />
                         <vue-date-picker
                             v-model="date"
+                            :min-date="new Date()"
                             @update:model-value="meeting.date = formattedDate">
                             <template #trigger>
                                 <v-text-field
