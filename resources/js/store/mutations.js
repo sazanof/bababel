@@ -18,6 +18,14 @@ export default {
 
         state.meeting.update(data)
     },
+    deleteMeeting(state, id) {
+        if (state.meetings.hasOwnProperty('data')) {
+            state.meetings = state.meetings.data.filter(meeting => {
+                return meeting.id !== id
+            })
+        }
+        state.meeting.reset()
+    },
     setMeetings(state, meetings) {
         state.meetings = meetings
     },

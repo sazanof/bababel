@@ -127,15 +127,26 @@
                             {{ $t('Save') }}
                         </v-btn>
                         <v-btn
+                            class="mr-4"
                             :disabled="loading"
                             prepend-icon="mdi-close"
                             @click="cancelCreateMeeting">
                             {{ $t('Cancel') }}
                         </v-btn>
+                        <v-btn
+                            :disabled="loading"
+                            color="error"
+                            prepend-icon="mdi-trash-can"
+                            @click="deleteMeeting">
+                            {{ $t('Delete') }}
+                        </v-btn>
                     </v-col>
                 </v-row>
             </v-card>
         </v-form>
+        <ConfirmationDialog
+            ref="deleteDialog"
+            color="error" />
     </v-col>
 </template>
 
@@ -144,6 +155,7 @@ import { useToast } from 'vue-toastification'
 import UsersSearch from '../chunks/UsersSearch.vue'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import moment from 'moment'
+import ConfirmationDialog from '../chunks/ConfirmationDialog.vue'
 
 const m = moment
 const toast = useToast()
@@ -151,6 +163,7 @@ const toast = useToast()
 export default {
     name: 'CreateMeeting',
     components: {
+        ConfirmationDialog,
         VueDatePicker,
         UsersSearch
     },
@@ -232,8 +245,8 @@ export default {
         this.meeting.id = this.id
         if (this.meeting.id > 0) {
             await this.getMeeting().catch(e => {
-                console.log(e)
-                alert('Error getting meeting')
+                this.$store.commit('clearMeetingState')
+                toast.error(this.$t('Error getting meeting'))
             })
         } else {
             this.$store.commit('clearMeetingState')
@@ -288,6 +301,23 @@ export default {
             await this.$store.dispatch('removeDocument', id).then(() => {
                 toast.success(this.$t('Document deleted'))
             })
+        },
+        async deleteMeeting() {
+            if (this.id) {
+                const ok = await this.$refs.deleteDialog.show({
+                    okColor: 'white',
+                    okIcon: 'mdi-trash-can',
+                    title: this.$t('Delete this meeting?'),
+                    message: this.$t('Sure delete meeting and participants?'),
+                    okButton: this.$t('Delete')
+                })
+                if (ok) {
+                    const res = await this.$store.dispatch('deleteMeeting', this.id)
+                    if (res) {
+                        this.$router.push({ name: 'meetings.my' })
+                    }
+                }
+            }
         }
     }
 

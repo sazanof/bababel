@@ -43,13 +43,13 @@
                                     :text="$t('Stop')"
                                     @click="stopMeeting" />
                                 <v-btn
-                                    v-if="meeting.status !== 2 && isOwner"
+                                    v-if="isOwner"
                                     :disabled="loading"
-                                    prepend-icon="mdi-trash-can"
-                                    color="red"
+                                    prepend-icon="mdi-pencil"
+                                    color="info"
                                     variant="flat"
-                                    :text="$t('Delete')"
-                                    @click="deleteMeeting" />
+                                    :text="$t('Edit')"
+                                    @click="$router.push({name:'edit_meeting',params:{id:meeting.id}})" />
                             </div>
                             <div>
                                 <v-btn
@@ -233,9 +233,6 @@ export default {
                 .finally(() => {
                     this.loading = false
                 })
-        },
-        deleteMeeting() {
-
         },
         open() {
             this.show = true

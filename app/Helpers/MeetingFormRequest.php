@@ -73,14 +73,18 @@ class MeetingFormRequest
         $this->participants = array_map(function ($item) {
             return [
                 'id' => (int)$item['id'],
-                'isModerator' => in_array($item['isModerator'], ['true', '1', 1, true])
+                'isModerator' => in_array($item['isModerator'], ['true', '1', 1, true], true)
             ];
         }, $participants);
     }
 
     public function addParticipant(array $participant): void
     {
-        $this->participants = array_merge_recursive($this->getParticipants(), [$participant]);
+        if ($this->getParticipants() === null) {
+            $this->setParticipants([$participant]);
+        } else {
+            $this->participants = array_merge_recursive($this->getParticipants(), [$participant]);
+        }
     }
 
 
@@ -211,7 +215,6 @@ class MeetingFormRequest
     {
         $this->id = $this->request->has('id') ? (int)$this->request->get('id') : null;
         $meeting = Meeting::find($this->id);
-        $clearDeletedUsersIDs = null;
         $participants = $meeting->participants();
         $postParticipants = $this->getParticipants();
         if ($postParticipants !== null) {
@@ -251,6 +254,17 @@ class MeetingFormRequest
             $meeting->refresh();
             return $meeting;
         });
+    }
+
+    /**
+     * @param Meeting $meeting
+     * @return bool
+     */
+    public function isDateChanged(Meeting $meeting): bool
+    {
+        $requestDate = Carbon::make($this->request->get('date'))->toISOString(true);
+        $meetingDate = Carbon::make($meeting->date)->toISOString(true);
+        return $requestDate !== $meetingDate;
     }
 
     public function addFiles(Meeting $meeting)

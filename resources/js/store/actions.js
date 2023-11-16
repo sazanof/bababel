@@ -106,8 +106,9 @@ export default {
         })
     },
     async deleteMeeting({ commit }, id) {
-        return await axios.get(`${PANEL}meetings/${id}/delete`).then(res => {
-            //return commit('setMeeting', res.data)
+        return await axios.delete(`${PANEL}meetings/${id}`).then(res => {
+            commit('deleteMeeting', id)
+            return res.data
         })
     },
     async getDashboardMeetings() {

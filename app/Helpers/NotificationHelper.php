@@ -2,7 +2,9 @@
 
 namespace App\Helpers;
 
+use App\Mail\DeleteMeetingMail;
 use App\Mail\NewMeetingMail;
+use App\Mail\UpdateMeetingDateMail;
 use App\Models\Meeting;
 use App\Models\Notification;
 use App\Models\User;
@@ -107,6 +109,46 @@ class NotificationHelper
                 Mail
                     ::to($recipient)
                     ->queue(new NewMeetingMail($meeting, $user));
+            }
+        }
+    }
+
+    /**
+     * @param Meeting $meeting
+     * @return void
+     */
+    public static function sendNotificationsOnMeetingUpdateDate(Meeting $meeting): void
+    {
+        $recipients = NotificationHelper::getMeetingRecipientsByNotificationKey($meeting, NotificationHelper::NOTY_MEETING_UPDATE_DATE);
+        if ($recipients !== null) {
+            /** @var Address $recipient */
+            foreach ($recipients as $recipient) {
+                $user = User::where('email', $recipient->address)->first();
+                Mail
+                    ::to($recipient)
+                    ->queue(new UpdateMeetingDateMail($meeting, $user));
+            }
+        }
+    }
+
+    /**
+     * @param array|Meeting $meeting
+     * @param array|null $recipients
+     * @return void
+     */
+    public static function sendNotificationsOnMeetingDelete(array|Meeting $meeting, ?array $recipients = null): void
+    {
+        if (is_null($recipients)) {
+            $recipients = NotificationHelper::getMeetingRecipientsByNotificationKey($meeting, NotificationHelper::NOTY_MEETING_DELETE);
+        }
+
+        if ($recipients !== null) {
+            /** @var Address $recipient */
+            foreach ($recipients as $recipient) {
+                $user = User::where('email', $recipient->address)->first();
+                Mail
+                    ::to($recipient)
+                    ->queue(new DeleteMeetingMail($meeting, $user));
             }
         }
     }

@@ -27,57 +27,58 @@
         font-weight: bold;
     ">{{$msg}}</p>
 
-    <div
-        style="background: #f9f9f9f9;
+    @section('custom')
+        <div
+            style="background: #f9f9f9f9;
         border-top:1px solid #f7f7f7f7;
         border-bottom:1px solid #f7f7f7f7;
         padding:15px 40px;
         margin: 0">
 
-        <p
-            style="font-family: Arial, Helvetica, Roboto, Arial, sans-serif;
+            <p
+                style="font-family: Arial, Helvetica, Roboto, Arial, sans-serif;
         margin: 15px 0;
         text-align: center;
         font-size: 16px;
         font-weight: bold;
         color:#e57d21;
     ">{{\Illuminate\Support\Carbon::make($meeting->date)->format('d.m.Y H:i')}}</p>
-        <p
-            style="font-family: Arial, Helvetica, Roboto, Arial, sans-serif;
+            <p
+                style="font-family: Arial, Helvetica, Roboto, Arial, sans-serif;
         margin: 5px 0;
         text-align: center;
         font-size: 16px;
         color:#444;
         font-weight: bold;
     ">{{$meeting->name}}</p>
-        <p
-            style="font-family: Arial, Helvetica, Roboto, Arial, sans-serif;
+            <p
+                style="font-family: Arial, Helvetica, Roboto, Arial, sans-serif;
         margin: 5px 0;
         text-align: center;
         font-size: 14px;
         color:#666;
     ">{{$meeting->welcome}}</p>
-        <p
-            style="font-family: Arial, Helvetica, Roboto, Arial, sans-serif;
-        margin: 20px 0;
-        text-align: center;
-        font-size: 14px;
-        color:#666;
-    ">
-            <span style="display:inline-block; margin-right: 6px">{{__('mail.invite_you')}}</span>
-            <span style="font-weight: bold;">{{$meeting->owner->firstname}} {{$meeting->owner->lastname}}</span>
-        </p>
-        <p
-            style="font-family: Arial, Helvetica, Roboto, Arial, sans-serif;
-        margin: 20px 0;
-        text-align: center;
-        font-size: 14px;
-        color:#666;
-    ">
-            <a
-                href="{{url('/#/meetings/3841/view')}}"
-                target="_blank"
+            <p
                 style="font-family: Arial, Helvetica, Roboto, Arial, sans-serif;
+        margin: 20px 0;
+        text-align: center;
+        font-size: 14px;
+        color:#666;
+    ">
+                <span style="display:inline-block; margin-right: 6px">{{__('mail.invite_you')}}</span>
+                <span style="font-weight: bold;">{{$meeting->owner->firstname}} {{$meeting->owner->lastname}}</span>
+            </p>
+            <p
+                style="font-family: Arial, Helvetica, Roboto, Arial, sans-serif;
+        margin: 20px 0;
+        text-align: center;
+        font-size: 14px;
+        color:#666;
+    ">
+                <a
+                    href="{{url('/#/meetings/3841/view')}}"
+                    target="_blank"
+                    style="font-family: Arial, Helvetica, Roboto, Arial, sans-serif;
             text-align: center;
             font-size: 14px;
             display:block;
@@ -90,10 +91,13 @@
             color:#fff;
             font-weight: bold;
         ">
-                {{__('mail.go')}}
-            </a>
-        </p>
-    </div>
+                    {{__('mail.go')}}
+                </a>
+            </p>
+        </div>
+
+    @stop
+    @yield('custom')
 
     <p
         style="font-family: Arial, Helvetica, Roboto, Arial, sans-serif;

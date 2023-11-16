@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 use Intervention\Image\Gd\Font;
@@ -52,10 +53,19 @@ class MeetingsController extends Controller
      */
     public function editMeeting(int $id, MeetingRequest $request): Model|array|Collection|Meeting|null
     {
+        $dateChanged = false;
         $meeting = Meeting::find($id);
         if (Auth::id() === $meeting->userId) {
             $postMeeting = new MeetingFormRequest($request);
-            return $postMeeting->edit();
+            if ($postMeeting->isDateChanged($meeting)) {
+                $dateChanged = true;
+            }
+            $res = $postMeeting->edit();
+            if ($dateChanged) {
+                /** NOTIFY USERS */
+                NotificationHelper::sendNotificationsOnMeetingUpdateDate($meeting);
+            }
+            return $res;
         }
         throw new MeetingsException();
     }
@@ -74,12 +84,33 @@ class MeetingsController extends Controller
     }
 
     /**
+     * @param int $id
+     * @return mixed
+     * @throws \Throwable
+     */
+    public function deleteMeeting(int $id)
+    {
+        return DB::transaction(function () use ($id) {
+            $meeting = Meeting::find($id);
+            // Get recipients BEFORE delete participants
+            $recipients = NotificationHelper::getMeetingRecipientsByNotificationKey($meeting, NotificationHelper::NOTY_MEETING_DELETE);
+            Participant::where('meetingId', $id)->delete();
+            $meeting->delete();
+            // toArray - case meeting was deleted!
+            NotificationHelper::sendNotificationsOnMeetingDelete($meeting->toArray(), $recipients);
+            return ['success' => true];
+        });
+
+    }
+
+    /**
      * @param string $criteria
      * @param Request $request
      * @return LengthAwarePaginator
      */
     public function getMeetings(string $criteria, Request $request): LengthAwarePaginator
     {
+        $order = 'ASC';
         $meetings = Meeting
             ::with(['owner', 'participants', 'documents'])
             ->select(Meeting::$selectableFields);
@@ -101,6 +132,7 @@ class MeetingsController extends Controller
                 break;
 
             case 'past':
+                $order = 'DESC';
                 $meetings->where('date', '<', Carbon::now());
                 $meetings->where(function (Builder $meetingsBuilder) use ($user) {
                     $meetingsBuilder->orWhere('userId', $user->id);
@@ -111,7 +143,7 @@ class MeetingsController extends Controller
 
                 break;
         }
-        return $meetings->orderBy('date', 'ASC')->paginate($limit, [], 'page', $page);
+        return $meetings->orderBy('date', $order)->paginate($limit, [], 'page', $page);
     }
 
     public function getDashboardMeetings(Request $request)

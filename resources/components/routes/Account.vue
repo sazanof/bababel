@@ -91,7 +91,7 @@ export default {
             if (val.indexOf(notification.id) !== -1) {
                 this.$store.dispatch('addNotification', notification.id)
                     .then(() => {
-                        toast.success('Notification enabled')
+                        toast.success(this.$t('Notification enabled'))
                     }).catch(e => {
                     toast.error(e.response.data.message)
                     this.enabledNotifications = this.enabledNotifications.filter(n => {
@@ -101,7 +101,7 @@ export default {
             } else {
                 this.$store.dispatch('deleteNotification', notification.id)
                     .then(() => {
-                        toast.success('Notification disabled')
+                        toast.success(this.$t('Notification disabled'))
                     })
                     .catch(e => {
                         toast.error(e.response.data.message)

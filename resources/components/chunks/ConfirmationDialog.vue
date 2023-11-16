@@ -3,7 +3,9 @@
         v-model="isVisible"
         width="400">
         <template #default="{ isActive }">
-            <v-card :title="title">
+            <v-card
+                :color="color"
+                :title="title">
                 <v-card-text>
                     {{ message }}
                 </v-card-text>
@@ -12,11 +14,12 @@
                     <v-spacer />
 
                     <v-btn
-                        prepend-icon="mdi-check"
+                        :prepend-icon="okIcon"
+                        :color="okColor"
                         :text="okButton"
                         @click="_confirm(isActive)" />
                     <v-btn
-                        prepend-icon="mdi-cancel"
+                        :prepend-icon="cancelIcon"
                         :text="cancelButton"
                         @click="_cancel(isActive)" />
                 </v-card-actions>
@@ -28,9 +31,9 @@
 export default {
     name: 'ConfirmationDialog',
     props: {
-        className: {
+        color: {
             type: String,
-            default: 'red'
+            default: 'white'
         }
     },
     emits: [ 'on-dialog-confirm' ],
@@ -42,6 +45,9 @@ export default {
         message: undefined, // Main text content
         okButton: undefined, // Text for confirm button; leave it empty because we don't know what we're using it for
         cancelButton: undefined, // Text for confirm button; leave it empty because we don't know what we're using it for
+        okIcon: 'mdi-check',
+        okColor: 'error',
+        cancelIcon: 'mdi-close',
 
         // Private variables
         resolvePromise: undefined,
@@ -57,9 +63,20 @@ export default {
             this.isVisible = false
         },
         show(opts = {}) {
+
             this.title = opts.title
             this.message = opts.message
             this.okButton = opts.okButton
+            if (opts.okButton) {
+                this.okColor = opts.okColor
+            }
+            if (opts.okIcon) {
+                this.okIcon = opts.okIcon
+            }
+            if (opts.cancelIcon) {
+                this.cancelIcon = opts.cancelIcon
+            }
+
             if (opts.cancelButton) {
                 this.cancelButton = opts.cancelButton
             } else {

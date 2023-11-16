@@ -46,6 +46,8 @@ Route
             Route::middleware(IsMeetingOwner::class)->group(function () {
                 Route::post('{id}', [MeetingsController::class, 'editMeeting'])
                     ->where('id', '[0-9]+');
+                Route::delete('{id}', [MeetingsController::class, 'deleteMeeting'])
+                    ->where('id', '[0-9]+');
                 Route::get('{id}', [MeetingsController::class, 'getMeeting'])
                     ->where('id', '[0-9]+');
                 Route::get('{id}/start', [BababelController::class, 'startMeeting'])
