@@ -36,6 +36,7 @@
     "Log in": "Войти",
     "Managing participant cameras": "Управление камерами участников",
     "Managing participant microphones": "Управление микрофонами участников",
+    "Meeting will begin": "Встреча начнется через",
     "Meeting name": "Название встречи",
     "Meeting parameters": "Параметры встречи",
     "Meeting records": "Записи встреч",
@@ -78,5 +79,9 @@
     "Welcome message or description": "Приветственное сообщение или описание",
     "You leaved meeting": "Вы покинули встречу",
     "{name} - participants": "{name} - участники",
-    "{count} participants": "{count} участников | {count} участник | {count} участника | {count} участников"
+    "{count} participants": "{участников | участник | участника | участников",
+    "{count} days": "дней |день | дня | дней",
+    "{count} hours": "часов | час | часа | часов",
+    "{count} minutes": "минут | минуту |  минуты |  минут",
+    "{count} seconds": "секунд | секунду | секунды |  секунд"
 }

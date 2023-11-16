@@ -53,6 +53,33 @@
                         variant="solo" />
                 </div>
             </div>
+            <h2 class="text-h6 text-deep-orange my-4">
+                {{ date }}
+            </h2>
+            <vue-countdown
+                v-slot="{ days, hours, minutes, seconds }"
+                :time="time"
+                :interval="100">
+                {{ $t('Meeting will begin') }}
+                <div class="count-wrapper d-flex align-center justify-center">
+                    <div class="count text-white bg-orange ma-3">
+                        {{ days }}
+                        <span class="text-grey">{{ $tc('{count} days', {count: days}) }}</span>
+                    </div>
+                    <div class="count text-white bg-orange ma-3">
+                        {{ hours }}
+                        <span class="text-grey">{{ $tc('{count} hours', {count: hours}) }}</span>
+                    </div>
+                    <div class="count text-white bg-orange ma-3">
+                        {{ minutes }}
+                        <span class="text-grey">{{ $tc('{count} minutes', {count: minutes}) }}</span>
+                    </div>
+                    <div class="count text-white bg-orange ma-3">
+                        {{ seconds }}
+                        <span class="text-grey">{{ $tc('{count} seconds', {count: seconds}) }}</span>
+                    </div>
+                </div>
+            </vue-countdown>
             <h2 class="text-h5 mb-6">
                 {{ meeting.meeting.name }}
             </h2>
@@ -86,7 +113,9 @@
 </template>
 
 <script>
+import VueCountdown from '@chenfengyuan/vue-countdown'
 import { useToast } from 'vue-toastification'
+import moment from 'moment'
 
 const toast = useToast()
 import Avatar from '../chunks/Avatar.vue'
@@ -94,7 +123,8 @@ import Avatar from '../chunks/Avatar.vue'
 export default {
     name: 'MeetingPage',
     components: {
-        Avatar
+        Avatar,
+        VueCountdown
     },
     data() {
         return {
@@ -129,6 +159,12 @@ export default {
         },
         authenticated() {
             return this.$store.getters['isAuthenticated']
+        },
+        date() {
+            return moment(this.meeting.meeting.date).format('DD.MM.YYYY HH:mm')
+        },
+        time() {
+            return moment(this.meeting.meeting.date).toDate() - new Date()
         }
     },
     async created() {
@@ -259,6 +295,29 @@ export default {
             height: 130px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.7);
+        }
+    }
+}
+
+.count-wrapper {
+    margin-bottom: 34px;
+
+    .count {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        font-size: 18px;
+        font-weight: bold;
+        border-radius: 6px;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+
+        span {
+            position: absolute;
+            bottom: -26px;
+            font-size: 14px;
+            font-weight: normal;
         }
     }
 }
