@@ -2,6 +2,8 @@
 
 namespace App\Mail;
 
+use App\Models\Meeting;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -13,12 +15,20 @@ class DeleteParticipantMail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $subject;
+    public string $msg;
+    public User $user;
+    public Meeting $meeting;
+
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct(User $user, Meeting $meeting)
     {
-        //
+        $this->user = $user;
+        $this->meeting = $meeting;
+        $this->subject = __('mail.participant.delete');
+        $this->msg = __('mail.participant.delete_message', ['name' => $user->firstname]);
     }
 
     /**
@@ -27,7 +37,7 @@ class DeleteParticipantMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Delete Participant Mail',
+            subject: $this->subject,
         );
     }
 
@@ -37,7 +47,7 @@ class DeleteParticipantMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'mail.participant-delete',
         );
     }
 

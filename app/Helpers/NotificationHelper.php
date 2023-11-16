@@ -2,7 +2,9 @@
 
 namespace App\Helpers;
 
+use App\Mail\AddParticipantMail;
 use App\Mail\DeleteMeetingMail;
+use App\Mail\DeleteParticipantMail;
 use App\Mail\NewMeetingMail;
 use App\Mail\UpdateMeetingDateMail;
 use App\Models\Meeting;
@@ -150,6 +152,34 @@ class NotificationHelper
                     ::to($recipient)
                     ->queue(new DeleteMeetingMail($meeting, $user));
             }
+        }
+    }
+
+    /**
+     * @param User $user
+     * @param Meeting $meeting
+     * @return void
+     */
+    public static function sendNotificationsOnParticipantCreate(User $user, Meeting $meeting): void
+    {
+        if (self::subscribeOnParticipantCreate($user)) {
+            Mail
+                ::to($user)
+                ->queue(new AddParticipantMail($user, $meeting));
+        }
+    }
+
+    /**
+     * @param User $user
+     * @param Meeting $meeting
+     * @return void
+     */
+    public static function sendNotificationsOnParticipantDelete(User $user, Meeting $meeting): void
+    {
+        if (self::subscribeOnParticipantDelete($user)) {
+            Mail
+                ::to($user)
+                ->queue(new DeleteParticipantMail($user, $meeting));
         }
     }
 }

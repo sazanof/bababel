@@ -213,6 +213,8 @@ class MeetingFormRequest
      */
     public function edit()
     {
+        $clearDeletedUsersIDs = [];
+        $addedUserIDs = [];
         $this->id = $this->request->has('id') ? (int)$this->request->get('id') : null;
         $meeting = Meeting::find($this->id);
         $participants = $meeting->participants();
@@ -226,6 +228,7 @@ class MeetingFormRequest
             }, $postParticipants);
             // Находим удаленных из формы на фронтэнде пользователей - участников
             $deletedUsersIDs = array_diff(is_array($userIDSs) ? $userIDSs : $userIDSs->toArray(), $postUserIDs);
+            $addedUserIDs = array_diff($postUserIDs, is_array($userIDSs) ? $userIDSs : $userIDSs->toArray());
             // Фильтруем массив удаленных пользователей. Оставляем организатора встречи.
             $clearDeletedUsersIDs = array_filter($deletedUsersIDs, function ($id) use ($meeting) {
                 return $id !== $meeting->userId;
@@ -234,7 +237,7 @@ class MeetingFormRequest
         } else {
             $this->addOwnerAsModerator();
         }
-        return DB::transaction(function () use ($meeting, $clearDeletedUsersIDs) {
+        return DB::transaction(function () use ($meeting, $clearDeletedUsersIDs, $addedUserIDs) {
             /** @var Carbon $d */
             //dd($this->id, $clearDeletedUsersIDs, $this->getMeeting(), $this->prepareParticipantsToDb($meeting));
             $meeting->update($this->getMeeting());
@@ -252,6 +255,23 @@ class MeetingFormRequest
             }
             $this->addFiles($meeting);
             $meeting->refresh();
+            // Deleted users collection
+            if (!empty($clearDeletedUsersIDs)) {
+                $notyDeleted = User::whereIn('id', $clearDeletedUsersIDs)->get();
+                if ($notyDeleted !== null) {
+                    foreach ($notyDeleted as $user) {
+                        NotificationHelper::sendNotificationsOnParticipantDelete($user, $meeting);
+                    }
+                }
+            }
+            if (!empty($addedUserIDs)) {
+                $notyAdded = User::whereIn('id', $addedUserIDs)->get();
+                if ($notyAdded !== null) {
+                    foreach ($notyAdded as $user) {
+                        NotificationHelper::sendNotificationsOnParticipantCreate($user, $meeting);
+                    }
+                }
+            }
             return $meeting;
         });
     }

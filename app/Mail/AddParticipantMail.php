@@ -2,6 +2,8 @@
 
 namespace App\Mail;
 
+use App\Models\Meeting;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -13,12 +15,20 @@ class AddParticipantMail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $subject;
+    public string $msg;
+    public User $user;
+    public Meeting $meeting;
+
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct(User $user, Meeting $meeting)
     {
-        //
+        $this->user = $user;
+        $this->meeting = $meeting;
+        $this->subject = __('mail.participant.create');
+        $this->msg = __('mail.participant.create_message', ['org' => $meeting->owner->lastname . ' ' . $meeting->owner->firstname]);
     }
 
     /**
@@ -27,7 +37,7 @@ class AddParticipantMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Add Participant Mail',
+            subject: $this->subject,
         );
     }
 
@@ -37,7 +47,7 @@ class AddParticipantMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'mail.participant-add',
         );
     }
 

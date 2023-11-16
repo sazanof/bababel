@@ -65,7 +65,7 @@
         font-size: 14px;
         color:#666;
     ">
-                <span style="display:inline-block; margin-right: 6px">{{__('mail.invite_you')}}</span>
+                <span style="display:inline-block; margin-right: 6px">{{__('mail.meeting.organizer')}}:</span>
                 <span style="font-weight: bold;">{{$meeting->owner->firstname}} {{$meeting->owner->lastname}}</span>
             </p>
             <p

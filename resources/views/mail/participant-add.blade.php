@@ -1,1 +1,1 @@
-<?php
+@extends('mail.main')
