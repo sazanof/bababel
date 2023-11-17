@@ -106,7 +106,6 @@ class BababelHelper
     {
         $inst = self::getInstance();
         $response = $inst->bbb->joinMeeting($inst->joinMeetingParameters($meeting, null, $fullName));
-        dd($response);
         return BigBlueButtonApiResponse::output($response);
     }
 
