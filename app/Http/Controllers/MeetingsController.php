@@ -245,7 +245,9 @@ class MeetingsController extends Controller
         $canJoin = ($meeting->status === 2 || $meeting->status === 1) && ($isParticipant || $success); // PENDING or STARTED
         $isStarted = $meeting->status === 1; // STARTED ON SERVER
         $isOwner = $meeting instanceof Meeting && $user instanceof User && $meeting->userId === $user->id;
-        $isModerator = $meeting instanceof Meeting && $participant instanceof Participant && $participant->isModerator;
+        $isModerator = $meeting instanceof Meeting &&
+            $participant !== null &&
+            in_array($participant->isModerator, ['true', true, 1]);
 
         if ($success) {
             $m = [

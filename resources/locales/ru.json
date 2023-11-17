@@ -79,7 +79,7 @@
     "Welcome message or description": "Приветственное сообщение или описание",
     "You leaved meeting": "Вы покинули встречу",
     "{name} - participants": "{name} - участники",
-    "{count} participants": "{участников | участник | участника | участников",
+    "{count} participants": "{count} участников | {count} участник | {count} участника | {count} участников",
     "{count} days": "дней |день | дня | дней",
     "{count} hours": "часов | час | часа | часов",
     "{count} minutes": "минут | минуту |  минуты |  минут",

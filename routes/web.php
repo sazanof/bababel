@@ -8,6 +8,7 @@ use App\Http\Controllers\UserNotificationsController;
 use App\Http\Controllers\UsersController;
 use App\Http\Middleware\AlreadyJoined;
 use App\Http\Middleware\BbbAllowedHosts;
+use App\Http\Middleware\IsMeetingModerator;
 use App\Http\Middleware\IsMeetingOwner;
 use Illuminate\Support\Facades\Route;
 
@@ -43,16 +44,18 @@ Route
             /** ADMIN ROUTES TO START, STOP, END, CREATE MEETING */
             Route::post('', [MeetingsController::class, 'addMeeting']);
             Route::post('{criteria}', [MeetingsController::class, 'getMeetings'])->where('criteria', '[a-z]+');
+            Route::middleware(IsMeetingModerator::class)->group(function () {
+                Route::get('{id}/start', [BababelController::class, 'startMeeting'])
+                    ->where('id', '[0-9]+');
+                Route::get('{id}/stop', [BababelController::class, 'stopMeeting'])
+                    ->where('id', '[0-9]+');
+            });
             Route::middleware(IsMeetingOwner::class)->group(function () {
                 Route::post('{id}', [MeetingsController::class, 'editMeeting'])
                     ->where('id', '[0-9]+');
                 Route::delete('{id}', [MeetingsController::class, 'deleteMeeting'])
                     ->where('id', '[0-9]+');
                 Route::get('{id}', [MeetingsController::class, 'getMeeting'])
-                    ->where('id', '[0-9]+');
-                Route::get('{id}/start', [BababelController::class, 'startMeeting'])
-                    ->where('id', '[0-9]+');
-                Route::get('{id}/stop', [BababelController::class, 'stopMeeting'])
                     ->where('id', '[0-9]+');
                 Route::get('{id}/running', [BababelController::class, 'isRunning'])
                     ->where('id', '[0-9]+');

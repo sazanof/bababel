@@ -106,6 +106,7 @@ class BababelHelper
     {
         $inst = self::getInstance();
         $response = $inst->bbb->joinMeeting($inst->joinMeetingParameters($meeting, null, $fullName));
+        dd($response);
         return BigBlueButtonApiResponse::output($response);
     }
 
@@ -139,7 +140,7 @@ class BababelHelper
     public function createMeetingParameters(Meeting $meeting)
     {
         $params = new CreateMeetingParameters($meeting->id, $meeting->name);
-        $params->setAllowRequestsWithoutSession($meeting->allowRequestsWithoutSession);
+        $params->setAllowRequestsWithoutSession(true);
         //$params->setAttendeePassword(self::decrypt($meeting->attendeePW)); -> join role use instead
         //$params->setModeratorPassword(self::decrypt($meeting->moderatorPW));  -> join role use instead
         $params->setWelcomeMessage($meeting->welcome);

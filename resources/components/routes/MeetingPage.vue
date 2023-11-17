@@ -62,19 +62,19 @@
                 :interval="100">
                 {{ $t('Meeting will begin') }}
                 <div class="count-wrapper d-flex align-center justify-center">
-                    <div class="count text-white bg-orange ma-3">
+                    <div class="count text-white bg-deep-orange ma-3">
                         {{ days }}
                         <span class="text-grey">{{ $tc('{count} days', {count: days}) }}</span>
                     </div>
-                    <div class="count text-white bg-orange ma-3">
+                    <div class="count text-white bg-deep-orange ma-3">
                         {{ hours }}
                         <span class="text-grey">{{ $tc('{count} hours', {count: hours}) }}</span>
                     </div>
-                    <div class="count text-white bg-orange ma-3">
+                    <div class="count text-white bg-deep-orange ma-3">
                         {{ minutes }}
                         <span class="text-grey">{{ $tc('{count} minutes', {count: minutes}) }}</span>
                     </div>
-                    <div class="count text-white bg-orange ma-3">
+                    <div class="count text-white bg-deep-orange ma-3">
                         {{ seconds }}
                         <span class="text-grey">{{ $tc('{count} seconds', {count: seconds}) }}</span>
                     </div>
@@ -155,7 +155,7 @@ export default {
             return this.meeting.canJoin
         },
         canStart() {
-            return this.meeting.meeting.status === 0 && (this.isOwner || this.isModerator)
+            return (this.meeting.meeting.status === 0 || this.meeting.meeting.status === 3) && (this.isOwner || this.isModerator)
         },
         authenticated() {
             return this.$store.getters['isAuthenticated']

@@ -70,4 +70,9 @@ class Participant extends Model
         'participants.isOrganizer',
         'participants.link',
     ];
+
+    protected $casts = [
+        'isModerator' => 'boolean',
+        'isOrganizer' => 'boolean',
+    ];
 }
