@@ -3,7 +3,7 @@
         <v-card
             :loading="loading"
             :title="title"
-            :subtitle="$t('New and failed meetings organized by you are shown here')">
+            :subtitle="criteriaText">
             <Meetings
                 v-if="meetings"
                 :user="user"
@@ -55,6 +55,20 @@ export default {
         },
         meetings() {
             return this.$store.getters['getMeetings']
+        },
+        criteriaText() {
+            switch (this.criteria) {
+                case 'my':
+                    return this.$t('New and failed meetings organized by you are shown here')
+                case 'invitations':
+                    return this.$t('New and failed meetings to which you were invited are shown here')
+                case 'past':
+                    return this.$t('Past meetings are displayed here')
+                case 'records':
+                    return this.$t('Meetings that have been recorded are displayed here')
+                default:
+                    return null
+            }
         }
     },
     watch: {

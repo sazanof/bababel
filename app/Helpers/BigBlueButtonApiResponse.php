@@ -6,9 +6,11 @@ use App\Models\Meeting;
 use BigBlueButton\Core\Attendee;
 use BigBlueButton\Responses\BaseResponse;
 use BigBlueButton\Responses\GetMeetingInfoResponse;
+use BigBlueButton\Responses\GetRecordingsResponse;
 use BigBlueButton\Responses\IsMeetingRunningResponse;
 use BigBlueButton\Responses\JoinMeetingResponse;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 class BigBlueButtonApiResponse extends JsonResponse
@@ -62,6 +64,9 @@ class BigBlueButtonApiResponse extends JsonResponse
             ];
         } else if ($response instanceof IsMeetingRunningResponse && $response->success()) {
             $data['running'] = $response->isRunning();
+        } else if ($response instanceof GetRecordingsResponse && $response->success()) {
+            $data['recordings'] = $response->getRawXml()->recordings;
+            $data['pagination'] = $response->getRawXml()->pagination;
         }
         parent::__construct($data, $status, $headers, $options, $json);
     }

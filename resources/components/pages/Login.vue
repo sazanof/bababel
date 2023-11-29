@@ -1,6 +1,8 @@
 <template>
     <div class="login">
-        <v-form @submit.prevent>
+        <v-form
+            @submit.prevent
+            @keyup.enter="login">
             <v-card class="login-form pa-4">
                 <template #text>
                     <v-text-field

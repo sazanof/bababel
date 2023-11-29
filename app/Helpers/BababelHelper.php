@@ -9,19 +9,17 @@ use App\Models\User;
 use BigBlueButton\Parameters\CreateMeetingParameters;
 use BigBlueButton\Parameters\EndMeetingParameters;
 use BigBlueButton\Parameters\GetMeetingInfoParameters;
+use App\Helpers\Parameters\GetRecordingsParameters;
 use BigBlueButton\Parameters\HooksCreateParameters;
 use BigBlueButton\Parameters\InsertDocumentParameters;
 use BigBlueButton\Parameters\IsMeetingRunningParameters;
 use BigBlueButton\Parameters\JoinMeetingParameters;
-use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Str;
 
 class BababelHelper
 {
@@ -33,6 +31,8 @@ class BababelHelper
     protected const KEY_DUPLICATE = 'duplicateWarning';
     protected const KEY_NOT_FOUND = 'notFound';
     protected const KEY_FORCIBLY_ENDED = 'meetingForciblyEnded';
+
+    protected const STATE_PUBLISHED = 'published';
 
     public function __construct()
     {
@@ -279,4 +279,25 @@ class BababelHelper
         return $res->success();
     }
 
+    /** RECORDINGS MANAGEMENT */
+
+    public function recordingParameters()
+    {
+        $params = new GetRecordingsParameters();
+        $params->setState(self::STATE_PUBLISHED);
+        return $params;
+    }
+
+    public static function getRecordings(int $limit = null, int $offset = null, Meeting $meeting = null): BigBlueButtonApiResponse
+    {
+        $limit = $limit ?? 1;
+        $offset = $offset ?? 0;
+        $inst = self::getInstance();
+        $parameters = $inst->recordingParameters();
+        $parameters->setLimit($limit);
+        $parameters->setOffset($offset);
+
+        $response = $inst->bbb->getRecordings($parameters);
+        return BigBlueButtonApiResponse::output($response);
+    }
 }
