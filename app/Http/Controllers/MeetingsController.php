@@ -120,11 +120,13 @@ class MeetingsController extends Controller
         $user = $request->user();
         switch ($criteria) {
             case 'my':
-                $meetings->where('date', '>=', Carbon::now());
+                $meetings->where('date', '>=', Carbon::now()->sub('1 day'));
+                $meetings->where('status', '!=', Meeting::STATUS_CLOSED);
                 $meetings->where('userId', $user->id);
                 break;
             case 'invitations':
-                $meetings->where('date', '>=', Carbon::now());
+                $meetings->where('date', '>=', Carbon::now()->sub('1 day'));
+                $meetings->where('status', '!=', Meeting::STATUS_CLOSED);
                 $meetings->whereNot('userId', $user->id);
                 $meetings->whereHas('participants', function (Builder $builder) use ($user) {
                     return $builder->where('userId', $user->id);
@@ -132,8 +134,15 @@ class MeetingsController extends Controller
                 break;
 
             case 'past':
+                /**
+                 * Display only past meetings by DATE and STATUS
+                 */
                 $order = 'DESC';
-                $meetings->where('date', '<', Carbon::now());
+                $meetings->where(function (Builder $meetingsBuilder) {
+                    $meetingsBuilder->orWhere('date', '<=', Carbon::now()->sub('1 day'));
+                    $meetingsBuilder->orWhere('status', Meeting::STATUS_CLOSED);
+                });
+
                 $meetings->where(function (Builder $meetingsBuilder) use ($user) {
                     $meetingsBuilder->orWhere('userId', $user->id);
                     $meetingsBuilder->orWhereHas('participants', function (Builder $builder) use ($user) {
