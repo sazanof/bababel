@@ -12,8 +12,8 @@ return new class extends Migration {
     {
         Schema::create('recordings', function (Blueprint $table) {
             $table->id();
-            $table->string('recordID');
-            $table->integer('meetingID')->index();
+            $table->string('recordId');
+            $table->integer('meetingId')->index();
             $table->dateTime('startTime')->nullable();
             $table->dateTime('endTime')->nullable();
             $table->integer('state')->default(0); //0 - unpublished 1 - published

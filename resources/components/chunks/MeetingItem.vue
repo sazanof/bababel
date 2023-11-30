@@ -69,6 +69,13 @@
             </v-card-text>
             <v-card-actions>
                 <v-btn
+                    v-if="recordingsCount > 0"
+                    color="red"
+                    prepend-icon="mdi-record"
+                    @click="$emit('info-dialog-open', meeting)">
+                    {{ $tc('{count} records', {count: recordingsCount}) }}
+                </v-btn>
+                <v-btn
                     v-if="participantsCount > 0"
                     prepend-icon="mdi-account-multiple"
                     @click="$emit('info-dialog-open', meeting)">
@@ -135,8 +142,14 @@ export default {
         participants() {
             return this.meeting.participants
         },
+        records() {
+            return this.meeting?.records
+        },
         participantsCount() {
             return this.participants?.length
+        },
+        recordingsCount() {
+            return this.records?.length
         },
         dateMod() {
             return moment(this.meeting.date).format(this.format)

@@ -64,8 +64,8 @@ class SyncRecordingsCommand extends Command
                 $this->counter++;
                 //dump($recording->playback);
                 $toDB = [
-                    'recordID' => $recording->recordID,
-                    'meetingID' => $recording->meetingID,
+                    'recordId' => $recording->recordID,
+                    'meetingId' => $recording->meetingID,
                     'startTime' => Carbon::createFromTimestampMs($recording->startTime),
                     'endTime' => Carbon::createFromTimestampMs($recording->endTime),
                     'state' => $this->makeState($recording->state),
@@ -73,7 +73,7 @@ class SyncRecordingsCommand extends Command
                     'url' => $recording->playback->format->url,
                     'processingTime' => (int)$recording->playback->format->processingTime
                 ];
-                Recording::updateOrInsert(['recordID' => $toDB['recordID']], $toDB);
+                Recording::updateOrInsert(['recordId' => $toDB['recordId']], $toDB);
             }
             dump("Limit $this->limit, offset $this->offset, pages $this->pages, counter $this->counter");
             if ($this->counter == $this->total) {

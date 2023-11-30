@@ -2,66 +2,117 @@
     <div class="dialogs">
         <v-dialog
             v-model="show"
+            height="90%"
+            :scrollable="true"
             transition="dialog-bottom-transition">
             <template #default="{ isActive }">
                 <v-card>
-                    <v-card-title>{{ meeting.name }}</v-card-title>
-                    <v-card-text class="pa-4">
-                        {{ meeting.welcome }}
-                        <ParticipantsList
-                            :meeting="meeting"
-                            :participants="participants" />
-                    </v-card-text>
-
-                    <v-card-actions>
+                    <v-toolbar color="deep-orange">
+                        <v-toolbar-title>{{ meeting.name }}</v-toolbar-title>
                         <v-spacer />
-                        <div class="pa-4 d-flex justify-space-between">
-                            <div>
-                                <v-btn
-                                    v-if="canStart"
-                                    :loading="startLoading"
-                                    :disabled="loading"
-                                    prepend-icon="mdi-play"
-                                    color="deep-orange"
-                                    variant="flat"
-                                    :text="$t('Start')"
-                                    @click="startMeeting" />
-                                <v-btn
-                                    v-else-if="meeting.status === 1 || meeting.status === 2"
-                                    :disabled="loading"
-                                    prepend-icon="mdi-account-voice"
-                                    color="deep-orange"
-                                    variant="flat"
-                                    :text="$t('Join')"
-                                    @click="preJoinMeeting" />
-                                <v-btn
-                                    v-if="meeting.status === 2 && isOwner"
-                                    :disabled="loading"
-                                    prepend-icon="mdi-stop"
-                                    color="primary"
-                                    variant="flat"
-                                    :text="$t('Stop')"
-                                    @click="stopMeeting" />
-                                <v-btn
-                                    v-if="isOwner"
-                                    :disabled="loading"
-                                    prepend-icon="mdi-pencil"
-                                    color="info"
-                                    variant="flat"
-                                    :text="$t('Edit')"
-                                    @click="$router.push({name:'edit_meeting',params:{id:meeting.id}})" />
-                            </div>
-                            <div>
-                                <v-btn
-                                    :disabled="loading"
-                                    class="ml-2"
-                                    prepend-icon="mdi-close"
-                                    :text="$t('Close')"
-                                    @click="isActive.value = false" />
-                            </div>
-                        </div>
-                    </v-card-actions>
+                        <v-btn
+                            v-if="participants.length > 0 && tab === 'participants'"
+                            icon="mdi-magnify" />
+                        <v-btn
+                            icon="mdi-close"
+                            @click="isActive.value = false" />
+
+                        <template #extension>
+                            <v-tabs
+                                v-model="tab"
+                                :show-arrows="true"
+                                :center-active="true"
+                                align-tabs="title">
+                                <v-tab
+                                    value="info"
+                                    prepend-icon="mdi-text">
+                                    {{ $t('Meeting details') }}
+                                </v-tab>
+                                <v-tab
+                                    value="participants"
+                                    prepend-icon="mdi-account-multiple">
+                                    {{ $t('Participants') }}
+                                </v-tab>
+                                <v-tab
+                                    v-if="hasRecords"
+                                    value="records"
+                                    prepend-icon="mdi-record">
+                                    {{ $t('Recordings') }}
+                                </v-tab>
+                            </v-tabs>
+                        </template>
+                    </v-toolbar>
+                    <v-card-text class="pa-10">
+                        <v-window v-model="tab">
+                            <v-window-item
+                                value="info">
+                                {{ meeting.welcome }}
+                            </v-window-item>
+
+                            <v-window-item value="participants">
+                                <ParticipantsList
+                                    :meeting="meeting"
+                                    :participants="participants" />
+                            </v-window-item>
+
+                            <v-window-item
+                                v-if="hasRecords"
+                                value="records">
+                                <v-list>
+                                    <RecordItem
+                                        v-for="record in records"
+                                        :key="record.id"
+                                        :meeting="meeting"
+                                        :record="record" />
+                                </v-list>
+                            </v-window-item>
+                        </v-window>
+                    </v-card-text>
                 </v-card>
+                <v-footer>
+                    <v-row
+                        justify="end"
+                        class="pa-4"
+                        :no-gutters="true">
+                        <v-btn
+                            v-if="canStart"
+                            class="ml-4"
+                            :loading="startLoading"
+                            :disabled="loading"
+                            prepend-icon="mdi-play"
+                            color="deep-orange"
+                            variant="flat"
+                            :text="$t('Start')"
+                            @click="startMeeting" />
+                        <v-btn
+                            v-else-if="meeting.status === 1 || meeting.status === 2"
+                            class="ml-4"
+                            :disabled="loading"
+                            prepend-icon="mdi-account-voice"
+                            color="deep-orange"
+                            variant="flat"
+                            :text="$t('Join')"
+                            @click="preJoinMeeting" />
+                        <v-btn
+                            v-if="meeting.status === 2 && isOwner"
+                            class="ml-4"
+                            :disabled="loading"
+                            prepend-icon="mdi-stop"
+                            color="primary"
+                            variant="flat"
+                            :text="$t('Stop')"
+                            @click="stopMeeting" />
+                        <v-btn
+                            v-if="isOwner"
+                            class="ml-4"
+                            :disabled="loading"
+                            prepend-icon="mdi-pencil"
+                            color="info"
+                            variant="flat"
+                            :text="$t('Edit')"
+                            @click="$router.push({name:'edit_meeting',params:{id:meeting.id}})" />
+                    </v-row>
+                </v-footer>
             </template>
         </v-dialog>
         <v-dialog
@@ -107,6 +158,7 @@
 </template>
 
 <script>
+import RecordItem from './RecordItem.vue'
 import { useToast } from 'vue-toastification'
 import ParticipantsList from './ParticipantsList.vue'
 
@@ -114,7 +166,8 @@ const toast = useToast()
 export default {
     name: 'MeetingDialogs',
     components: {
-        ParticipantsList
+        ParticipantsList,
+        RecordItem
     },
     props: {
         user: {
@@ -133,6 +186,8 @@ export default {
     emits: [ 'on-info-change', 'on-join-success' ],
     data() {
         return {
+            tab: null,
+            duplicate: false,
             joinLoader: false,
             visibleName: null,
             link: null,
@@ -147,6 +202,9 @@ export default {
         participants() {
             return this.meeting.participants
         },
+        records() {
+            return this.meeting?.records
+        },
         currentParticipant() {
             return this.meeting.participants.find(p => {
                 return p.id === this.user.id
@@ -157,6 +215,9 @@ export default {
         },
         canStart() {
             return this.isOwner && (this.meeting.status === 0 || this.meeting.status === 3)
+        },
+        hasRecords() {
+            return this.meeting?.records && this.meeting?.records.length > 0
         }
     },
     watch: {

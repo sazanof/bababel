@@ -33,6 +33,10 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Recording whereState($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Recording whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Recording whereUrl($value)
+ * @property string $recordId
+ * @property int $meetingId
+ * @method static \Illuminate\Database\Eloquent\Builder|Recording whereMeetingId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Recording whereRecordId($value)
  * @mixin \Eloquent
  */
 class Recording extends Model
@@ -40,8 +44,8 @@ class Recording extends Model
     use HasFactory;
 
     protected $fillable = [
-        'recordID',
-        'meetingID',
+        'recordId',
+        'meetingId',
         'startTime',
         'endTime',
         'state',
@@ -51,8 +55,8 @@ class Recording extends Model
     ];
 
     protected $casts = [
-        'recordID' => 'string',
-        'meetingID' => 'integer',
+        'recordId' => 'string',
+        'meetingId' => 'integer',
         'startTime' => 'datetime',
         'endTime' => 'datetime',
         'state' => 'integer',

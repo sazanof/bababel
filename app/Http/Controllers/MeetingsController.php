@@ -151,6 +151,15 @@ class MeetingsController extends Controller
                 });
 
                 break;
+            case 'records':
+                /**
+                 * Show only records which user
+                 */
+                $order = 'DESC';
+                $meetings->with('records');
+                $meetings->where('userId', $user->id);
+                $meetings->whereHas('records');
+                break;
         }
         return $meetings->orderBy('date', $order)->paginate($limit, [], 'page', $page);
     }

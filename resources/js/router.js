@@ -52,7 +52,11 @@ const routes = [
             },
             {
                 path: 'records',
-                component: Dashboard
+                component: MeetingsPage,
+                name: 'meetings.records',
+                props: {
+                    criteria: 'records'
+                }
             },
             {
                 path: 'create',

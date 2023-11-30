@@ -49,6 +49,8 @@ export default {
                     return this.$t('Invitations')
                 case 'past':
                     return this.$t('Past meetings')
+                case 'records':
+                    return this.$t('Meeting records')
                 default :
                     return this.$t('My meetings')
             }
@@ -65,7 +67,7 @@ export default {
                 case 'past':
                     return this.$t('Past meetings are displayed here')
                 case 'records':
-                    return this.$t('Meetings that have been recorded are displayed here')
+                    return this.$t('Your meetings that have been recorded are displayed here')
                 default:
                     return null
             }

@@ -147,6 +147,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Meeting whereHookId($value)
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Document> $documents
  * @property-read int|null $documents_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Recording> $records
+ * @property-read int|null $records_count
  * @mixin \Eloquent
  */
 class Meeting extends Model
@@ -333,5 +335,10 @@ class Meeting extends Model
     public function documents()
     {
         return $this->hasMany(Document::class, 'meetingId', 'id');
+    }
+
+    public function records()
+    {
+        return $this->hasMany(Recording::class, 'meetingId', 'id');
     }
 }
