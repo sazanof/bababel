@@ -4,6 +4,17 @@
             :loading="loading"
             :title="title"
             :subtitle="criteriaText">
+            <template #append>
+                <v-menu>
+                    <template #activator="{ props }">
+                        <v-btn
+                            icon="mdi-dots-vertical"
+                            variant="text"
+                            v-bind="props" />
+                    </template>
+                    <v-list />
+                </v-menu>
+            </template>
             <Meetings
                 v-if="meetings"
                 :user="user"
@@ -15,12 +26,14 @@
 <script>
 import { useToast } from 'vue-toastification'
 import Meetings from '../chunks/Meetings.vue'
+import ConfirmationDialog from '../chunks/ConfirmationDialog.vue'
 
 const toast = useToast()
 
 export default {
     name: 'MeetingsPage',
     components: {
+        ConfirmationDialog,
         Meetings
     },
     props: {

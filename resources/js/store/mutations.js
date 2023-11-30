@@ -31,5 +31,8 @@ export default {
     },
     clearMeetingState(state) {
         state.meeting.reset()
+    },
+    deleteRecord(record) {
+
     }
 }

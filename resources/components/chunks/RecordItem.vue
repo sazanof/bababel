@@ -40,10 +40,13 @@
 </template>
 
 <script>
+import { useToast } from 'vue-toastification'
 import ConfirmationDialog from './ConfirmationDialog.vue'
 import moment from 'moment'
 
 const m = moment
+const toast = useToast()
+
 export default {
     name: 'RecordItem',
     components: {
@@ -59,6 +62,7 @@ export default {
             required: true
         }
     },
+    emits: [ 'on-record-deleted' ],
     computed: {
         moment() {
             return m
@@ -99,6 +103,15 @@ export default {
                 message: this.$t('Sure delete record?'),
                 okButton: this.$t('Delete')
             })
+            if (ok) {
+                await this.$store.dispatch('deleteRecord', this.record.id).then(() => {
+                    toast.success(this.$t('Record deleted'))
+                    this.$emit('on-record-deleted', this.record)
+                }).catch(() => {
+                    toast.error(this.$t('Error deleting record'))
+                })
+
+            }
         }
     }
 }

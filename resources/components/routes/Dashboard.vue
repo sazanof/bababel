@@ -136,7 +136,7 @@ export default {
     methods: {
         async copyLink(m) {
             try {
-                const link = `${document.location.protocol}://${document.location.host}/#/meetings/${m.id}/view`
+                const link = `${document.location.protocol}//${document.location.host}/#/meetings/${m.id}/view`
                 await navigator.clipboard.writeText(link)
                 m.copied = true
                 setTimeout(() => {

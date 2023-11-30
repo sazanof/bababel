@@ -5,8 +5,10 @@ namespace App\Helpers;
 use App\Models\Document;
 use App\Models\Meeting;
 use App\Models\Participant;
+use App\Models\Recording;
 use App\Models\User;
 use BigBlueButton\Parameters\CreateMeetingParameters;
+use BigBlueButton\Parameters\DeleteRecordingsParameters;
 use BigBlueButton\Parameters\EndMeetingParameters;
 use BigBlueButton\Parameters\GetMeetingInfoParameters;
 use App\Helpers\Parameters\GetRecordingsParameters;
@@ -281,7 +283,10 @@ class BababelHelper
 
     /** RECORDINGS MANAGEMENT */
 
-    public function recordingParameters()
+    /**
+     * @return GetRecordingsParameters
+     */
+    public function recordingParameters(): GetRecordingsParameters
     {
         $params = new GetRecordingsParameters();
         $params->setState(self::STATE_PUBLISHED);
@@ -298,6 +303,29 @@ class BababelHelper
         $parameters->setOffset($offset);
 
         $response = $inst->bbb->getRecordings($parameters);
+        return BigBlueButtonApiResponse::output($response);
+    }
+
+    /**
+     * @param Recording $recording
+     * @return DeleteRecordingsParameters
+     */
+    public function deleteRecordingParameters(Recording $recording): DeleteRecordingsParameters
+    {
+        $params = new DeleteRecordingsParameters();
+        $params->setRecordingId($recording->recordId);
+        return $params;
+    }
+
+    /**
+     * @param Recording $recording
+     * @return BigBlueButtonApiResponse
+     */
+    public static function deleteRecording(Recording $recording): BigBlueButtonApiResponse
+    {
+        $inst = self::getInstance();
+        $parameters = $inst->deleteRecordingParameters($recording);
+        $response = $inst->bbb->deleteRecordings($parameters);
         return BigBlueButtonApiResponse::output($response);
     }
 }

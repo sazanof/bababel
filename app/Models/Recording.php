@@ -9,10 +9,10 @@ use Illuminate\Database\Eloquent\Model;
  * App\Models\Recording
  *
  * @property int $id
- * @property string $recordID
- * @property int $meetingID
- * @property string|null $startTime
- * @property string|null $endTime
+ * @property string $recordId
+ * @property int $meetingId
+ * @property \Illuminate\Support\Carbon|null $startTime
+ * @property \Illuminate\Support\Carbon|null $endTime
  * @property int $state
  * @property int|null $size
  * @property string|null $url
@@ -25,18 +25,14 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Recording whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Recording whereEndTime($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Recording whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Recording whereMeetingID($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Recording whereMeetingId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Recording whereProcessingTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Recording whereRecordID($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Recording whereRecordId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Recording whereSize($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Recording whereStartTime($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Recording whereState($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Recording whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Recording whereUrl($value)
- * @property string $recordId
- * @property int $meetingId
- * @method static \Illuminate\Database\Eloquent\Builder|Recording whereMeetingId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Recording whereRecordId($value)
  * @mixin \Eloquent
  */
 class Recording extends Model

@@ -203,7 +203,7 @@ export default {
         },
         async copyLink() {
             try {
-                const link = `${document.location.protocol}://${document.location.host}/#/meetings/${this.meeting.id}/view`
+                const link = `${document.location.protocol}//${document.location.host}/#/meetings/${this.meeting.id}/view`
                 await navigator.clipboard.writeText(link)
                 this.copied = true
                 setTimeout(() => {

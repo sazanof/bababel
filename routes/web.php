@@ -4,10 +4,12 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BababelController;
 use App\Http\Controllers\MailController;
 use App\Http\Controllers\MeetingsController;
+use App\Http\Controllers\RecordingsController;
 use App\Http\Controllers\UserNotificationsController;
 use App\Http\Controllers\UsersController;
 use App\Http\Middleware\AlreadyJoined;
 use App\Http\Middleware\BbbAllowedHosts;
+use App\Http\Middleware\CanDeleteRecord;
 use App\Http\Middleware\IsMeetingModerator;
 use App\Http\Middleware\IsMeetingOwner;
 use Illuminate\Support\Facades\Route;
@@ -72,6 +74,14 @@ Route
                 ->where('id', '[0-9]+');
         });
         Route::delete('documents/{id}', [MeetingsController::class, 'removeDocument']);
+
+        /** Recordings manager */
+        Route::prefix('records')->group(function () {
+            Route::middleware(CanDeleteRecord::class)
+                ->delete('{id}', [RecordingsController::class, 'deleteRecording'])
+                ->where('id', '[0-9]+');
+        });
+
     });
 /** CALLBACKS */
 Route

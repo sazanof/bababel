@@ -19,7 +19,7 @@ const routes = [
     },
     {
         path: '/bbb',
-        name: 'BBB',
+        name: 'bbb',
         component: BbbWindow
     },
 

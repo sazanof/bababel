@@ -135,5 +135,10 @@ export default {
         return await axios.delete(`${PANEL}account/notifications/${id}`).then(res => {
             return res.data
         })
+    },
+    async deleteRecord({ commit }, id) {
+        return await axios.delete(`${PANEL}records/${id}`).then(res => {
+            return res.data
+        })
     }
 }

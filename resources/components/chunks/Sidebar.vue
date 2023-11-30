@@ -1,6 +1,7 @@
 <template>
     <v-navigation-drawer
         v-model="opened"
+        :temporary="$route.path === '/bbb'"
         @update:modelValue="$emit('on-update-drawer', $event)">
         <v-sheet
             color="deep-orange"
@@ -54,7 +55,7 @@ export default {
     emits: [ 'on-update-drawer' ],
     data() {
         return {
-            opened: true,
+            opened: false,
             links: [
                 [
                     'mdi-view-dashboard',
@@ -93,6 +94,9 @@ export default {
         drawer() {
             this.opened = this.drawer
         }
+    },
+    created() {
+        this.opened = this.$route.path !== '/bbb'
     }
 }
 </script>

@@ -63,7 +63,8 @@
                                         v-for="record in records"
                                         :key="record.id"
                                         :meeting="meeting"
-                                        :record="record" />
+                                        :record="record"
+                                        @on-record-deleted="onRecordDeleted($event)" />
                                 </v-list>
                             </v-window-item>
                         </v-window>
@@ -195,15 +196,13 @@ export default {
             showJoin: false,
             loading: false,
             startLoading: false,
-            joinLoading: false
+            joinLoading: false,
+            records: null
         }
     },
     computed: {
         participants() {
             return this.meeting.participants
-        },
-        records() {
-            return this.meeting?.records
         },
         currentParticipant() {
             return this.meeting.participants.find(p => {
@@ -231,6 +230,7 @@ export default {
     },
     created() {
         this.visibleName = `${this.user.lastname} ${this.user.firstname}`
+        this.records = this.meeting?.records
     },
     methods: {
         preJoinMeeting() {
@@ -304,6 +304,9 @@ export default {
         close() {
             this.show = false
             this.showJoin = false
+        },
+        onRecordDeleted(r) {
+            this.records = this.records.filter(record => record.id !== r.id)
         }
     }
 }
