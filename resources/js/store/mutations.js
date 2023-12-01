@@ -32,7 +32,10 @@ export default {
     clearMeetingState(state) {
         state.meeting.reset()
     },
-    deleteRecord(record) {
-
+    setActiveJoinInfo(state, join) {
+        state.activeJoinInfo = join
+    },
+    resetActiveJoinInfo(state) {
+        state.activeJoinInfo = null
     }
 }

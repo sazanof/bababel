@@ -17,7 +17,9 @@
                 </v-row>
             </v-container>
         </v-main>
-        <div class="create-menu">
+        <div
+            v-if="$route.name !== 'bbb'"
+            class="create-menu">
             <v-menu>
                 <template #activator="{ props }">
                     <v-btn
@@ -57,8 +59,12 @@ export default {
     },
     data() {
         return {
-            drawer: true
+            drawer: false
         }
+    },
+    created() {
+        this.drawer = this.$route.path !== '/bbb'
+
     },
     methods: {
         openCreateMeeting() {

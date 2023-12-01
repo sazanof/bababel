@@ -1,5 +1,7 @@
 <template>
-    <div class="meeting-page">
+    <div
+        v-if="!authenticated"
+        class="meeting-page">
         <v-sheet
             v-if="meeting"
             elevation="12"
@@ -110,6 +112,78 @@
             </v-bottom-sheet>
         </v-sheet>
     </div>
+    <v-col v-else>
+        <v-card
+            v-if="meeting"
+            width="100%"
+            class="text-no-wrap"
+            :loading="loading">
+            <template #title>
+                <div class="text-caption">
+                    {{ date }}
+                </div>
+                {{ meeting.meeting.name }}
+            </template>
+            <template #subtitle>
+                {{ meeting.meeting.welcome }}
+            </template>
+            <v-card-text>
+                <div
+                    v-if="loading"
+                    class="card-countdown-wrapper">
+                    <vue-countdown
+                        v-slot="{ days, hours, minutes, seconds }"
+                        :time="time"
+                        :interval="100">
+                        {{ $t('Meeting will begin') }}
+                        <div class="card-counter text-button">
+                            <div class="card-counter-item">
+                                {{ days }}
+                                <span>{{ $tc('{count} days', {count: days}) }}</span>
+                            </div>
+                            <div class="card-counter-item">
+                                {{ hours }}
+                                <span>{{ $tc('{count} hours', {count: hours}) }}</span>
+                            </div>
+                            <div class="card-counter-item">
+                                {{ minutes }}
+                                <span>{{ $tc('{count} minutes', {count: minutes}) }}</span>
+                            </div>
+                            <div class="card-counter-item">
+                                {{ seconds }}
+                                <span>{{ $tc('{count} seconds', {count: seconds}) }}</span>
+                            </div>
+                        </div>
+                    </vue-countdown>
+                </div>
+                <div
+                    v-else
+                    class="join-info">
+                    <v-text-field
+                        v-model="fullName"
+                        :label="$t('Name')" />
+                </div>
+            </v-card-text>
+            <v-card-actions>
+                <v-btn
+                    v-if="canJoin && !loading"
+                    :disabled="(fullName === null || fullName.length < 3) || joinLoader"
+                    :loading="joinLoader"
+                    color="deep-orange"
+                    prepend-icon="mdi-send"
+                    @click="joinMeeting">
+                    {{ $t('Join') }}
+                </v-btn>
+                <v-btn
+                    v-if="canStart"
+                    color="deep-orange"
+                    prepend-icon="mdi-send"
+                    @click="startMeeting">
+                    {{ $t('Start') }}
+                </v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-col>
 </template>
 
 <script>
@@ -210,16 +284,35 @@ export default {
                 .catch(e => {
                     this.duplicate = true
                     this.link = e.response.data.link
+                    if (this.user !== null && this.authenticated) {
+                        this.$store.commit('setActiveJoinInfo', e.response.data)
+                        this.$router.push({
+                            name: 'bbb',
+                            params: {
+                                pid: e.response.data.join.id
+                            }
+                        })
+                    }
                     toast.error(e.response.data.message)
                 })
                 .finally(() => {
                     this.loading = false
                     this.joinLoader = false
                 })
-            if (joinInfo) {
-                const url = joinInfo.join.url
-                window.open(url, '_blank').focus()
+            if (joinInfo && !this.duplicate) {
+                if (this.user !== null) {
+                    this.$store.commit('setActiveJoinInfo', joinInfo)
+                    this.$router.push({
+                        name: 'bbb',
+                        params: {
+                            pid: joinInfo.join.pid
+                        }
+                    })
+                } else {
+                    window.open(joinInfo.join.url, '_blank').focus()
+                }
             }
+
         }
     }
 }
@@ -319,6 +412,15 @@ export default {
             font-size: 14px;
             font-weight: normal;
         }
+    }
+}
+
+.card-counter {
+    display: flex;
+    align-items: center;
+
+    .card-counter-item {
+        margin-right: 6px;
     }
 }
 </style>

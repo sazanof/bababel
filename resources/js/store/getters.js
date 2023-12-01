@@ -13,5 +13,8 @@ export default {
     },
     getMeetings(state) {
         return state.meetings
+    },
+    getJoinInfo(state) {
+        return state.activeJoinInfo
     }
 }

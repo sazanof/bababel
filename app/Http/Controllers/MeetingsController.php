@@ -334,4 +334,28 @@ class MeetingsController extends Controller
         }
         throw  new MeetingsException();
     }
+
+    /**
+     * @param int $pid
+     * @param Request $request
+     * @return Participant|void
+     */
+    public function getParticipantInfo(int $pid, Request $request)
+    {
+        /** @var User $user */
+        $user = $request->user();
+        $f = [
+            'id',
+            'userId',
+            'meetingId',
+            'isModerator',
+            'isOrganizer',
+            'link',
+        ];
+        /** @var Participant $participant */
+        $participant = Participant::select($f)->find($pid);
+        if ($user->id === $participant->userId) {
+            return $participant;
+        }
+    }
 }

@@ -4,7 +4,7 @@
         id="conference-wrapper"
         class="container">
         <div
-            v-if="$route.name === 'meeting_page' || $route.name === 'meeting_logout_page'"
+            v-if="($route.name === 'meeting_page' || $route.name === 'meeting_logout_page') && !authenticated"
             class="app-wrapper single-meeting-view">
             <router-view />
         </div>
@@ -43,6 +43,7 @@ export default {
         }
     },
     async created() {
+        window.top.postMessage({ fromIFrame: true })
         await this.checkAuth().finally(() => {
             this.loaded = true
         })

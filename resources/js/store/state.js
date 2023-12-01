@@ -8,5 +8,6 @@ export default {
         timeFormat: 'HH:mm'
     },
     meeting: new Meeting(),
-    meetings: []
+    meetings: [],
+    activeJoinInfo: null
 }

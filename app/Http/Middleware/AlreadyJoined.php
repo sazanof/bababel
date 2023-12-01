@@ -45,7 +45,15 @@ class AlreadyJoined
                         $e = new AlreadyJoinedException();
                         return response()->json([
                             'message' => $e->getMessage(),
-                            'link' => $participant->link
+                            'link' => $participant->link,
+                            'join' => [
+                                'id' => $participant->participants_tid,
+                                'isModerator' => $participant->isModerator,
+                                'isOrganizer' => $participant->isOrganizer,
+                                'url' => $participant->link,
+                                'meetingId' => $meeting->id,
+                                'userId' => $user->id
+                            ]
                         ], 409);
                     }
                 }

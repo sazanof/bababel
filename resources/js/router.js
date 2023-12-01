@@ -18,9 +18,10 @@ const routes = [
         name: 'account'
     },
     {
-        path: '/bbb',
+        path: '/bbb/:pid(\\d+)',
         name: 'bbb',
-        component: BbbWindow
+        component: BbbWindow,
+        props: true
     },
 
     {

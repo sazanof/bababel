@@ -140,5 +140,10 @@ export default {
         return await axios.delete(`${PANEL}records/${id}`).then(res => {
             return res.data
         })
+    },
+    async getJoinInfo({ _ }, pid) {
+        return await axios.get(`${PANEL}join/${pid}/info`).then(res => {
+            return res.data
+        })
     }
 }

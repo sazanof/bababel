@@ -81,7 +81,10 @@ Route
                 ->delete('{id}', [RecordingsController::class, 'deleteRecording'])
                 ->where('id', '[0-9]+');
         });
-
+        Route::prefix('join')->group(function () {
+            Route::get('{pid}/info', [MeetingsController::class, 'getParticipantInfo'])
+                ->where('id', '[0-9]+');
+        });
     });
 /** CALLBACKS */
 Route
