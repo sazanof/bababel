@@ -1,7 +1,7 @@
 <template>
     <v-navigation-drawer
         v-model="opened"
-        :temporary="$route.path === '/bbb'"
+        :temporary="$route.name === 'bbb'"
         @update:modelValue="$emit('on-update-drawer', $event)">
         <v-sheet
             color="deep-orange"

@@ -25,7 +25,7 @@ export default {
     name: 'BbbWindow',
     props: {
         pid: {
-            type: Number,
+            type: String,
             required: true
         }
     },

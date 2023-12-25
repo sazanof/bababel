@@ -106,10 +106,11 @@
                 @click="startMeeting">
                 {{ $t('Start') }}
             </v-btn>
-            <v-bottom-sheet
-                v-if="loading">
+            <div
+                v-if="loading"
+                class="loading">
                 <span class="mt-2 ml-4 text-button text-deep-orange">{{ $t('Waiting for connection') }}</span>
-            </v-bottom-sheet>
+            </div>
         </v-sheet>
     </div>
     <v-col v-else>
