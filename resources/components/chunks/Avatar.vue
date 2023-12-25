@@ -3,7 +3,6 @@
         class="avatar"
         :size="size">
         <v-img
-            v-if="user.photo !== null"
             :src="user.photo" />
     </v-avatar>
 </template>
