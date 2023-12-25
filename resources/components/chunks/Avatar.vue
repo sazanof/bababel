@@ -5,9 +5,6 @@
         <v-img
             v-if="user.photo !== null"
             :src="user.photo" />
-        <v-img
-            v-else
-            :src="`users/${user.id}/avatar/${size}`" />
     </v-avatar>
 </template>
 

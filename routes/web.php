@@ -42,6 +42,10 @@ Route
         Route::prefix('dashboard')->group(function () {
             Route::get('meetings', [MeetingsController::class, 'getDashboardMeetings']);
         });
+        Route::prefix('profile')->group(function () {
+            Route::post('avatar', [UsersController::class, 'updateAvatar']);
+            Route::get('avatar/{size?}', [UsersController::class, 'getProfileAvatar'])->name('avatar');
+        });
         Route::prefix('meetings')->group(function () {
             /** ADMIN ROUTES TO START, STOP, END, CREATE MEETING */
             Route::post('', [MeetingsController::class, 'addMeeting']);

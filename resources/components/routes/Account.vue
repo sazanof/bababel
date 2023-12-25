@@ -10,7 +10,6 @@
             <v-card-text>
                 <div class="user-profile text-center mt-4">
                     <Avatar
-                        v-if="!user.photo"
                         :user="user"
                         :size="180" />
                     <div class="text-h3 mt-6 mb-4">
@@ -22,10 +21,17 @@
                     <div class="mb-4 text-deep-orange text-h6">
                         {{ user.email }}
                     </div>
+                    <input
+                        ref="avatarInput"
+                        type="file"
+                        accept="image/*"
+                        class="d-none"
+                        @change="openCropper">
                     <v-btn
                         variant="flat"
                         color="deep-orange"
-                        prepend-icon="mdi-camera">
+                        prepend-icon="mdi-camera"
+                        @click="$refs.avatarInput.click()">
                         {{ $t('Change photo') }}
                     </v-btn>
                     <v-divider class="mt-4" />
@@ -49,30 +55,40 @@
                 </div>
             </v-card-text>
         </v-card>
+        <ImageCropper
+            ref="avatarCropper"
+            :file="file"
+            @on-save="saveAvatar" />
     </v-col>
 </template>
 
 <script>
 import { useToast } from 'vue-toastification'
+import ImageCropper from '../chunks/ImageCropper.vue'
 import Avatar from '../chunks/Avatar.vue'
 
 const toast = useToast()
 export default {
     name: 'Account',
     components: {
-        Avatar
+        Avatar,
+        ImageCropper
     },
 
     data() {
         return {
             loading: false,
             notificationsList: null,
-            enabledNotifications: null
+            enabledNotifications: null,
+            file: new Blob()
         }
     },
     computed: {
         user() {
             return this.$store.getters['getUser']
+        },
+        photo() {
+            return this.user.photo ? '/panel/profile/avatar/512' : null
         }
     },
     async created() {
@@ -108,6 +124,17 @@ export default {
                         this.enabledNotifications = this.enabledNotifications.push(notification.id)
                     })
             }
+        },
+        openCropper() {
+            this.file = this.$refs.avatarInput.files[0]
+            this.$refs.avatarCropper.open()
+        },
+        async saveAvatar({ coordinates, canvas }) {
+            await this.$store.dispatch('updateAvatar', {
+                coordinates,
+                avatar: this.file
+            })
+            this.$store.commit('updateAvatar', canvas.toDataURL())
         }
     }
 }

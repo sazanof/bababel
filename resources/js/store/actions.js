@@ -145,5 +145,15 @@ export default {
         return await axios.get(`${PANEL}join/${pid}/info`).then(res => {
             return res.data
         })
+    },
+
+    async updateAvatar({ commit }, data) {
+        return await axios.post(`${PANEL}profile/avatar`, data, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        }).then(res => {
+            commit('setUser', res.data)
+        })
     }
 }

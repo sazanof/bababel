@@ -7,6 +7,10 @@ use App\Models\User;
 use App\Models\UserNotification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Exception\NotFoundException;
 use Intervention\Image\Facades\Image;
 use Intervention\Image\ImageCache;
@@ -46,10 +50,10 @@ class UsersController extends Controller
         $user = User::find($id);
         if ($user instanceof User) {
             if ($user->photo !== null) {
-                return Image::cache(function (ImageCache $image) use ($user, $size) {
-                    return $image->make($user->photo)
-                        ->resize($size, $size);
-                })->response('png');
+                $path = Storage::drive('private')->path('avatars' . DIRECTORY_SEPARATOR . $user->id) . DIRECTORY_SEPARATOR . 'thumb.jpg';
+                if (File::exists($path)) {
+                    return Image::make($path)->response('jpg');
+                }
             }
 
             $name = $user->lastname . ' ' . $user->firstname;
@@ -65,6 +69,11 @@ class UsersController extends Controller
         }
         throw new NotFoundException();
 
+    }
+
+    public function getProfileAvatar(Request $request, int $size = null)
+    {
+        return $this->getAvatar($request->user()->id, $size);
     }
 
     private function HTMLToRGB($htmlCode)
@@ -122,5 +131,51 @@ class UsersController extends Controller
         $l = (int)round(255.0 * $l);
 
         return (object)array('hue' => $h, 'saturation' => $s, 'lightness' => $l);
+    }
+
+    /**
+     * @param UploadedFile $file
+     * @param array $coords
+     * @param array $path
+     * @return bool
+     */
+    public static function cropPhoto(UploadedFile $file, array $coords, array $path): bool
+    {
+        $w = $coords['width'];
+        $h = $coords['height'];
+        $x = $coords['left'];
+        $y = $coords['top'];
+        $img = Image::make($file);
+        $imgWidth = $img->getWidth();
+        $imgHeight = $img->getHeight();
+        $save_path = $path['original'];
+        $save_thumb_path = $path['thumb'];
+        $r = Image::make($file)->resize($imgWidth, $imgHeight)->save($save_path);
+        if (Image::make($r)->crop($w, $h, $x, $y)->save($save_thumb_path)) {
+            return true;
+        }
+        return false;
+    }
+
+    public function updateAvatar(Request $request): User
+    {
+        /** @var User $user */
+        $user = $request->user();
+        $file = $request->file('avatar');
+        $coordinates = $request->get('coordinates');
+        $path = '/private/avatars/' . Auth::id();
+        $original = $path . DIRECTORY_SEPARATOR . 'original.jpg';
+        $thumb = $path . DIRECTORY_SEPARATOR . 'thumb.jpg';
+        if (!Storage::directoryExists($path)) {
+            Storage::makeDirectory($path);
+        }
+        if (self::cropPhoto($file, $coordinates, [
+            'original' => Storage::path($original),
+            'thumb' => Storage::path($thumb),
+        ])) {
+            $user->photo = '/users/' . $user->id . '/avatar';
+            $user->save();
+        }
+        return $user;
     }
 }

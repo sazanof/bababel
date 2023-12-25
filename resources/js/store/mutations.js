@@ -37,5 +37,11 @@ export default {
     },
     resetActiveJoinInfo(state) {
         state.activeJoinInfo = null
+    },
+    setUser(state, user) {
+        state.user = user
+    },
+    updateAvatar(state, blobUrl) {
+        state.user.photo = blobUrl
     }
 }

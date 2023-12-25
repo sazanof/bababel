@@ -21,6 +21,7 @@
         "vuetify": "^3.3.22"
     },
     "dependencies": {
+        "vue-advanced-cropper": "^2.8.8",
         "@chenfengyuan/vue-countdown": "^2.1.2",
         "@vuepic/vue-datepicker": "^7.2.0",
         "@webzlodimir/vue-avatar": "^0.0.8",
