@@ -17,8 +17,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $date
  * @property string $name
  * @property string $meetingID
- * @property string $attendeePW
- * @property string $moderatorPW
  * @property string $welcome
  * @property string|null $dialNumber
  * @property int|null $voiceBridge
@@ -79,7 +77,6 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Meeting whereAllowModsToUnmuteUsers($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Meeting whereAllowRequestsWithoutSession($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Meeting whereAllowStartStopRecording($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Meeting whereAttendeePW($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Meeting whereAutoStartRecording($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Meeting whereBannerColor($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Meeting whereBannerText($value)
@@ -119,7 +116,6 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Meeting whereMeetingLayout($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Meeting whereMeta($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Meeting whereModeratorOnlyMessage($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Meeting whereModeratorPW($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Meeting whereMuteOnStart($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Meeting whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Meeting whereNotifyRecordingIsOn($value)
@@ -162,8 +158,6 @@ class Meeting extends Model
      * date
      * name
      * meetingID
-     * attendeePW
-     * moderatorPW
      * welcome
      * dialNumber
      * voiceBridge
@@ -247,11 +241,6 @@ class Meeting extends Model
         'guestPolicy'
     ];
 
-    protected $hidden = [
-        'attendeePW',
-        'moderatorPW',
-    ];
-
     protected $casts = [
         'record' => 'boolean',
         'autoStartRecording' => 'boolean',
@@ -260,11 +249,6 @@ class Meeting extends Model
         'lockSettingsDisableMic' => 'boolean',
         'allowModsToUnmuteUsers' => 'boolean',
         'allowModsToEjectCameras' => 'boolean',
-    ];
-
-    protected $attributes = [
-        'moderatorPW' => '',
-        'attendeePW' => '',
     ];
 
     public static array $selectableFields = [

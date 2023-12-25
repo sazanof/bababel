@@ -18,7 +18,6 @@ return new class extends Migration {
             $table->string('name');
             $table->string('meetingID')->nullable();
             $table->string('attendeePW')->nullable();
-            $table->string('moderatorPW')->nullable();
             $table->string('welcome');
             $table->string('dialNumber')->nullable();
             $table->integer('voiceBridge')->nullable();

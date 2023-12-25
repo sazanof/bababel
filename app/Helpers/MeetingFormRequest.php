@@ -110,6 +110,7 @@ class MeetingFormRequest
     protected function prepareRequest(): void
     {
         $data = $this->request->all();
+        $data['meetingID'] = BababelHelper::generateMeetingId();
         foreach ($data as $key => $item) {
             if (in_array($item, ['true', 'false'])) {
                 $data[$key] = $item === "true";
@@ -124,12 +125,6 @@ class MeetingFormRequest
         unset($data['participants']);
         $data['userId'] = $this->owner->id;
         $data['date'] = Carbon::parse($data['date']);
-        $data['attendeePW'] = !empty($data['attendeePW'])
-            ? Crypt::encrypt($data['attendeePW'])
-            : self::generateAttendeePW();
-        $data['moderatorPW'] = !empty($data['moderatorPW'])
-            ? Crypt::encrypt($data['moderatorPW'])
-            : self::generateModeratorPW();
         unset($data['id']);
 
         //TODO create Meeting instantly by new Meeting()
@@ -155,22 +150,6 @@ class MeetingFormRequest
         }
 
         return $ar;
-    }
-
-    /**
-     * @return string
-     */
-    public function generateAttendeePW()
-    {
-        return Crypt::encrypt('att' . Str::random());
-    }
-
-    /**
-     * @return string
-     */
-    public function generateModeratorPW()
-    {
-        return Crypt::encrypt('mod' . Str::random());
     }
 
     /**

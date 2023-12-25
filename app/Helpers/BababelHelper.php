@@ -46,9 +46,9 @@ class BababelHelper
     /**
      * @return string
      */
-    public function generateMeetingId($id): string
+    public static function generateMeetingId(): string
     {
-        return 'conf_' . Meeting::count('id') . '_' . uniqid();
+        return uniqid("", true);
     }
 
     public static function getInstance()
@@ -114,7 +114,7 @@ class BababelHelper
     public function insertDocumentParameters(Meeting $meeting)
     {
         $params = new InsertDocumentParameters();
-        $params->setMeetingId($meeting->id);
+        $params->setMeetingId($meeting->meetingID);
         $documents = Document::where('meetingId', $meeting->id)->get();
         if ($documents->isNotEmpty()) {
             foreach ($documents as $document) {
@@ -140,10 +140,8 @@ class BababelHelper
      */
     public function createMeetingParameters(Meeting $meeting)
     {
-        $params = new CreateMeetingParameters($meeting->id, $meeting->name);
+        $params = new CreateMeetingParameters($meeting->meetingID, $meeting->name);
         $params->setAllowRequestsWithoutSession(true);
-        //$params->setAttendeePassword(self::decrypt($meeting->attendeePW)); -> join role use instead
-        //$params->setModeratorPassword(self::decrypt($meeting->moderatorPW));  -> join role use instead
         $params->setWelcomeMessage($meeting->welcome);
         $params->setRecord($meeting->record);
         $params->setAutoStartRecording($meeting->autoStartRecording);
@@ -196,12 +194,12 @@ class BababelHelper
      */
     public function isMeetingRuninngParameters(Meeting $meeting): IsMeetingRunningParameters
     {
-        return new IsMeetingRunningParameters($meeting->id);
+        return new IsMeetingRunningParameters($meeting->meetingID);
     }
 
     public function getMeetingInfoParameters(Meeting $meeting)
     {
-        return new GetMeetingInfoParameters($meeting->id);
+        return new GetMeetingInfoParameters($meeting->meetingID);
     }
 
     public function joinMeetingParameters(Meeting $meeting, User $user = null, string $visibleName = null)
@@ -216,7 +214,7 @@ class BababelHelper
         $role = !is_null($participant) && $participant->isModerator ? 'MODERATOR' : 'VIEWER';
         $fullName = $visibleName ?? $user->lastname . ' ' . $user->firstname;
 
-        $parameters = new JoinMeetingParameters($meeting->id);
+        $parameters = new JoinMeetingParameters($meeting->meetingID);
 
         if ($user instanceof User) {
             $parameters->setUserId($user->id);
@@ -237,7 +235,7 @@ class BababelHelper
     {
         $url = URL::route('callback_hooks', ['id' => $meeting->id]);
         $parameters = new HooksCreateParameters($url);
-        $parameters->setMeetingId($meeting->id);
+        $parameters->setMeetingId($meeting->meetingID);
         $parameters->setGetRaw(true);
         return $parameters;
     }

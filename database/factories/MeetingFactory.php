@@ -27,8 +27,6 @@ class MeetingFactory extends Factory
         return [
             'userId' => User::withoutTrashed()->get()->random()->id,
             'meetingID' => null,
-            'attendeePW' => Crypt::encrypt(Str::random()),
-            'moderatorPW' => Crypt::encrypt(Str::random()),
             'date' => fake()->dateTimeBetween('now', '+6 months'),
             'name' => fake()->realTextBetween(10, 50),
             'welcome' => fake()->realText(250),
