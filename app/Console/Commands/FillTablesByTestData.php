@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Document;
 use App\Models\Meeting;
 use App\Models\Participant;
 use Illuminate\Console\Command;
@@ -29,13 +30,12 @@ class FillTablesByTestData extends Command
      */
     public function handle()
     {
-        Participant::truncate();
-        Meeting::truncate();
-        $statement = "ALTER TABLE `meetings` AUTO_INCREMENT = 10;";
-        DB::unprepared($statement);
         $this->error('THIS WILL DESTROY ALL DATA IN SYSTEM');
         if ($this->confirm('Fill tables with test data?')) {
             if ($this->confirm('Are you sure?')) {
+                Participant::truncate();
+                Meeting::truncate();
+                Document::truncate();
                 for ($i = 0; $i < 100; $i++) {
                     Meeting::factory()->count(100)->create();
                 }
