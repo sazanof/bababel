@@ -76,7 +76,7 @@
         color:#666;
     ">
                 <a
-                    href="{{url('/#/meetings/3841/view')}}"
+                    href="{{url('/#/meetings/'.$meeting->id.'/view')}}"
                     target="_blank"
                     style="font-family: Arial, Helvetica, Roboto, Arial, sans-serif;
             text-align: center;
