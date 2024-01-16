@@ -13,7 +13,7 @@ export default class Meeting {
         this.allowModsToEjectCameras = true
         this.participants = []
         this.files = null
-        this.meetingLayout = null
+        this.meetingLayout = 'VIDEO_FOCUS'
         this.guestPolicy = 'ASK_MODERATOR'
     }
 
@@ -31,7 +31,7 @@ export default class Meeting {
         this.allowModsToEjectCameras = true
         this.participants = []
         this.files = null
-        this.meetingLayout = null
+        this.meetingLayout = 'VIDEO_FOCUS'
         this.guestPolicy = 'ASK_MODERATOR'
     }
 
