@@ -13,6 +13,13 @@
             <v-container
                 fluid>
                 <v-row>
+                    <v-col>
+                        <v-alert color="error">
+                            Сервис работает в тестовом режиме!
+                        </v-alert>
+                    </v-col>
+                </v-row>
+                <v-row>
                     <router-view />
                 </v-row>
             </v-container>

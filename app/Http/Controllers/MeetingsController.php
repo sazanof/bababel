@@ -338,9 +338,9 @@ class MeetingsController extends Controller
     /**
      * @param int $pid
      * @param Request $request
-     * @return Participant|void
+     * @return Participant|null
      */
-    public function getParticipantInfo(int $pid, Request $request)
+    public function getParticipantInfo(int $pid, Request $request): ?Participant
     {
         /** @var User $user */
         $user = $request->user();
@@ -354,8 +354,12 @@ class MeetingsController extends Controller
         ];
         /** @var Participant $participant */
         $participant = Participant::select($f)->find($pid);
-        if ($user->id === $participant->userId) {
-            return $participant;
+        if (!is_null($participant)) {
+            if ($user->id === $participant->userId) {
+                return $participant;
+            }
         }
+        return null;
+
     }
 }
