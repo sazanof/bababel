@@ -171,7 +171,7 @@ export default {
     },
     data() {
         return {
-            layout: null,
+            layout: 'VIDEO_FOCUS',
             guestPolicy: null,
             date: null,
             loading: false,
