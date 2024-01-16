@@ -71,13 +71,14 @@ class BababelController extends Controller
             $data = $res->getData();
             $url = $data->join->url;
             $participant = Participant::where('meetingId', $meeting->id)->where('userId', $user->id)->first();
-            $data->join->pid = $participant->id;
             $data->join->mid = $meeting->id;
             if (!is_null($participant)) {
+                $data->join->pid = $participant->id;
                 $participant->link = $url;
                 $participant->save();
+            } elseif (!is_null($user)) {
+                $data->join->pid = $user->id;
             }
-
             $meeting->status = $meeting::STATUS_PENDING;
             $meeting->save();
             return $data;
