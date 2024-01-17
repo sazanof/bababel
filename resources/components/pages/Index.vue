@@ -6,8 +6,7 @@
         :full-height="true">
         <Sidebar
             :user="user"
-            :rail="rail"
-            @on-update-rail="rail = $event" />
+            :rail="rail" />
         <AppHeader @on-menu-click="onMenuClick" />
         <v-main>
             <v-container
@@ -69,9 +68,15 @@ export default {
             rail: true
         }
     },
+    watch: {
+        rail() {
+            this.calculateBbbWindowLeft()
+        }
+    },
     created() {
         this.rail = this.$route.path !== '/bbb'
         this.$store.commit('setRail', this.rail)
+        this.calculateBbbWindowLeft()
     },
     methods: {
         openCreateMeeting() {
@@ -81,6 +86,16 @@ export default {
         onMenuClick() {
             this.rail = !this.rail
             this.$store.commit('setRail', this.rail)
+        },
+        calculateBbbWindowLeft() {
+            setTimeout(() => {
+                const sidebar = document.getElementById('sidebar')
+                if (sidebar !== null) {
+                    const coords = sidebar.getBoundingClientRect()
+                    this.$store.commit('setBbbWindowLeft', coords.right)
+                }
+            }, 700)
+
         }
     }
 

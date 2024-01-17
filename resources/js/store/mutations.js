@@ -46,5 +46,8 @@ export default {
     },
     setRail(state, rail) {
         state.settings.rail = rail
+    },
+    setBbbWindowLeft(state, left) {
+        state.settings.bbbWindowLeft = left
     }
 }

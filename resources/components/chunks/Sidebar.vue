@@ -1,8 +1,10 @@
 <template>
     <v-navigation-drawer
+        id="sidebar"
+        v-model="drawer"
         :rail="opened"
-        :temporary="$route.name === 'bbb'"
-        @update:rail="onUpdateRail">
+        :permanent="true"
+        @update:rail="onUpdateRail($event)">
         <v-sheet
             color="deep-orange">
             <div
@@ -60,6 +62,7 @@ export default {
     emits: [ 'on-update-rail' ],
     data() {
         return {
+            drawer: true,
             opened: false,
             links: [
                 [

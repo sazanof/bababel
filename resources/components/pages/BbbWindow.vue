@@ -2,7 +2,9 @@
     <div
         v-if="joinInfo"
         class="link">
-        <div class="auto-height">
+        <div
+            class="auto-height"
+            :style="`left: ${bbbWindowLeft}px`">
             <iframe
                 v-if="!hideFrame"
                 ref="frame"
@@ -16,7 +18,7 @@
     </div>
     <v-alert
         v-else
-        type="error"
+        type="warning"
         :text="$t('Unable to get information about the meeting, please contact technical support.')" />
 </template>
 
@@ -31,8 +33,14 @@ export default {
     },
     data() {
         return {
+            left: 0,
             joinInfo: null,
             hideFrame: false
+        }
+    },
+    computed: {
+        bbbWindowLeft() {
+            return this.$store.getters['getBbbWindowLeft']
         }
     },
     async created() {
@@ -72,7 +80,6 @@ export default {
 .auto-height {
     position: absolute;
     top: 65px;
-    left: 0;
     right: 0;
     bottom: 0;
 

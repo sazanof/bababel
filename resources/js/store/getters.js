@@ -19,5 +19,8 @@ export default {
     },
     getRail(state) {
         return state.settings.rail
+    },
+    getBbbWindowLeft(state) {
+        return state.settings.bbbWindowLeft
     }
 }
