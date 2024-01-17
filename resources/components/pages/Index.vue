@@ -6,9 +6,9 @@
         :full-height="true">
         <Sidebar
             :user="user"
-            :drawer="drawer"
-            @on-update-drawer="drawer = !drawer" />
-        <AppHeader @on-menu-click="drawer = !drawer" />
+            :rail="rail"
+            @on-update-rail="rail = $event" />
+        <AppHeader @on-menu-click="onMenuClick" />
         <v-main>
             <v-container
                 fluid>
@@ -66,17 +66,21 @@ export default {
     },
     data() {
         return {
-            drawer: false
+            rail: true
         }
     },
     created() {
-        this.drawer = this.$route.path !== '/bbb'
-
+        this.rail = this.$route.path !== '/bbb'
+        this.$store.commit('setRail', this.rail)
     },
     methods: {
         openCreateMeeting() {
             this.$store.commit('clearMeetingState')
             this.$router.push({ name: 'create_meeting' })
+        },
+        onMenuClick() {
+            this.rail = !this.rail
+            this.$store.commit('setRail', this.rail)
         }
     }
 

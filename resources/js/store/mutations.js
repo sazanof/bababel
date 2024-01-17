@@ -43,5 +43,8 @@ export default {
     },
     updateAvatar(state, blobUrl) {
         state.user.photo = blobUrl
+    },
+    setRail(state, rail) {
+        state.settings.rail = rail
     }
 }

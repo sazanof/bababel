@@ -16,5 +16,8 @@ export default {
     },
     getJoinInfo(state) {
         return state.activeJoinInfo
+    },
+    getRail(state) {
+        return state.settings.rail
     }
 }

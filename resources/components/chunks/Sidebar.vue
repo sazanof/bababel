@@ -1,27 +1,32 @@
 <template>
     <v-navigation-drawer
-        v-model="opened"
+        :rail="opened"
         :temporary="$route.name === 'bbb'"
-        @update:modelValue="$emit('on-update-drawer', $event)">
+        @update:rail="onUpdateRail">
         <v-sheet
-            color="deep-orange"
-            class="pa-4">
-            <Avatar
-                class="mb-4"
-                :size="opened ? 64 : 40"
-                :user="user" />
+            color="deep-orange">
             <div
-                class="name">
-                {{ fullName }}
-            </div>
-            <div>
-                {{ user.email }}
+                class="user-block"
+                :class="{mini : rail}">
+                <Avatar
+                    class="avatar"
+                    :size="!rail ? 64 : 42"
+                    :user="user" />
+                <div
+                    v-if="!rail"
+                    class="name">
+                    {{ fullName }}
+                </div>
+                <div
+                    v-if="!rail">
+                    {{ user.email }}
+                </div>
             </div>
         </v-sheet>
 
         <v-divider color="blue-grey-darken-4" />
 
-        <v-list>
+        <v-list class="pa-0">
             <v-list-item
                 v-for="[icon, text, path] in links"
                 :key="icon"
@@ -43,7 +48,7 @@ export default {
     name: 'Sidebar',
     components: { Avatar },
     props: {
-        drawer: {
+        rail: {
             type: Boolean,
             default: true
         },
@@ -52,7 +57,7 @@ export default {
             required: true
         }
     },
-    emits: [ 'on-update-drawer' ],
+    emits: [ 'on-update-rail' ],
     data() {
         return {
             opened: false,
@@ -91,18 +96,41 @@ export default {
         }
     },
     watch: {
-        drawer() {
-            this.opened = this.drawer
+        rail() {
+            this.opened = this.rail
         }
     },
     created() {
         this.opened = this.$route.path !== '/bbb'
+    },
+    methods: {
+        onUpdateRail() {
+            this.$emit('on-update-rail', this.rail)
+        }
     }
 }
 </script>
 
 <style lang="scss" scoped>
-.name {
-    font-weight: bold;
+.user-block {
+    min-height: 64px;
+    transition: 0.5s;
+
+    .name {
+        font-weight: bold;
+    }
+
+    padding: 6px;
+
+    &.mini {
+        padding-top: 10px;
+    }
+
+    &:not(.mini) {
+        .avatar {
+            margin-bottom: 10px;
+        }
+    }
 }
+
 </style>
