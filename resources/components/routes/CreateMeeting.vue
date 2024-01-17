@@ -218,7 +218,7 @@ export default {
             return this.$route.params.id ?? null
         },
         formattedDate() {
-            return this.date ? m(this.date).format('DD.MM.YYYY HH:mm') : m().format('DD.MM.YYYY HH:mm')
+            return this.date ? m(this.date).format('DD.MM.YYYY HH:mm') : this.meeting.date
         },
         user() {
             return this.$store.getters['getUser']
@@ -255,7 +255,7 @@ export default {
         }
         this.layout = this.meeting.meetingLayout
         this.guestPolicy = this.meeting.guestPolicy
-        this.date = this.meeting.date
+        this.date = new Date()
     },
     methods: {
         async saveMeeting(event) {

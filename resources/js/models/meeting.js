@@ -1,8 +1,9 @@
+import moment from 'moment'
+
 export default class Meeting {
     constructor() {
         this.id = null
         this.name = null
-        this.date = new Date().toISOString()
         this.welcome = null
         this.record = true
         this.autoStartRecording = false
@@ -15,12 +16,12 @@ export default class Meeting {
         this.files = null
         this.meetingLayout = 'VIDEO_FOCUS'
         this.guestPolicy = 'ASK_MODERATOR'
+        this.resetDate()
     }
 
     reset() {
         this.id = null
         this.name = null
-        this.date = new Date().toISOString()
         this.welcome = null
         this.record = true
         this.autoStartRecording = false
@@ -33,10 +34,15 @@ export default class Meeting {
         this.files = null
         this.meetingLayout = 'VIDEO_FOCUS'
         this.guestPolicy = 'ASK_MODERATOR'
+        this.resetDate()
     }
 
     update(data) {
         Object.assign(this, data)
+    }
+
+    resetDate() {
+        this.date = moment(new Date()).format('DD.MM.YYYY HH:mm')
     }
 
     toObject() {
