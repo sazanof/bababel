@@ -69,7 +69,7 @@ class SyncRecordingsCommand extends Command
                     //dump($recording->playback);
                     $toDB = [
                         'recordId' => $recording->recordID,
-                        'meetingId' => $recording->meetingID,
+                        'meetingId' => $meeting->id,
                         'startTime' => Carbon::createFromTimestampMs($recording->startTime),
                         'endTime' => Carbon::createFromTimestampMs($recording->endTime),
                         'state' => $this->makeState($recording->state),
