@@ -9,6 +9,7 @@ use App\Mail\NewMeetingMail;
 use App\Mail\UpdateMeetingDateMail;
 use App\Models\Meeting;
 use App\Models\Notification;
+use App\Models\Participant;
 use App\Models\User;
 use App\Models\UserNotification;
 use Illuminate\Support\Arr;
@@ -70,14 +71,20 @@ class NotificationHelper
     }
 
     /**
-     * @param Meeting $meeting
+     * @param array|Meeting $meeting
      * @param string $key
      * @return ?array
      */
-    public static function getMeetingRecipientsByNotificationKey(Meeting $meeting, string $key): ?array
+    public static function getMeetingRecipientsByNotificationKey(array|Meeting $meeting, string $key): ?array
     {
         $participants = null;
-        if ($meeting->participants->isNotEmpty()) {
+        if ($meeting instanceof Meeting) {
+            $db_participants = $meeting->participants;
+        } else {
+            $id = $meeting['id'];
+            $db_participants = Participant::where('meetingId', $id)->get();
+        }
+        if ($db_participants->isNotEmpty()) {
             foreach ($meeting->participants as $participant) {
                 if (
                     filter_var($participant->email, FILTER_VALIDATE_EMAIL) &&
@@ -140,9 +147,12 @@ class NotificationHelper
      */
     public static function sendNotificationsOnMeetingDelete(array|Meeting $meeting, ?array $recipients = null): void
     {
-        if (is_null($recipients)) {
-            $recipients = NotificationHelper::getMeetingRecipientsByNotificationKey($meeting, NotificationHelper::NOTY_MEETING_DELETE);
+        if ($meeting instanceof Meeting) {
+            if (is_null($recipients)) {
+                $recipients = NotificationHelper::getMeetingRecipientsByNotificationKey($meeting, NotificationHelper::NOTY_MEETING_DELETE);
+            }
         }
+
 
         if ($recipients !== null) {
             /** @var Address $recipient */
