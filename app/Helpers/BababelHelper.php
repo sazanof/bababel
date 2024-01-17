@@ -156,6 +156,7 @@ class BababelHelper
         $params->setAllowModsToEjectCameras($meeting->allowModsToEjectCameras);
         $params->setMeetingLayout($meeting->meetingLayout);
         $params->setEndWhenNoModeratorDelayInMinutes($meeting->endWhenNoModeratorDelayInMinutes);
+        $params->setGuestPolicy($meeting->guestPolicy);
         $params->setBannerText(env('APP_NAME'));
 
 
