@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Helpers\BababelHelper;
+use App\Models\Meeting;
 use App\Models\Recording;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
@@ -60,20 +61,25 @@ class SyncRecordingsCommand extends Command
             $this->pages = ceil($this->total / $this->limit);
             $this->start = $this->offset + 1;
             $recordings = $recordings instanceof \stdClass ? [$recordings] : $recordings;
+
             foreach ($recordings as $recording) {
                 $this->counter++;
-                //dump($recording->playback);
-                $toDB = [
-                    'recordId' => $recording->recordID,
-                    'meetingId' => $recording->meetingID,
-                    'startTime' => Carbon::createFromTimestampMs($recording->startTime),
-                    'endTime' => Carbon::createFromTimestampMs($recording->endTime),
-                    'state' => $this->makeState($recording->state),
-                    'size' => (int)$recording->size,
-                    'url' => $recording->playback->format->url,
-                    'processingTime' => (int)$recording->playback->format->processingTime
-                ];
-                Recording::updateOrInsert(['recordId' => $toDB['recordId']], $toDB);
+                $meeting = Meeting::where('meetingId', $recording->meetingID)->first();
+                if (!is_null($meeting)) {
+                    //dump($recording->playback);
+                    $toDB = [
+                        'recordId' => $recording->recordID,
+                        'meetingId' => $recording->meetingID,
+                        'startTime' => Carbon::createFromTimestampMs($recording->startTime),
+                        'endTime' => Carbon::createFromTimestampMs($recording->endTime),
+                        'state' => $this->makeState($recording->state),
+                        'size' => (int)$recording->size,
+                        'url' => $recording->playback->format->url,
+                        'processingTime' => (int)$recording->playback->format->processingTime
+                    ];
+                    Recording::updateOrInsert(['recordId' => $toDB['recordId']], $toDB);
+                }
+
             }
             dump("Limit $this->limit, offset $this->offset, pages $this->pages, counter $this->counter");
             if ($this->counter == $this->total) {
