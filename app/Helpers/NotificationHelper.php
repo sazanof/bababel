@@ -6,14 +6,17 @@ use App\Mail\AddParticipantMail;
 use App\Mail\DeleteMeetingMail;
 use App\Mail\DeleteParticipantMail;
 use App\Mail\NewMeetingMail;
+use App\Mail\RecordingReadyMail;
 use App\Mail\UpdateMeetingDateMail;
 use App\Models\Meeting;
 use App\Models\Notification;
 use App\Models\Participant;
+use App\Models\Recording;
 use App\Models\User;
 use App\Models\UserNotification;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Mail\Mailables\Address;
@@ -32,6 +35,7 @@ class NotificationHelper
     public const NOTY_MEETING_DELETE = 'meeting.delete';
     public const NOTY_PARTICIPANT_CREATE = 'participant.create';
     public const NOTY_PARTICIPANT_DELETE = 'participant.delete';
+    public const NOTY_RECORDING_READY = 'recording.ready';
 
     /**
      * @param string $key
@@ -68,6 +72,23 @@ class NotificationHelper
             return self::subscribeOn($key, !empty($arguments) && $arguments[0] instanceof User ? $arguments[0] : null);
         }
         return false;
+    }
+
+    public static function getMeetingModerators(Meeting $meeting, string $key)
+    {
+        $moderators = null;
+        $participants = $meeting->participants()->where('isModerator', true)->get();
+        if ($participants->isNotEmpty()) {
+            foreach ($participants as $participant) {
+                if (
+                    filter_var($participant->email, FILTER_VALIDATE_EMAIL) &&
+                    self::subscribeOn($key, $participant)
+                ) {
+                    $moderators[] = new Address($participant->email, $participant->lastname . ' ' . $participant->firstname);
+                }
+            }
+        }
+        return $moderators;
     }
 
     /**
@@ -120,6 +141,25 @@ class NotificationHelper
                     ->queue(new NewMeetingMail($meeting, $user));
             }
         }
+    }
+
+    public static function sendNotificationsOnRecordingReady(Recording $recording): void
+    {
+        try {
+            $recording->load('meeting');
+            $recipients = NotificationHelper::getMeetingModerators($recording->meeting, NotificationHelper::NOTY_RECORDING_READY);
+            if (!is_null($recipients)) {
+                /** @var Address $recipient */
+                foreach ($recipients as $recipient) {
+                    Mail
+                        ::to($recipient)
+                        ->queue(new RecordingReadyMail($recording));
+                }
+            }
+        } catch (\Exception $e) {
+            Log::error('[BBB] [sendNotificationsOnRecordingReady] failed with message: ' . $e->getMessage());
+        }
+
     }
 
     /**

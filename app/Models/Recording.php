@@ -33,6 +33,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Recording whereState($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Recording whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Recording whereUrl($value)
+ * @property-read \App\Models\Meeting|null $meeting
  * @mixin \Eloquent
  */
 class Recording extends Model
@@ -60,4 +61,9 @@ class Recording extends Model
         'url' => 'string',
         'processingTime' => 'integer'
     ];
+
+    public function meeting()
+    {
+        return $this->belongsTo(Meeting::class, 'meetingId', 'id');
+    }
 }

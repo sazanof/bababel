@@ -5,6 +5,7 @@ return [
         'meeting_update_date' => 'Перенос даты',
         'meeting_delete' => 'Удаление встречи',
         'participant_create' => 'Меня пригласили на встречу',
-        'participant_delete' => 'Меня исключили из встречи'
+        'participant_delete' => 'Меня исключили из встречи',
+        'recording_ready' => 'Готовность записи'
     ]
 ];

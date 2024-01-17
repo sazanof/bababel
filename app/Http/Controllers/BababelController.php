@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\JoinMeetingException;
 use App\Helpers\BababelHelper;
+use App\Helpers\NotificationHelper;
 use App\Models\Meeting;
 use App\Models\Participant;
 use App\Models\Recording;
@@ -168,6 +169,9 @@ class BababelController extends Controller
                     $recording->url = $r->playback->format->url;
                     $recording->state = $this->makeState($r->state);
                     $recording->save();
+                    // Send notification
+                    NotificationHelper::sendNotificationsOnRecordingReady($recording);
+
                 } catch (\Exception $e) {
                     Log::error('[BBB] [callbackRecordReady] - error while adding recording for recordId ' . $signedParameters->getRecordId());
                     Log::error(json_encode($e));

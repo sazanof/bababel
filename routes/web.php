@@ -107,11 +107,6 @@ Route
             ->where('id', '[0-9]+')
             ->name('make_cover');
     });
-//Route::get('/test', function () {
-//    $parameters = 'eyJhbGciOiJIUzI1NiJ9.eyJtZWV0aW5nX2lkIjoiNjVhNzY4NDRhYThmODYuNDU5NTM3NzQiLCJyZWNvcmRfaWQiOiI5ZjM1MWRiYjg4MmE3YjQ1NDViMWY4NWI5MjlhMDkzYTg3OGJiZjUyLTE3MDU0NzE2MDM5MjMifQ.VEi6yMChnOUWR7Bqjl5g5mrANykrfeSqKEYSsk84XBk';
-//
-//
-//});
 Route::get('/', [AuthController::class, 'index']);
 Route::prefix('mail')->group(function () {
     Route::get('logo', [MailController::class, 'getLogo']);
