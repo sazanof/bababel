@@ -89,6 +89,13 @@
             <p class="mb-4 text-medium-emphasis text-body-2">
                 {{ meeting.meeting.welcome }}
             </p>
+            <a
+                v-if="url"
+                :href="url"
+                class="redirect-link text-deep-orange"
+                target="_blank">
+                {{ $t('If you have not been redirected, click here') }}
+            </a>
             <v-divider class="mb-4" />
             <v-btn
                 v-if="canJoin && !loading"
@@ -164,6 +171,13 @@
                         v-model="fullName"
                         :label="$t('Name')" />
                 </div>
+                <a
+                    v-if="url"
+                    :href="url"
+                    class="redirect-link"
+                    target="_blank">
+                    {{ $t('If you have not been redirected, click here') }}
+                </a>
             </v-card-text>
             <v-card-actions>
                 <v-btn
@@ -207,7 +221,8 @@ export default {
             joinLoader: false,
             meeting: null,
             refreshHandle: null,
-            fullName: null
+            fullName: null,
+            url: null
         }
     },
     computed: {
@@ -239,7 +254,8 @@ export default {
             return moment(this.meeting.meeting.date).format('DD.MM.YYYY HH:mm')
         },
         time() {
-            return moment(this.meeting.meeting.date).toDate() - new Date()
+            const time = moment(this.meeting.meeting.date).toDate() - new Date()
+            return time < 0 ? 0 : time
         }
     },
     async created() {
@@ -278,6 +294,7 @@ export default {
         async joinMeeting() {
             this.joinLoader = true
             const method = this.user !== null ? 'joinMeeting' : 'joinMeetingAsGuest'
+            const _window = this.user !== null ? null : window.open()
             const joinInfo = await this.$store.dispatch(method, {
                 id: this.id,
                 visibleName: this.fullName
@@ -301,6 +318,7 @@ export default {
                     this.joinLoader = false
                 })
             if (joinInfo && !this.duplicate) {
+                this.url = joinInfo.join.url
                 if (this.user !== null) {
                     this.$store.commit('setActiveJoinInfo', joinInfo)
                     this.$router.push({
@@ -310,7 +328,10 @@ export default {
                         }
                     })
                 } else {
-                    window.open(joinInfo.join.url, '_blank').focus()
+                    if (_window !== null) {
+                        _window.location = joinInfo.join.url
+                    }
+                    //window.open(joinInfo.join.url, '_blank').focus()
                 }
             }
 
@@ -332,6 +353,12 @@ export default {
     align-items: center;
     justify-content: center;
     overflow: hidden;
+
+    .redirect-link {
+        text-align: center;
+        display: block;
+        margin: 10px 0;
+    }
 
     &:before {
         content: "";
