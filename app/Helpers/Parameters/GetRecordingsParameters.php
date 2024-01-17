@@ -26,6 +26,16 @@ class GetRecordingsParameters extends \BigBlueButton\Parameters\GetRecordingsPar
         $this->limit = $limit;
     }
 
+    public function setRecordId($recordId)
+    {
+        return $this->recordId = $recordId;
+    }
+
+    public function setMeetingId($meetingId)
+    {
+        return $this->meetingId = $meetingId;
+    }
+
     /**
      * @return int
      */

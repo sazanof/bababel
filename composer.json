@@ -12,6 +12,7 @@
         "bigbluebutton/bigbluebutton-api-php": "dev-master",
         "directorytree/ldaprecord": "^3.2",
         "directorytree/ldaprecord-laravel": "^3.0",
+        "firebase/php-jwt": "^6.10",
         "guzzlehttp/guzzle": "^7.2",
         "intervention/image": "^2.7",
         "intervention/imagecache": "^2.6",

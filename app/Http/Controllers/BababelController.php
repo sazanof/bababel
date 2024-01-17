@@ -6,6 +6,7 @@ use App\Exceptions\JoinMeetingException;
 use App\Helpers\BababelHelper;
 use App\Models\Meeting;
 use App\Models\Participant;
+use App\Models\Recording;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -130,9 +131,51 @@ class BababelController extends Controller
 
     }
 
+    private function makeState(string $state)
+    {
+        return match ($state) {
+            'unpublished' => 0,
+            'published' => 1,
+            default => throw new \Exception('Unexpected match value')
+        };
+    }
+
     public function callbackRecordReady(int $id, Request $request)
     {
         //TODO notificate organizer
+        /**
+         * $rec = Recording::first();
+         * $id = $rec->recordId;
+         * $res = BababelHelper::getRecording($id);
+         * $record = $res->getData()->recordings->recording;
+         */
+        $parameters = $request->get('signed_parameters');
+        if (!empty($parameters)) {
+            $signedParameters = BababelHelper::parseSignedParameters($parameters);
+            if (!is_null($signedParameters)) {
+                try {
+                    $p = BababelHelper::parseSignedParameters($parameters);
+                    $r = BababelHelper::getRecording($p->getRecordId());
+                    $r = $r->getData()->recordings->recording;
+                    $recording = new Recording();
+                    $meeting = Meeting::where('meetingId', $r->meetingID)->firstOrFail();
+                    $recording->meetingId = $meeting->id;
+                    $recording->recordId = $r->recordID;
+                    $recording->startTime = \Illuminate\Support\Carbon::createFromTimestampMs($r->startTime);
+                    $recording->endTime = \Illuminate\Support\Carbon::createFromTimestampMs($r->endTime);
+                    $recording->processingTime = $r->playback->format->processingTime;
+                    $recording->size = $r->size;
+                    $recording->url = $r->playback->format->url;
+                    $recording->state = $this->makeState($r->state);
+                    $recording->save();
+                } catch (\Exception $e) {
+                    Log::error('[BBB] [callbackRecordReady] - error while adding recording for recordId ' . $signedParameters->getRecordId());
+                    Log::error(json_encode($e));
+                    dump($e);
+                }
+            }
+
+        }
         Log::info('[BBB CALLBACK RECORD ' . $id . '] ' . __METHOD__ . ': ' . json_encode($request->all()));
     }
 

@@ -107,32 +107,11 @@ Route
             ->where('id', '[0-9]+')
             ->name('make_cover');
     });
-Route::get('/test', function () {
-    /*return view('mail.meeting-create', [
-        'meeting' => \App\Models\Meeting::all()->random(),
-        'subject' => fake()->realText(),
-        'msg' => fake()->randomElement(
-            [
-                'Михаил, вас пригласили на встречу',
-                //'Михаил, встреча отменена'
-            ]
-        )
-    ]);*/
-    $m = \App\Models\Meeting::find(9132);
-    $r = \App\Helpers\NotificationHelper::getMeetingRecipientsByNotificationKey($m, \App\Helpers\NotificationHelper::NOTY_MEETING_CREATE);
-    dd($r);
-
-    if ($r !== null) {
-        /** @var \Illuminate\Mail\Mailables\Address $recipient */
-        foreach ($r as $recipient) {
-            $user = \App\Models\User::where('email', $recipient->address)->first();
-            \Illuminate\Support\Facades\Mail
-                ::to($recipient)
-                ->queue(new \App\Mail\NewMeetingMail($m, $user));
-            dump($user->firstname . ' ' . $user->lastname . ' -> ' . $recipient->address);
-        }
-    }
-});
+//Route::get('/test', function () {
+//    $parameters = 'eyJhbGciOiJIUzI1NiJ9.eyJtZWV0aW5nX2lkIjoiNjVhNzY4NDRhYThmODYuNDU5NTM3NzQiLCJyZWNvcmRfaWQiOiI5ZjM1MWRiYjg4MmE3YjQ1NDViMWY4NWI5MjlhMDkzYTg3OGJiZjUyLTE3MDU0NzE2MDM5MjMifQ.VEi6yMChnOUWR7Bqjl5g5mrANykrfeSqKEYSsk84XBk';
+//
+//
+//});
 Route::get('/', [AuthController::class, 'index']);
 Route::prefix('mail')->group(function () {
     Route::get('logo', [MailController::class, 'getLogo']);

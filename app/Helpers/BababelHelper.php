@@ -16,12 +16,16 @@ use BigBlueButton\Parameters\HooksCreateParameters;
 use BigBlueButton\Parameters\InsertDocumentParameters;
 use BigBlueButton\Parameters\IsMeetingRunningParameters;
 use BigBlueButton\Parameters\JoinMeetingParameters;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+use Firebase\JWT\SignatureInvalidException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 
 class BababelHelper
 {
@@ -302,6 +306,32 @@ class BababelHelper
 
         $response = $inst->bbb->getRecordings($parameters);
         return BigBlueButtonApiResponse::output($response);
+    }
+
+    public static function getRecording(string $recordId): BigBlueButtonApiResponse
+    {
+        $inst = self::getInstance();
+        $parameters = $inst->recordingParameters();
+        $parameters->setRecordId($recordId);
+        $response = $inst->bbb->getRecordings($parameters);
+        return BigBlueButtonApiResponse::output($response);
+    }
+
+    /**
+     * @param string $parameters
+     * @return BababelSignedParameters|null
+     */
+    public static function parseSignedParameters(string $parameters): ?BababelSignedParameters
+    {
+        try {
+            $jwt = JWT::decode($parameters, new Key(env('BBB_SECRET'), 'HS256'));
+            if ($jwt->meeting_id && $jwt->record_id) {
+                return new BababelSignedParameters($jwt->meeting_id, $jwt->record_id);
+            }
+        } catch (SignatureInvalidException $e) {
+            Log::error("[BBB] [parseSignedParameters]: " . $e->getMessage());
+            return null;
+        }
     }
 
     /**
