@@ -15,7 +15,7 @@ export default class Meeting {
         this.participants = []
         this.files = null
         this.meetingLayout = 'VIDEO_FOCUS'
-        this.guestPolicy = 'ASK_MODERATOR'
+        this.guestPolicy = 'ALWAYS_DENY'
         this.resetDate()
     }
 
@@ -33,7 +33,7 @@ export default class Meeting {
         this.participants = []
         this.files = null
         this.meetingLayout = 'VIDEO_FOCUS'
-        this.guestPolicy = 'ASK_MODERATOR'
+        this.guestPolicy = 'ALWAYS_DENY'
         this.resetDate()
     }
 

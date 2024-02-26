@@ -44,7 +44,7 @@ Route
         });
         Route::prefix('profile')->group(function () {
             Route::post('avatar', [UsersController::class, 'updateAvatar']);
-            Route::get('avatar/{size?}', [UsersController::class, 'getProfileAvatar'])->name('avatar');
+            Route::get('avatar/{size?}', [UsersController::class, 'getProfileAvatar'])->name('profile_avatar');
         });
         Route::prefix('meetings')->group(function () {
             /** ADMIN ROUTES TO START, STOP, END, CREATE MEETING */

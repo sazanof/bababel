@@ -48,7 +48,6 @@ export default {
         const info = await this.getJoinInfo()
         if (info) {
             this.joinInfo = this.$store.getters['getJoinInfo']
-            this.$store.commit('resetActiveJoinInfo')
         }
         if (this.joinInfo === null) {
             this.$router.push({ name: 'meeting_page', params: { id: info.meetingId } })
@@ -58,11 +57,11 @@ export default {
             return false
         }, { capture: true })
         window.addEventListener('message', function (e) {
-            console.log(e)
             if (typeof e.data === 'object') {
                 if (e.data?.fromIFrame) {
                     that.hideFrame = true
-                    that.$router.go(-1)
+                    console.log(info)
+                    that.$router.push({ name: 'meeting_page', params: { id: info.meetingId } })
                 }
             }
         }, false)

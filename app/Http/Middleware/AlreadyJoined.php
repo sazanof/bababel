@@ -11,7 +11,6 @@ use App\Models\Participant;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use PHPUnit\Logging\Exception;
 use Symfony\Component\HttpFoundation\Response;
 
 class AlreadyJoined
@@ -60,7 +59,7 @@ class AlreadyJoined
             }
             return $next($request);
         }
-        throw new Exception(__('exceptions.join.error'));
+        throw new \Exception(__('exceptions.join.error'));
 
     }
 }

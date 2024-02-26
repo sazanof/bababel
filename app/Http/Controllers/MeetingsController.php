@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\MeetingGuestPolicy;
+use App\Enums\MeetingStatus;
 use App\Exceptions\MeetingsException;
 use App\Helpers\MeetingFormRequest;
 use App\Helpers\NotificationHelper;
@@ -229,25 +231,12 @@ class MeetingsController extends Controller
     {
         /** @var User $user */
         $user = $request->user();
-        $guest = false;
-        $success = false;
+        $allowGuests = false;
 
         $meeting = Meeting::find($id);
 
-        switch ($meeting->guestPolicy) {
-            case 'ALWAYS_ACCEPT':
-                $guest = true;
-                $success = true;
-                break;
-            case 'ALWAYS_DENY':
-                if (is_null($user)) {
-                    throw new \Exception('Access denied to meeting');
-                }
-                $success = true;
-                break;
-            case 'ASK_MODERATOR':
-                $success = true;
-                break;
+        if ($meeting->guestPolicy === MeetingGuestPolicy::ALWAYS_ACCEPT->value) {
+            $allowGuests = true;
         }
 
         /** @var ?Participant $participant */
@@ -259,32 +248,31 @@ class MeetingsController extends Controller
                     ->where('userId', $user->id)
                     ->first();
         }
-        $isParticipant = $user instanceof User && $participant instanceof Participant;
-        $canJoin = ($meeting->status === 2 || $meeting->status === 1) && ($isParticipant || $success); // PENDING or STARTED
-        $isStarted = $meeting->status === 1; // STARTED ON SERVER
         $isOwner = $meeting instanceof Meeting && $user instanceof User && $meeting->userId === $user->id;
         $isModerator = $meeting instanceof Meeting &&
             $participant !== null &&
             in_array($participant->isModerator, ['true', true, 1]);
+        $isParticipant = $participant !== null;
+        $canJoin = ($meeting->status === MeetingStatus::CREATED->value || $meeting->status === MeetingStatus::PENDING->value) && ($isModerator || $isOwner || $isParticipant || $allowGuests); // PENDING or STARTED
 
-        if ($success) {
-            $m = [
-                'name' => $meeting->name,
-                'welcome' => $meeting->welcome,
-                'date' => $meeting->date,
-                'status' => $meeting->status
-            ];
-        } else {
-            $m = null;
-        }
+        $isStarted = $meeting->status === MeetingStatus::CREATED->value || $meeting->status === MeetingStatus::PENDING->value; // STARTED ON SERVER
+
+
+        $m = [
+            'name' => $meeting->name,
+            'welcome' => $meeting->welcome,
+            'date' => $meeting->date,
+            'status' => $meeting->status,
+            'owner' => Auth::id() ? $meeting->owner : null
+        ];
+
         return [
             'isModerator' => $isModerator,
             'isParticipant' => $isParticipant,
             'isOwner' => $isOwner,
             'isStarted' => $isStarted,
             'canJoin' => $canJoin,
-            'isGuest' => $guest,
-            'success' => $success,
+            'isGuest' => $allowGuests,
             'meeting' => $m
         ];
     }

@@ -2,6 +2,8 @@
 
 namespace App\Helpers;
 
+use App\Enums\MeetingGuestPolicy;
+use App\Enums\MeetingParticipantRole;
 use App\Models\Document;
 use App\Models\Meeting;
 use App\Models\Participant;
@@ -25,7 +27,6 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Str;
 
 class BababelHelper
 {
@@ -108,10 +109,10 @@ class BababelHelper
         return BigBlueButtonApiResponse::output($response)->merge($meeting);
     }
 
-    public static function joinMeeting(Meeting $meeting, string $fullName = null)
+    public static function joinMeeting(Meeting $meeting, string $fullName = null, User $user = null)
     {
         $inst = self::getInstance();
-        $response = $inst->bbb->joinMeeting($inst->joinMeetingParameters($meeting, null, $fullName));
+        $response = $inst->bbb->joinMeeting($inst->joinMeetingParameters($meeting, $user, $fullName));
         return BigBlueButtonApiResponse::output($response);
     }
 
@@ -156,7 +157,11 @@ class BababelHelper
         $params->setAllowModsToEjectCameras($meeting->allowModsToEjectCameras);
         $params->setMeetingLayout($meeting->meetingLayout);
         $params->setEndWhenNoModeratorDelayInMinutes($meeting->endWhenNoModeratorDelayInMinutes);
-        $params->setGuestPolicy($meeting->guestPolicy);
+
+        //$params->setGuestPolicy($meeting->guestPolicy);
+
+        // FIX https://github.com/bigbluebutton/bigbluebutton/pull/16965
+        $params->setGuestPolicy(MeetingGuestPolicy::ALWAYS_ACCEPT->value);
         $params->setBannerText(env('APP_NAME'));
 
 
@@ -216,7 +221,7 @@ class BababelHelper
         /** @var Participant $participant */
         $participant = $user instanceof User ? $meeting->participants()->where('userId', $user->id)->first() : null;
         //MODERATOR or VIEWER
-        $role = !is_null($participant) && $participant->isModerator ? 'MODERATOR' : 'VIEWER';
+        $role = !is_null($participant) && $participant->isModerator ? MeetingParticipantRole::MODERATOR->value : MeetingParticipantRole::VIEWER->value;
         $fullName = $visibleName ?? $user->lastname . ' ' . $user->firstname;
 
         $parameters = new JoinMeetingParameters($meeting->meetingID);
@@ -225,12 +230,13 @@ class BababelHelper
             $parameters->setUserId($user->id);
             $parameters->setAvatarURL(URL::route('avatar', ['id' => $user->id, 'size' => 128]));
             $parameters->setCustomParameter('errorRedirectUrl', URL::route('join_error', ['id' => $meeting->id, 'userId' => $user->id]));
+        } else {
+            $parameters->setGuest(true);
         }
         $parameters->setRole($role);
-        $parameters->setDefaultLayout(!is_null($participant) ? $participant->defaultLayout : $meeting->meetingLayout); // TODO change from frontend
+        $parameters->setDefaultLayout(!is_null($participant) ? $participant->defaultLayout : $meeting->meetingLayout);
         $parameters->setExcludeFromDashboard(!is_null($participant) ? $participant->excludeFromDashboard : false);
         // TODO - denied GUEST (is_guest)
-        $parameters->setGuest(!is_null($participant) ? $participant->guest : true);
         $parameters->setUsername($fullName);
         $parameters->setRedirect(false);
         return $parameters;

@@ -3,6 +3,15 @@
         class="bg-blue-grey-lighten-5"
         :elevation="0">
         <template #append>
+            <v-tooltip :text="$t('Service running in development mode')">
+                <template #activator="{ props }">
+                    <v-btn
+                        variant="tonal"
+                        v-bind="props"
+                        icon="mdi-alert"
+                        color="error" />
+                </template>
+            </v-tooltip>
             <v-btn icon="mdi-magnify" />
             <v-btn
                 icon="mdi-account"

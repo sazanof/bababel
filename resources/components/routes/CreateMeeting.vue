@@ -185,10 +185,6 @@ export default {
                 {
                     title: this.$t('Deny'),
                     value: 'ALWAYS_DENY'
-                },
-                {
-                    title: this.$t('Ask moderator'),
-                    value: 'ASK_MODERATOR'
                 }
             ],
             layoutOptions: [

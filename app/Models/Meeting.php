@@ -214,6 +214,7 @@ class Meeting extends Model
      * preUploadedPresentationName
      **/
 
+    /** @deprecated */
     public const STATUS_NEW = 0;
     public const STATUS_CREATED = 1;
     public const STATUS_PENDING = 2;

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\MeetingGuestPolicy;
 use App\Exceptions\JoinMeetingException;
 use App\Helpers\BababelHelper;
 use App\Helpers\NotificationHelper;
@@ -61,6 +62,7 @@ class BababelController extends Controller
      * @param Request $request
      * @return \App\Helpers\BigBlueButtonApiResponse
      * @throws JoinMeetingException
+     * @throws \Exception
      */
     public function joinMeeting(int $id, Request $request)
     {
@@ -68,19 +70,34 @@ class BababelController extends Controller
         $user = $request->user();
         /** @var Meeting $meeting */
         $meeting = Meeting::select(Meeting::$selectableFields)->find($id);
-        $res = BababelHelper::joinMeeting($meeting, $request->get('visibleName'));
+        if (!$user instanceof User) {
+            switch ($meeting->guestPolicy) {
+                case MeetingGuestPolicy::ASK_MODERATOR:
+                case MeetingGuestPolicy::ALWAYS_DENY:
+                    throw new \Exception('Guest access not allowed for this meeting', 66);
+            }
+        }
+
+        // ok: user is User, guest policy is ALWAYS ACCEPT
+
+        $res = BababelHelper::joinMeeting($meeting, $request->get('visibleName'), $request->user());
         if ($res->isSuccessful()) {
             $data = $res->getData();
             $url = $data->join->url;
-            $participant = Participant::where('meetingId', $meeting->id)->where('userId', $user->id)->first();
             $data->join->mid = $meeting->id;
-            if (!is_null($participant)) {
-                $data->join->pid = $participant->id;
-                $participant->link = $url;
-                $participant->save();
-            } elseif (!is_null($user)) {
-                $data->join->pid = $user->id;
+            // let's find that user is participant of meeting
+            if ($user instanceof User) {
+                $participant = Participant::where('meetingId', $meeting->id)->where('userId', $user->id)->first();
+
+                if (!is_null($participant)) {
+                    $data->join->pid = $participant->id;
+                    $participant->link = $url;
+                    $participant->save();
+                } else {
+                    $data->join->pid = $user->id;
+                }
             }
+
             $meeting->status = $meeting::STATUS_PENDING;
             $meeting->save();
             return $data;
