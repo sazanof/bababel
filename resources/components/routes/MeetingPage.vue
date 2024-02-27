@@ -339,7 +339,7 @@ export default {
             return this.meeting !== null && (this.isGuest || this.isOwner || this.isModerator || this.isParticipant)
         }
     },
-    async created() {
+    async mounted() {
         if (this.user !== null) {
             await this.$store.dispatch('getMeetingInfo', this.id).catch(e => {
                 console.log(e)
@@ -357,6 +357,9 @@ export default {
                 this.loading = false
             }
         }, 3000)
+    },
+    unmounted() {
+        clearInterval(this.refreshHandle)
     },
     methods: {
         async viewMeeting() {
