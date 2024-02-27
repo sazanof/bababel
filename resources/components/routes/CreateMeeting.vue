@@ -23,7 +23,6 @@
                             :items="layoutOptions"
                             prepend-icon="mdi-palette-swatch-variant"
                             :item-props="true" />
-                        {{ meeting.date }}
                         <vue-date-picker
                             v-model="date"
                             :min-date="new Date()"
@@ -170,7 +169,6 @@ import UsersSearch from '../chunks/UsersSearch.vue'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import moment from 'moment'
 import ConfirmationDialog from '../chunks/ConfirmationDialog.vue'
-import meetings from '../chunks/Meetings.vue'
 
 const m = moment
 const toast = useToast()
