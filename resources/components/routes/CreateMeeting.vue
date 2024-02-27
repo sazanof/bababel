@@ -17,6 +17,7 @@
                             hide-details
                             :label="$t('Meeting name')" />
                         <v-select
+                            v-if="showMore"
                             v-model="layout"
                             :label="$t('Style')"
                             :items="layoutOptions"
@@ -67,7 +68,9 @@
                             :meeting="meeting"
                             @update:participants="meeting.participants = $event" />
                     </v-col>
-                    <v-col cols="4">
+                    <v-col
+                        v-if="showMore"
+                        cols="4">
                         <div
                             class="text-subtitle-1 text-grey-darken-1 text-button mb-4">
                             {{ $t('Advanced settings') }}
@@ -118,30 +121,38 @@
                     </v-col>
                 </v-row>
                 <v-row class="pb-4 px-4">
-                    <v-col>
+                    <v-col class="actions">
                         <v-btn
-                            :loading="loading"
-                            :disabled="loading"
-                            type="submit"
-                            class="mr-4"
-                            prepend-icon="mdi-content-save"
-                            color="deep-orange">
-                            {{ $t('Save') }}
-                        </v-btn>
-                        <v-btn
-                            class="mr-4"
-                            :disabled="loading"
-                            prepend-icon="mdi-close"
-                            @click="cancelCreateMeeting">
-                            {{ $t('Cancel') }}
-                        </v-btn>
-                        <v-btn
-                            :disabled="loading"
-                            color="error"
-                            prepend-icon="mdi-trash-can"
-                            @click="deleteMeeting">
-                            {{ $t('Delete') }}
-                        </v-btn>
+                            variant="text"
+                            :text="showMore ? $t('Simple mode') : $t('Extended mode')"
+                            :prepend-icon="showMore ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+                            @click="showMore = !showMore" />
+                        <div class="actions-right">
+                            <v-btn
+                                class="mr-4"
+                                :disabled="loading"
+                                prepend-icon="mdi-close"
+                                @click="cancelCreateMeeting">
+                                {{ $t('Cancel') }}
+                            </v-btn>
+                            <v-btn
+                                :loading="loading"
+                                :disabled="loading"
+                                type="submit"
+                                class="mr-4"
+                                prepend-icon="mdi-content-save"
+                                color="deep-orange">
+                                {{ $t('Save') }}
+                            </v-btn>
+                            <v-btn
+                                v-if="id"
+                                :disabled="loading"
+                                color="error"
+                                prepend-icon="mdi-trash-can"
+                                @click="deleteMeeting">
+                                {{ $t('Delete') }}
+                            </v-btn>
+                        </div>
                     </v-col>
                 </v-row>
             </v-card>
@@ -177,6 +188,7 @@ export default {
             loading: false,
             caption: null,
             files: null,
+            showMore: false,
             guestPolicyOptions: [
                 {
                     title: this.$t('Allow'),
@@ -237,6 +249,9 @@ export default {
             if (this.meeting.record === false && this.meeting.autoStartRecording === true) {
                 this.meeting.autoStartRecording = false
             }
+        },
+        editMode() {
+            return this.id !== null && this.meeting !== null
         }
     },
     async created() {
@@ -323,5 +338,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
+.actions {
+    display: flex;
+    justify-content: space-between;
+    padding-left: 52px;
+}
 </style>
