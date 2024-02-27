@@ -192,10 +192,14 @@ class MeetingFormRequest
      */
     public function edit()
     {
+
         $clearDeletedUsersIDs = [];
         $addedUserIDs = [];
         $this->id = $this->request->has('id') ? (int)$this->request->get('id') : null;
-        $meeting = Meeting::find($this->id);
+        $meeting = Meeting::findOrFail($this->id);
+        if ($this->meeting['meetingID']) {
+            unset($this->meeting['meetingID']);
+        }
         $participants = $meeting->participants();
         $postParticipants = $this->getParticipants();
         if ($postParticipants !== null) {
