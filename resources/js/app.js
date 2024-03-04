@@ -23,6 +23,11 @@ const vuetify = createVuetify({
         sets: {
             mdi
         }
+    },
+    defaults: {
+        VTextField: {
+            hideDetails: true
+        }
     }
 })
 

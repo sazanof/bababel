@@ -38,6 +38,12 @@ export default {
         })
     },
 
+    async searchMeetings({ _ }, term) {
+        return await axios.get(`${PANEL}search/meetings?term=${term}`).then(res => {
+            return res.data
+        })
+    },
+
     async addMeeting({ _ }, data) {
         return await axios.post(`${PANEL}meetings`, data, {
             headers: {
@@ -154,6 +160,14 @@ export default {
             }
         }).then(res => {
             commit('setUser', res.data)
+        })
+    },
+
+    async leaveRequest({ commit }, data) {
+        return await axios.post(`${PANEL}feedback`, data, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
         })
     }
 }

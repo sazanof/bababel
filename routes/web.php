@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BababelController;
 use App\Http\Controllers\MailController;
 use App\Http\Controllers\MeetingsController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RecordingsController;
 use App\Http\Controllers\UserNotificationsController;
 use App\Http\Controllers\UsersController;
@@ -38,6 +39,7 @@ Route
         });
         Route::prefix('search')->group(function () {
             Route::get('users', [UsersController::class, 'searchUsers']);
+            Route::get('meetings', [MeetingsController::class, 'searchMeetings']);
         });
         Route::prefix('dashboard')->group(function () {
             Route::get('meetings', [MeetingsController::class, 'getDashboardMeetings']);
@@ -89,6 +91,7 @@ Route
             Route::get('{pid}/info', [MeetingsController::class, 'getParticipantInfo'])
                 ->where('id', '[0-9]+');
         });
+        Route::post('feedback', [NotificationController::class, 'leaveRequest']);
     });
 /** CALLBACKS */
 Route

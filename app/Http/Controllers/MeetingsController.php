@@ -105,6 +105,23 @@ class MeetingsController extends Controller
 
     }
 
+    public function searchMeetings(Request $request)
+    {
+        /** @var User $user */
+        $term = $request->get('term') ?? '';
+        $user = $request->user();
+        $m = Meeting::query()->with(['participants', 'owner']);
+        $m->orderBy('date', 'DESC');
+        $m->where('name', 'LIKE', '%' . $term . '%');
+        $m->where(function (Builder $builder) use ($user) {
+            $builder->orWhereHas('participants', function (Builder $pBuilder) use ($user) {
+                $pBuilder->where('userId', $user->id);
+            });
+            $builder->orWhere('userId', $user->id);
+        });
+        return $m->get();
+    }
+
     /**
      * @param string $criteria
      * @param Request $request

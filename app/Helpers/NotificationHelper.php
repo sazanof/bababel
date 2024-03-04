@@ -37,6 +37,12 @@ class NotificationHelper
     public const NOTY_PARTICIPANT_DELETE = 'participant.delete';
     public const NOTY_RECORDING_READY = 'recording.ready';
 
+    public static function getSystemNotificationEmails()
+    {
+        $emails = env('FEEDBACK_EMAILS', '');
+        return explode(',', $emails);
+    }
+
     /**
      * @param string $key
      * @param User|null $user
