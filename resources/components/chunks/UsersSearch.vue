@@ -57,12 +57,14 @@
 
         <v-list
             v-if="selectedUsers.length > 0"
-            class="ps-6 py-6">
+            class="ps-6 py-6 d-flex flex-wrap">
             <v-list-item
                 v-for="user in selectedUsers"
                 :key="user.id"
+                :value="user"
                 lines="three"
-                class="mb-2">
+                class="mb-2"
+                max-width="500px">
                 <template #title>
                     <div class="fullname">
                         {{ user.lastname }} {{ user.firstname }}

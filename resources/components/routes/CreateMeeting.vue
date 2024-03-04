@@ -1,10 +1,11 @@
 <template>
     <v-col>
-        <v-form @submit.prevent="saveMeeting">
-            <v-card
-                :title="caption">
+        <v-card
+            :title="caption">
+            <v-form @submit.prevent="saveMeeting">
                 <v-row class="px-4">
-                    <v-col class="mr-4">
+                    <v-col
+                        class="mr-4">
                         <div
                             class="text-subtitle-1 text-grey-darken-1 text-button mb-4">
                             {{ $t('Meeting parameters') }}
@@ -155,8 +156,9 @@
                         </div>
                     </v-col>
                 </v-row>
-            </v-card>
-        </v-form>
+            </v-form>
+        </v-card>
+
         <ConfirmationDialog
             ref="deleteDialog"
             color="error" />
