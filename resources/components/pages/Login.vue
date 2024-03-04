@@ -7,11 +7,13 @@
                 <template #text>
                     <v-text-field
                         v-model="username"
+                        class="mb-4"
                         prepend-inner-icon="mdi-account-outline"
                         :label="$t('Username')"
                         variant="outlined" />
                     <v-text-field
                         v-model="password"
+                        class="mb-4"
                         prepend-inner-icon="mdi-lock-outline"
                         type="password"
                         :label="$t('Password')"
