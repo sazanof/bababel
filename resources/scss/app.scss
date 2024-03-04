@@ -1,3 +1,7 @@
 @import "vuetify/styles";
 @import "variables";
 @import "toast";
+
+.v-card-subtitle {
+    white-space: inherit;
+}
