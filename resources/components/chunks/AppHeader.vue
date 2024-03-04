@@ -43,7 +43,7 @@
         <AppDialog
             ref="leaveRequest"
             :title="$t('Leave request')"
-            :subtitle="$t('Leave request')">
+            :subtitle="$t('To send suggestions and register errors when working in the system')">
             <VForm>
                 <VTextField
                     v-model="subject"
