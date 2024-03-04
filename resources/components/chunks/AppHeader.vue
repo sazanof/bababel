@@ -47,6 +47,7 @@
             <VForm>
                 <VTextField
                     v-model="subject"
+                    class="mb-4"
                     :loading="loading.feedback"
                     :label="$t('Subject')" />
                 <VTextarea
@@ -54,6 +55,7 @@
                     :loading="loading.feedback"
                     :label="$t('Message')" />
                 <VFileInput
+                    class="mb-4"
                     :loading="loading.feedback"
                     :label="$t('Files')"
                     type="file"
