@@ -43,6 +43,7 @@ class AuthController extends Controller
         $validated = $request->validated();
         $username = $validated['username'];
         $password = $validated['password'];
+
         $credentials = [
             'samaccountname' => $username,
             'password' => $password,
