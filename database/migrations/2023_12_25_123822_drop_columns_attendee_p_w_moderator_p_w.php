@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('meetings', function (Blueprint $table) {
-            $table->dropColumn(['attendeePw', 'moderatorPW']);
+         $table->dropColumn(['attendeePw', 'moderatorPW']); /**/
         });
     }
 
