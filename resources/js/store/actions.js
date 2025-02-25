@@ -147,8 +147,8 @@ export default {
             return res.data
         })
     },
-    async getJoinInfo({ _ }, pid) {
-        return await axios.get(`${PANEL}join/${pid}/info`).then(res => {
+    async getJoinInfo({ _ }, { id, pid }) {
+        return await axios.get(`${PANEL}join/${id}/${pid}/info`).then(res => {
             return res.data
         })
     },

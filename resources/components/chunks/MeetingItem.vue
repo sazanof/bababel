@@ -201,18 +201,41 @@ export default {
         preJoinMeeting() {
             this.showPreJoin = true
         },
-        async copyLink() {
+        unsecuredCopyToClipboard(text) {
+            const textArea = document.createElement('textarea')
+            textArea.value = text
+            document.body.appendChild(textArea)
+            textArea.focus()
+            textArea.select()
             try {
-                const link = `${document.location.protocol}//${document.location.host}/#/meetings/${this.meeting.id}/view`
-                await navigator.clipboard.writeText(link)
+                document.execCommand('copy')
+            } catch (err) {
+                console.error('Unable to copy to clipboard', err)
+            }
+            document.body.removeChild(textArea)
+        },
+        async copyLink() {
+            const link = `${document.location.protocol}//${document.location.host}/#/meetings/${this.meeting.id}/view`
+
+            if (window.isSecureContext && navigator.clipboard) {
+                try {
+                    await navigator.clipboard.writeText(link)
+                    this.copied = true
+                    setTimeout(() => {
+                        this.copied = false
+                    }, 1500)
+
+                } catch (e) {
+                    console.error(e)
+                }
+            } else {
+                this.unsecuredCopyToClipboard(link)
                 this.copied = true
                 setTimeout(() => {
                     this.copied = false
                 }, 1500)
-
-            } catch (e) {
-                console.error(e)
             }
+
         },
         goTo(m) {
             this.$router.push({

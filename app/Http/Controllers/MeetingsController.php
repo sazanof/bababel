@@ -341,30 +341,35 @@ class MeetingsController extends Controller
     }
 
     /**
+     * @param int $id
      * @param int $pid
      * @param Request $request
      * @return Participant|null
      */
-    public function getParticipantInfo(int $pid, Request $request): ?Participant
+    public function getParticipantInfo(int $id, int $pid, Request $request): ?Participant
     {
-        /** @var User $user */
-        $user = $request->user();
-        $f = [
-            'id',
-            'userId',
-            'meetingId',
-            'isModerator',
-            'isOrganizer',
-            'link',
-        ];
-        /** @var Participant $participant */
-        $participant = Participant::select($f)->find($pid);
-        if (!is_null($participant)) {
-            if ($user->id === $participant->userId) {
-                return $participant;
+        $meeting = Meeting::find($id);
+        if ($meeting instanceof Meeting) {
+            /** @var User $user */
+            $user = $request->user();
+            $f = [
+                'id',
+                'userId',
+                'meetingId',
+                'isModerator',
+                'isOrganizer',
+                'link',
+            ];
+            /** @var Participant $participant */
+            $participant = Participant::select($f)->find($pid);
+            if (!is_null($participant)) {
+                if ($user->id === $participant->userId) {
+                    return $participant;
+                }
             }
         }
-        return null;
+
+        throw new \Exception('Meeting not found');
 
     }
 }

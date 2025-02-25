@@ -18,10 +18,22 @@ const routes = [
         name: 'account'
     },
     {
-        path: '/bbb/:pid(\\d+)',
+        path: '/bbb/m/:id(\\d+)/p/:pid(\\d+)',
         name: 'bbb',
         component: BbbWindow,
-        props: true
+        props: (route) => {
+            /**
+             * This would preserve the other route.params object properties overriding only
+             * `userId` in case it exists with its integer equivalent, or otherwise with
+             * undefined.
+             */
+            return {
+                ...route.params, ...{
+                    id: Number.parseInt(route.params.id, 10) || null,
+                    pid: Number.parseInt(route.params.pid, 10) || null
+                }
+            }
+        }
     },
 
     {

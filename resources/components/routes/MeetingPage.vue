@@ -248,7 +248,7 @@
             </v-card-text>
             <v-card-actions>
                 <v-btn
-                    v-if="canJoin && !loading && isStarted"
+                    v-if="canJoin || (!loading && isStarted)"
                     :disabled="(fullName === null || fullName.length < 3) || joinLoader"
                     :loading="joinLoader"
                     color="deep-orange"
@@ -396,6 +396,7 @@ export default {
                             this.$router.push({
                                 name: 'bbb',
                                 params: {
+                                    id: this.id,
                                     pid: e.response.data.join.id
                                 }
                             })
@@ -414,6 +415,7 @@ export default {
                     this.$router.push({
                         name: 'bbb',
                         params: {
+                            id: this.id,
                             pid: joinInfo.join.pid
                         }
                     })

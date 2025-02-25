@@ -9,6 +9,7 @@ use App\Models\Meeting;
 use App\Models\Participant;
 use App\Models\Recording;
 use App\Models\User;
+use BigBlueButton\Parameters\Config\DocumentOptionsStore;
 use BigBlueButton\Parameters\CreateMeetingParameters;
 use BigBlueButton\Parameters\DeleteRecordingsParameters;
 use BigBlueButton\Parameters\EndMeetingParameters;
@@ -168,10 +169,16 @@ class BababelHelper
         $documents = Document::where('meetingId', $meeting->id)->get();
         if ($documents->isNotEmpty()) {
             foreach ($documents as $document) {
-                $params->addPresentation(URL::to(Storage::url($document->path)));
+                $params->addPresentation(
+                    nameOrUrl: URL::to(Storage::url($document->path)),
+                    attributes: new DocumentOptionsStore()
+                );
             }
         } else {
-            $params->addPresentation(URL::route('make_cover', ['id' => $meeting->id, 'format' => 'jpg']));
+            $params->addPresentation(
+                nameOrUrl: URL::route('make_cover', ['id' => $meeting->id, 'format' => 'jpg']),
+                attributes: new DocumentOptionsStore()
+            );
         }
         $logoutUrl = URL::to('/#/meetings/' . $meeting->id . '/logout');
         $params->setLogoutUrl($logoutUrl);
@@ -234,8 +241,12 @@ class BababelHelper
             $parameters->setGuest(true);
         }
         $parameters->setRole($role);
-        $parameters->setDefaultLayout(!is_null($participant) ? $participant->defaultLayout : $meeting->meetingLayout);
-        $parameters->setExcludeFromDashboard(!is_null($participant) ? $participant->excludeFromDashboard : false);
+        $parameters->setDefaultLayout(
+            !is_null($participant?->defaultLayout) ? $participant->defaultLayout : $meeting->meetingLayout
+        );
+        $parameters->setExcludeFromDashboard(
+            !is_null($participant?->excludeFromDashboard) ? $participant->excludeFromDashboard : false
+        );
         // TODO - denied GUEST (is_guest)
         $parameters->setUsername($fullName);
         $parameters->setRedirect(false);

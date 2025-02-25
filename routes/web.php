@@ -88,7 +88,7 @@ Route
                 ->where('id', '[0-9]+');
         });
         Route::prefix('join')->group(function () {
-            Route::get('{pid}/info', [MeetingsController::class, 'getParticipantInfo'])
+            Route::get('{id}/{pid}/info', [MeetingsController::class, 'getParticipantInfo'])
                 ->where('id', '[0-9]+');
         });
         Route::post('feedback', [NotificationController::class, 'leaveRequest']);

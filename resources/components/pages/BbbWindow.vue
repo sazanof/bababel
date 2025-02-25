@@ -26,49 +26,58 @@
 export default {
     name: 'BbbWindow',
     props: {
+        id: {
+            type: Number,
+            required: true
+        },
         pid: {
-            type: String,
+            type: Number,
             required: true
         }
     },
     data() {
         return {
             left: 0,
-            joinInfo: null,
             hideFrame: false
         }
     },
     computed: {
+        joinInfo() {
+            return this.$store.getters['getJoinInfo']
+        },
         bbbWindowLeft() {
             return this.$store.getters['getBbbWindowLeft']
         }
     },
     async created() {
         const that = this
-        const info = await this.getJoinInfo()
-        if (info) {
-            this.joinInfo = this.$store.getters['getJoinInfo']
-        }
+        const info = this.joinInfo
+
         if (this.joinInfo === null) {
-            this.$router.push({ name: 'meeting_page', params: { id: info.meetingId } })
+            this.$router.push({ name: 'meeting_page', params: { id: info.join.mid } })
         }
+
         window.addEventListener('beforeunload', function (event) {
             event.preventDefault()
             return false
         }, { capture: true })
+
         window.addEventListener('message', function (e) {
             if (typeof e.data === 'object') {
                 if (e.data?.fromIFrame) {
                     that.hideFrame = true
                     console.log(info)
-                    that.$router.push({ name: 'meeting_page', params: { id: info.meetingId } })
+                    that.$router.push({ name: 'meeting_page', params: { id: info.join.mid } })
                 }
             }
         }, false)
     },
     methods: {
         async getJoinInfo() {
-            return await this.$store.dispatch('getJoinInfo', this.pid)
+            return await this.$store.dispatch('getJoinInfo', {
+                id: this.id,
+                pid: this.pid
+            })
         }
         // need to reload page like /bbb/1234
     }
