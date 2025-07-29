@@ -26,14 +26,16 @@ class GetRecordingsParameters extends \BigBlueButton\Parameters\GetRecordingsPar
         $this->limit = $limit;
     }
 
-    public function setRecordId($recordId)
+    public function setRecordId($recordId): \BigBlueButton\Parameters\GetRecordingsParameters
     {
-        return $this->recordId = $recordId;
+        $this->recordId = $recordId;
+        return $this;
     }
 
-    public function setMeetingId($meetingId)
+    public function setMeetingId($meetingId): \BigBlueButton\Parameters\GetRecordingsParameters
     {
-        return $this->meetingId = $meetingId;
+        $this->meetingId = $meetingId;
+        return $this;
     }
 
     /**
@@ -52,7 +54,7 @@ class GetRecordingsParameters extends \BigBlueButton\Parameters\GetRecordingsPar
         $this->offset = $offset;
     }
 
-    public function getHTTPQuery()
+    public function getHTTPQuery(): string
     {
         $queries = [
             'meetingID' => $this->meetingId,
