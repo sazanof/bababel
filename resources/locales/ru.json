@@ -121,6 +121,7 @@
     "{lastname} {firstname} invites you": "Вас приглашает {lastname} {firstname}",
     "{name} - participants": "{name} - участники",
     "{count} participants": "{count} участников | {count} участник | {count} участника | {count} участников",
+    "{count} meetings": "{count} встреч | {count} встреча | {count} встречи | {count} встреч",
     "{count} days": "дней |день | дня | дней",
     "{count} hours": "часов | час | часа | часов",
     "{count} minutes": "минут | минуту |  минуты |  минут",

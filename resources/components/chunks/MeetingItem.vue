@@ -73,13 +73,13 @@
                     color="red"
                     prepend-icon="mdi-record"
                     @click="$emit('info-dialog-open', meeting)">
-                    {{ $tc('{count} records', {count: recordingsCount}) }}
+                    {{ $t('{count} records', {count: recordingsCount}) }}
                 </v-btn>
                 <v-btn
                     v-if="participantsCount > 0"
                     prepend-icon="mdi-account-multiple"
                     @click="$emit('info-dialog-open', meeting)">
-                    {{ $tc('{count} participants', {count: participantsCount}) }}
+                    {{ $t('{count} participants', {count: participantsCount}) }}
                 </v-btn>
                 <v-btn
                     prepend-icon="mdi-eye"

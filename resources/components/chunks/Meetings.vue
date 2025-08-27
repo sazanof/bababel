@@ -1,6 +1,6 @@
 <template>
     <div class="meetings-wrapper">
-        <v-timeline
+        <VTimeline
             v-if="meetings.data"
             class="pa-6"
             align="start"
@@ -12,7 +12,7 @@
                 :meeting="meeting"
                 @on-join-click="onJoinClick($event)"
                 @info-dialog-open="onInfoDialogOpen($event)" />
-        </v-timeline>
+        </VTimeline>
         <MeetingDialogs
             v-if="dialogMeeting"
             ref="meetingDialogs"

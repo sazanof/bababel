@@ -118,7 +118,7 @@ export default {
         })
     },
     async getDashboardMeetings() {
-        return await axios.get(`${PANEL}dashboard/meetings/`).then(res => {
+        return await axios.get(`${PANEL}dashboard/meetings`).then(res => {
             return res.data
         })
     },

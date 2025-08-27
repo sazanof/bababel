@@ -9,11 +9,22 @@
             :rail="rail" />
         <AppHeader @on-menu-click="onMenuClick" />
         <VMain>
-            <VContainer fluid>
-                <VRow>
-                    <router-view />
-                </VRow>
-            </VContainer>
+            <VSheet
+                max-width="1200"
+                class="ma-auto fill-height pb-4"
+                color="transparent">
+                <VSheet
+                    color="transparent"
+                    class="fill-height ma-auto">
+                    <VContainer
+                        fluid
+                        class="fill-height">
+                        <VRow class="fill-height">
+                            <router-view />
+                        </VRow>
+                    </VContainer>
+                </VSheet>
+            </VSheet>
         </VMain>
         <div
             v-if="$route.name !== 'bbb'"

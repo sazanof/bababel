@@ -11,6 +11,7 @@ use App\Http\Requests\MeetingRequest;
 use App\Models\Document;
 use App\Models\Meeting;
 use App\Models\Participant;
+use App\Models\Recording;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -215,7 +216,13 @@ class MeetingsController extends Controller
         });
         $recent->whereNotIn('id', $ids)->orderBy('date', 'ASC');
         $recent->where('date', '>=', Carbon::now());
+
+        $recordings = Recording::with('meeting')->orderBy('id', 'DESC')->limit(4)->get();
         return [
+            'records' => [
+                'items' => $recordings,
+                'count' => Recording::count('id'),
+            ],
             'today' => [
                 'items' => $today->get(),
                 'count' => $today->count()
