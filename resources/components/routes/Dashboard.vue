@@ -49,7 +49,8 @@
                                         icon="mdi-play"
                                         variant="text"
                                         density="comfortable"
-                                        :href="record.meeting.url" />
+                                        :href="record.url"
+                                        target="_blank" />
                                 </template>
                             </VListItem>
                         </VList>
