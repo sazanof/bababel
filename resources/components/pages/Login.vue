@@ -1,37 +1,40 @@
 <template>
     <div class="login">
-        <v-form
+        <VForm
             @submit.prevent
             @keyup.enter="login">
-            <v-card class="login-form pa-4">
+            <VCard
+                variant="elevated"
+                width="400"
+                class="login-form pa-4">
+                <template #title>
+                    {{ title }}
+                </template>
                 <template #text>
-                    <v-text-field
+                    <VTextField
                         v-model="username"
                         class="mb-4"
                         prepend-inner-icon="mdi-account-outline"
-                        :label="$t('Username')"
-                        variant="outlined" />
-                    <v-text-field
+                        :label="$t('Username')" />
+                    <VTextField
                         v-model="password"
                         class="mb-4"
                         prepend-inner-icon="mdi-lock-outline"
                         type="password"
-                        :label="$t('Password')"
-                        variant="outlined" />
-                    <v-btn
+                        :label="$t('Password')" />
+                    <VBtn
                         prepend-icon="mdi-login-variant"
                         :disabled="loading"
                         :loading="loading"
                         :block="true"
                         color="deep-orange"
-                        size="x-large"
                         variant="flat"
                         @click.prevent="login">
                         {{ $t('Log in') }}
-                    </v-btn>
+                    </VBtn>
                 </template>
-            </v-card>
-        </v-form>
+            </VCard>
+        </VForm>
     </div>
 </template>
 
@@ -46,6 +49,11 @@ export default {
             loading: false,
             username: '',
             password: ''
+        }
+    },
+    computed: {
+        title() {
+            return document.title
         }
     },
     methods: {

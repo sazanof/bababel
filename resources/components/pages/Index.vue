@@ -1,5 +1,5 @@
 <template>
-    <v-app
+    <VApp
         v-if="user !== undefined"
         id="inspire"
         class="bg-blue-grey-lighten-5"
@@ -8,36 +8,35 @@
             :user="user"
             :rail="rail" />
         <AppHeader @on-menu-click="onMenuClick" />
-        <v-main>
-            <v-container
-                fluid>
-                <v-row>
+        <VMain>
+            <VContainer fluid>
+                <VRow>
                     <router-view />
-                </v-row>
-            </v-container>
-        </v-main>
+                </VRow>
+            </VContainer>
+        </VMain>
         <div
             v-if="$route.name !== 'bbb'"
             class="create-menu">
-            <v-menu>
+            <VMenu>
                 <template #activator="{ props }">
-                    <v-btn
+                    <VBtn
                         icon="mdi-plus"
                         color="deep-orange"
                         v-bind="props"
                         size="x-large" />
                 </template>
-                <v-list>
-                    <v-list-item
+                <VList>
+                    <VListItem
                         :value="1"
                         prepend-icon="mdi-video-account"
                         @click="openCreateMeeting">
-                        <v-list-item-title>{{ $t('Create meeting') }}</v-list-item-title>
-                    </v-list-item>
-                </v-list>
-            </v-menu>
+                        <VListItemTitle>{{ $t('Create meeting') }}</VListItemTitle>
+                    </VListItem>
+                </VList>
+            </VMenu>
         </div>
-    </v-app>
+    </VApp>
 </template>
 
 <script>

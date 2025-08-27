@@ -25,9 +25,16 @@ const vuetify = createVuetify({
         }
     },
     defaults: {
+        global: {
+            rounded: 'lg'
+        },
         VTextField: {
+            variant: 'outlined',
+
+            density: 'compact',
             hideDetails: true
-        }
+        },
+        VBtn: {}
     }
 })
 

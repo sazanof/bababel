@@ -1,11 +1,14 @@
 <template>
-    <v-navigation-drawer
+    <VNavigationDrawer
         id="sidebar"
         v-model="drawer"
+        rounded="0"
         :rail="opened"
         :permanent="true"
         @update:rail="onUpdateRail($event)">
-        <v-sheet
+        <VSheet
+            rounded="0"
+            class="header-bg"
             color="deep-orange">
             <div
                 class="user-block"
@@ -24,14 +27,23 @@
                     {{ user.email }}
                 </div>
             </div>
-        </v-sheet>
+        </VSheet>
 
-        <v-divider color="blue-grey-darken-4" />
-
-        <v-list class="pa-0">
-            <v-list-item
+        <VList
+            rounded="0"
+            class="pa-0">
+            <VListItem
+                rounded="0"
+                variant="flat"
+                base-color="deep-orange"
+                prepend-icon="mdi-plus-circle"
+                :title="$t('Create meeting')"
+                @click="openCreateMeeting" />
+            <VListItem
                 v-for="[icon, text, path] in links"
                 :key="icon"
+                rounded="0"
+                class="py-4"
                 :value="text"
                 :prepend-icon="icon"
                 :title="text"
@@ -39,8 +51,8 @@
                 color="blue-grey-darken-1"
                 link
                 @click="$router.push(path)" />
-        </v-list>
-    </v-navigation-drawer>
+        </VList>
+    </VNavigationDrawer>
 </template>
 
 <script>
@@ -109,13 +121,52 @@ export default {
     methods: {
         onUpdateRail() {
             this.$emit('on-update-rail', this.rail)
+        },
+        openCreateMeeting() {
+            this.$store.commit('clearMeetingState')
+            this.$router.push({ name: 'create_meeting' })
         }
     }
 }
 </script>
 
 <style lang="scss" scoped>
+.header-bg {
+    position: relative;
+    overflow: hidden;
+
+    &:after {
+        content: "";
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        left: -10px;
+        bottom: -10px;
+        z-index: 11;
+        background-image: url("../../img/meeting-bg.jpg");
+        background-position: center;
+        background-size: cover;
+        overflow: hidden;
+        filter: blur(5px);
+        opacity: 0.7;
+    }
+
+    &:before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        z-index: 12;
+        background: var(--color-orange);
+        opacity: 0.5;
+    }
+}
+
 .user-block {
+    z-index: 100;
+    position: relative;
     min-height: 64px;
     transition: 0.5s;
 
@@ -123,10 +174,10 @@ export default {
         font-weight: bold;
     }
 
-    padding: 6px;
+    padding: 16px;
 
     &.mini {
-        padding-top: 10px;
+        padding: 10px 6px 6px 6px;
     }
 
     &:not(.mini) {
