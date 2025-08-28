@@ -56,15 +56,13 @@
 
 <script>
 import moment from 'moment'
-import MeetingDialogs from '../chunks/MeetingDialogs.vue'
-import RecordItem from '../chunks/RecordItem.vue'
 import RecordListItem from '../chunks/RecordListItem.vue'
 import DashboardEventsCard from '../chunks/DashboardEventsCard.vue'
 
 const m = moment
 export default {
     name: 'Dashboard',
-    components: { DashboardEventsCard, RecordListItem, RecordItem, MeetingDialogs },
+    components: { DashboardEventsCard, RecordListItem },
     data() {
         return {
             copied: false,
