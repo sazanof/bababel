@@ -38,16 +38,17 @@ export default {
         meetings: {
             type: Object,
             required: true
-        },
-        user: {
-            type: Object,
-            required: true
         }
     },
     data() {
         return {
             dialogMeeting: null,
             dialogInfoOpen: false
+        }
+    },
+    computed: {
+        user() {
+            return this.$store.getters['getUser']
         }
     },
     methods: {

@@ -40,6 +40,18 @@ const vuetify = createVuetify({
         VTab: {
             rounded: 0
         },
+        VSelect: {
+            variant: 'outlined',
+            density: 'compact'
+        },
+        VTextarea: {
+            variant: 'outlined',
+            density: 'compact'
+        },
+        VFileInput: {
+            variant: 'outlined',
+            density: 'compact'
+        },
         VBtn: {}
     }
 })

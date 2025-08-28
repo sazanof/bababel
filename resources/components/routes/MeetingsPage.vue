@@ -17,7 +17,6 @@
             </template>
             <Meetings
                 v-if="meetings"
-                :user="user"
                 :meetings="meetings" />
         </v-card>
     </v-col>

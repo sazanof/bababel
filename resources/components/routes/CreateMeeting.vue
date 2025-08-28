@@ -30,7 +30,7 @@
                             @update:model-value="meeting.date = formattedDate">
                             <template #trigger>
                                 <v-text-field
-                                    v-model="formattedDate"
+                                    :model-value="formattedDate"
                                     hide-details
                                     class="mb-6"
                                     :label="$t('Date')"
@@ -50,7 +50,7 @@
                             :chips="true"
                             :multiple="true"
                             :label="$t('Files')"
-                            @update:modelValue="addFiles" />
+                            @update:model-value="addFiles" />
 
                         <v-chip-group
                             v-if="documents"
@@ -185,7 +185,7 @@ export default {
     data() {
         return {
             layout: 'VIDEO_FOCUS',
-            guestPolicy: null,
+            guestPolicy: 'ALWAYS_ACCEPT',
             date: null,
             loading: false,
             caption: null,
@@ -266,7 +266,8 @@ export default {
             this.date = this.meeting.date
         } else {
             this.$store.commit('clearMeetingState')
-            this.date = new Date()
+            this.date = m(new Date()).add(3, 'hours').toDate()
+            this.meeting.date = this.formattedDate
         }
         this.layout = this.meeting.meetingLayout
         this.guestPolicy = this.meeting.guestPolicy
@@ -274,6 +275,9 @@ export default {
     methods: {
         async saveMeeting(event) {
             this.loading = true
+            if (this.meeting.welcome === null) {
+                this.meeting.welcome = this.meeting.name
+            }
             this.meeting.guestPolicy = this.guestPolicy
             this.meeting.meetingLayout = this.layout
             const data = this.meeting.toObject()
