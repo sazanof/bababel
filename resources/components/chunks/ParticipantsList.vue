@@ -4,7 +4,7 @@
             v-for="participant in participants"
             :key="participant.id"
             :meeting="meeting"
-            :user="participant" />
+            :participant="participant" />
     </v-row>
 </template>
 

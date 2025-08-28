@@ -6,23 +6,23 @@
             <v-card
                 :color="color"
                 :title="title">
-                <v-card-text>
+                <VCardText>
                     {{ message }}
-                </v-card-text>
+                </VCardText>
 
-                <v-card-actions>
-                    <v-spacer />
+                <VCardActions>
+                    <VSpacer />
 
-                    <v-btn
+                    <VBtn
                         :prepend-icon="okIcon"
                         :color="okColor"
                         :text="okButton"
                         @click="_confirm(isActive)" />
-                    <v-btn
+                    <VBtn
                         :prepend-icon="cancelIcon"
                         :text="cancelButton"
                         @click="_cancel(isActive)" />
-                </v-card-actions>
+                </VCardActions>
             </v-card>
         </template>
     </v-dialog>

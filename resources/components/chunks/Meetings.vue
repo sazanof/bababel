@@ -8,7 +8,7 @@
             <MeetingItem
                 v-for="meeting in meetings.data"
                 :key="meeting.id"
-                :user="user"
+                :meeting-user="user"
                 :meeting="meeting"
                 @on-join-click="onJoinClick($event)"
                 @info-dialog-open="onInfoDialogOpen($event)" />
@@ -16,7 +16,7 @@
         <MeetingDialogs
             v-if="dialogMeeting"
             ref="meetingDialogs"
-            :user="user"
+            :meeting-user="user"
             :meeting="dialogMeeting"
             :show-more="dialogInfoOpen"
             @on-join-success="onJoinSuccess"

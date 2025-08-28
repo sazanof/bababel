@@ -79,19 +79,19 @@
                 <div class="count-wrapper d-flex align-center justify-center">
                     <div class="count text-white bg-deep-orange ma-3">
                         {{ days }}
-                        <span class="text-grey">{{ $tc('{count} days', {count: days}) }}</span>
+                        <span class="text-grey">{{ $t('{count} days', {count: days}) }}</span>
                     </div>
                     <div class="count text-white bg-deep-orange ma-3">
                         {{ hours }}
-                        <span class="text-grey">{{ $tc('{count} hours', {count: hours}) }}</span>
+                        <span class="text-grey">{{ $t('{count} hours', {count: hours}) }}</span>
                     </div>
                     <div class="count text-white bg-deep-orange ma-3">
                         {{ minutes }}
-                        <span class="text-grey">{{ $tc('{count} minutes', {count: minutes}) }}</span>
+                        <span class="text-grey">{{ $t('{count} minutes', {count: minutes}) }}</span>
                     </div>
                     <div class="count text-white bg-deep-orange ma-3">
                         {{ seconds }}
-                        <span class="text-grey">{{ $tc('{count} seconds', {count: seconds}) }}</span>
+                        <span class="text-grey">{{ $t('{count} seconds', {count: seconds}) }}</span>
                     </div>
                 </div>
             </vue-countdown>
@@ -214,19 +214,19 @@
                         <div class="card-counter text-button">
                             <div class="card-counter-item">
                                 {{ days }}
-                                <span>{{ $tc('{count} days', {count: days}) }}</span>
+                                <span>{{ $t('{count} days', {count: days}) }}</span>
                             </div>
                             <div class="card-counter-item">
                                 {{ hours }}
-                                <span>{{ $tc('{count} hours', {count: hours}) }}</span>
+                                <span>{{ $t('{count} hours', {count: hours}) }}</span>
                             </div>
                             <div class="card-counter-item">
                                 {{ minutes }}
-                                <span>{{ $tc('{count} minutes', {count: minutes}) }}</span>
+                                <span>{{ $t('{count} minutes', {count: minutes}) }}</span>
                             </div>
                             <div class="card-counter-item">
                                 {{ seconds }}
-                                <span>{{ $tc('{count} seconds', {count: seconds}) }}</span>
+                                <span>{{ $t('{count} seconds', {count: seconds}) }}</span>
                             </div>
                         </div>
                     </vue-countdown>

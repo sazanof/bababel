@@ -217,7 +217,7 @@ class MeetingsController extends Controller
         $recent->whereNotIn('id', $ids)->orderBy('date', 'ASC');
         $recent->where('date', '>=', Carbon::now());
 
-        $recordings = Recording::with('meeting')->orderBy('id', 'DESC')->limit(4)->get();
+        $recordings = Recording::with('meeting')->orderBy('id', 'DESC')->limit(10)->get();
         return [
             'records' => [
                 'items' => $recordings,

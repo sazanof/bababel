@@ -26,27 +26,6 @@
                 </VSheet>
             </VSheet>
         </VMain>
-        <div
-            v-if="$route.name !== 'bbb'"
-            class="create-menu">
-            <VMenu>
-                <template #activator="{ props }">
-                    <VBtn
-                        icon="mdi-plus"
-                        color="deep-orange"
-                        v-bind="props"
-                        size="x-large" />
-                </template>
-                <VList>
-                    <VListItem
-                        :value="1"
-                        prepend-icon="mdi-video-account"
-                        @click="openCreateMeeting">
-                        <VListItemTitle>{{ $t('Create meeting') }}</VListItemTitle>
-                    </VListItem>
-                </VList>
-            </VMenu>
-        </div>
     </VApp>
 </template>
 

@@ -1,75 +1,77 @@
 <template>
     <div class="dialogs">
-        <v-dialog
+        <VDialog
             v-model="show"
             height="90%"
             :scrollable="true"
             transition="dialog-bottom-transition">
             <template #default="{ isActive }">
-                <v-card>
-                    <v-toolbar color="deep-orange">
-                        <v-toolbar-title>{{ meeting.name }}</v-toolbar-title>
-                        <v-spacer />
-                        <v-btn
+                <VCard>
+                    <VToolbar
+                        color="deep-orange"
+                        rounded="0">
+                        <VToolbarTitle>{{ meeting.name }}</VToolbarTitle>
+                        <VSpacer />
+                        <VBtn
                             v-if="participants.length > 0 && tab === 'participants'"
                             icon="mdi-magnify" />
-                        <v-btn
+                        <VBtn
                             icon="mdi-close"
                             @click="isActive.value = false" />
 
                         <template #extension>
-                            <v-tabs
+                            <VTabs
                                 v-model="tab"
                                 :show-arrows="true"
                                 :center-active="true"
                                 align-tabs="title">
-                                <v-tab
+                                <VTab
                                     value="info"
                                     prepend-icon="mdi-text">
                                     {{ $t('Meeting details') }}
-                                </v-tab>
-                                <v-tab
+                                </VTab>
+                                <VTab
                                     value="participants"
                                     prepend-icon="mdi-account-multiple">
                                     {{ $t('Participants') }}
-                                </v-tab>
-                                <v-tab
+                                </VTab>
+                                <VTab
                                     v-if="hasRecords"
                                     value="records"
                                     prepend-icon="mdi-record">
                                     {{ $t('Recordings') }}
-                                </v-tab>
-                            </v-tabs>
+                                </VTab>
+                            </VTabs>
                         </template>
-                    </v-toolbar>
-                    <v-card-text class="pa-10">
-                        <v-window v-model="tab">
-                            <v-window-item
+                    </VToolbar>
+                    <VCardText class="pa-10">
+                        <VWindow v-model="tab">
+                            <VWindowItem
                                 value="info">
                                 {{ meeting.welcome }}
-                            </v-window-item>
+                            </VWindowItem>
 
-                            <v-window-item value="participants">
+                            <VWindowItem value="participants">
                                 <ParticipantsList
                                     :meeting="meeting"
                                     :participants="participants" />
-                            </v-window-item>
+                            </VWindowItem>
 
-                            <v-window-item
+                            <VWindowItem
                                 v-if="hasRecords"
                                 value="records">
-                                <v-list>
+                                <VList>
                                     <RecordItem
                                         v-for="record in records"
                                         :key="record.id"
                                         :meeting="meeting"
                                         :record="record"
                                         @on-record-deleted="onRecordDeleted($event)" />
-                                </v-list>
-                            </v-window-item>
-                        </v-window>
-                    </v-card-text>
-                </v-card>
+                                </VList>
+                            </VWindowItem>
+                        </VWindow>
+                    </VCardText>
+                </VCard>
                 <v-footer>
                     <v-row
                         justify="end"
@@ -115,7 +117,7 @@
                     </v-row>
                 </v-footer>
             </template>
-        </v-dialog>
+        </VDialog>
         <v-dialog
             v-model="showJoin"
             width="400"
@@ -171,7 +173,7 @@ export default {
         RecordItem
     },
     props: {
-        user: {
+        meetingUser: {
             type: Object,
             required: true
         },
@@ -206,11 +208,11 @@ export default {
         },
         currentParticipant() {
             return this.meeting.participants.find(p => {
-                return p.id === this.user.id
+                return p.id === this.meetingUser.id
             })
         },
         isOwner() {
-            return this.user.id === this.meeting.userId
+            return this.meetingUser.id === this.meeting.userId
         },
         canStart() {
             return this.isOwner && (this.meeting.status === 0 || this.meeting.status === 3)
@@ -229,7 +231,7 @@ export default {
         }
     },
     created() {
-        this.visibleName = `${this.user.lastname} ${this.user.firstname}`
+        this.visibleName = `${this.meetingUser.lastname} ${this.meetingUser.firstname}`
         this.records = this.meeting?.records
     },
     methods: {

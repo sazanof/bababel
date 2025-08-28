@@ -48,7 +48,7 @@ export default {
     },
 
     props: {
-        user: {
+        participant: {
             type: Object,
             required: true
         },
@@ -59,13 +59,13 @@ export default {
     },
     computed: {
         fullName() {
-            return `${this.user.lastname} ${this.user.firstname}`
+            return `${this.user.lastname} ${this.participant.firstname}`
         },
         isModerator() {
-            return this.user.isModerator
+            return this.participant.isModerator
         },
         isOrganizer() {
-            return this.user.isOrganizer
+            return this.participant.isOrganizer
         }
     }
 }

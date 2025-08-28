@@ -114,7 +114,7 @@ export default {
             type: Object,
             required: true
         },
-        user: {
+        meetingUser: {
             type: Object,
             required: true
         }
@@ -137,7 +137,7 @@ export default {
             return this.meeting.owner
         },
         isOwner() {
-            return this.user.id === this.meeting.userId
+            return this.meetingUser.id === this.meeting.userId
         },
         participants() {
             return this.meeting.participants

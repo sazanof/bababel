@@ -34,6 +34,12 @@ const vuetify = createVuetify({
             density: 'compact',
             hideDetails: true
         },
+        VAppBar: {
+            rounded: 0
+        },
+        VTab: {
+            rounded: 0
+        },
         VBtn: {}
     }
 })
