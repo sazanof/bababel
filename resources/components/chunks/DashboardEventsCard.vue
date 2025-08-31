@@ -128,7 +128,9 @@ export default {
         <VDialog
             v-model="open"
             max-width="500">
-            <VCard>
+            <VCard
+                :title="card.title"
+                :subtitle="card.subtitle">
                 <template #text>
                     <VCardText
                         v-for="meeting in card.items.items"

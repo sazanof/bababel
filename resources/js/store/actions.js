@@ -45,13 +45,14 @@ export default {
     },
 
     async addMeeting({ _ }, data) {
-        return await axios.post(`${PANEL}meetings`, data, {
+        const res = await axios.post(`${PANEL}meetings`, data, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
-        }).then(res => {
-            return res.data
         })
+        if (res) {
+            return res.data
+        }
     },
     async editMeeting({ _ }, data) {
         return await axios.post(`${PANEL}meetings/${data.id}`, data, {

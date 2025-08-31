@@ -52,7 +52,9 @@ const vuetify = createVuetify({
             variant: 'outlined',
             density: 'compact'
         },
-        VBtn: {}
+        VFooter: {
+            rounded: false
+        }
     }
 })
 

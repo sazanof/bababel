@@ -1,50 +1,56 @@
 <template>
-    <v-col>
-        <v-card
+    <VCol
+        v-if="ready"
+        class="fill-height">
+        <VCard
+            v-if="showMore"
             :title="caption">
-            <v-form @submit.prevent="saveMeeting">
-                <v-row class="px-4">
-                    <v-col
+            <VForm
+
+                @submit.prevent="saveMeeting">
+                <VRow
+
+                    class="px-4">
+                    <VCol
                         class="mr-4">
                         <div
                             class="text-subtitle-1 text-grey-darken-1 text-button mb-4">
                             {{ $t('Meeting parameters') }}
-                            <v-divider />
+                            <VDivider />
                         </div>
-                        <v-text-field
+                        <VTextField
                             v-model="meeting.name"
                             prepend-icon="mdi-text-shadow"
                             class="mb-6"
                             hide-details
                             :label="$t('Meeting name')" />
-                        <v-select
-                            v-if="showMore"
+                        <VSelect
                             v-model="layout"
                             :label="$t('Style')"
                             :items="layoutOptions"
                             prepend-icon="mdi-palette-swatch-variant"
                             :item-props="true" />
-                        <vue-date-picker
+                        <VueDatePicker
                             v-model="date"
                             :min-date="new Date()"
                             @update:model-value="meeting.date = formattedDate">
                             <template #trigger>
-                                <v-text-field
+                                <VTextField
                                     :model-value="formattedDate"
                                     hide-details
                                     class="mb-6"
                                     :label="$t('Date')"
                                     prepend-icon="mdi-calendar" />
                             </template>
-                        </vue-date-picker>
-                        <v-textarea
+                        </VueDatePicker>
+                        <VTextarea
                             v-model="meeting.welcome"
                             prepend-icon="mdi-text-long"
                             class="mb-6"
                             hide-details
                             :label="$t('Welcome message or description')" />
 
-                        <v-file-input
+                        <VFileInput
                             hide-details
                             prepend-icon="mdi-paperclip"
                             :chips="true"
@@ -52,91 +58,92 @@
                             :label="$t('Files')"
                             @update:model-value="addFiles" />
 
-                        <v-chip-group
+                        <VChipGroup
                             v-if="documents"
                             class="mb-6 ml-10">
-                            <v-chip
+                            <VChip
                                 v-for="doc in documents"
                                 :key="doc.id"
                                 :closable="true"
                                 @click:close="removeDocument(doc.id)">
                                 {{ doc.name }}
-                            </v-chip>
-                        </v-chip-group>
+                            </VChip>
+                        </VChipGroup>
 
                         <UsersSearch
                             :participants="meeting.participants"
                             :meeting="meeting"
                             @update:participants="meeting.participants = $event" />
-                    </v-col>
-                    <v-col
-                        v-if="showMore"
+                    </VCol>
+                    <VCol
                         cols="4">
                         <div
                             class="text-subtitle-1 text-grey-darken-1 text-button mb-4">
                             {{ $t('Advanced settings') }}
-                            <v-divider />
+                            <VDivider />
                         </div>
-                        <v-select
+                        <VBtn
+                            block
+                            color="deep-orange"
+                            :text="showMore ? $t('Simple mode') : $t('Extended mode')"
+                            :prepend-icon="showMore ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+                            class="mb-6"
+                            @click="showMore = !showMore" />
+                        <VSelect
                             v-model="guestPolicy"
                             :label="$t('Guest access')"
                             :items="guestPolicyOptions"
                             prepend-icon="mdi-incognito"
                             :item-props="true" />
-                        <v-switch
+                        <VSwitch
                             v-model="meeting.record"
                             color="deep-orange"
                             :value="true"
                             :label="$t('Record')" />
-                        <v-switch
+                        <VSwitch
                             v-if="meeting.record"
                             v-model="meeting.autoStartRecording"
                             color="deep-orange"
                             :value="true"
                             :label="$t('Auto start recording')" />
-                        <v-switch
+                        <VSwitch
                             v-model="meeting.webcamsOnlyForModerator"
                             color="deep-orange"
                             :value="true"
                             :label="$t('Webcams only for moderator')" />
-                        <v-switch
+                        <VSwitch
                             v-model="meeting.allowModsToEjectCameras"
                             color="deep-orange"
                             :value="true"
                             :label="$t('Managing participant cameras')" />
-                        <v-switch
+                        <VSwitch
                             v-model="meeting.muteOnStart"
                             color="deep-orange"
                             :value="true"
                             :label="$t('Mute on start')" />
-                        <v-switch
+                        <VSwitch
                             v-model="meeting.lockSettingsDisableMic"
                             color="deep-orange"
                             :value="true"
                             :label="$t('All participants are listeners')" />
-                        <v-switch
+                        <VSwitch
                             v-model="meeting.allowModsToUnmuteUsers	"
                             color="deep-orange"
                             :value="true"
                             :label="$t('Managing participant microphones')" />
-                    </v-col>
-                </v-row>
-                <v-row class="pb-4 px-4">
-                    <v-col class="actions">
-                        <v-btn
-                            variant="text"
-                            :text="showMore ? $t('Simple mode') : $t('Extended mode')"
-                            :prepend-icon="showMore ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-                            @click="showMore = !showMore" />
-                        <div class="actions-right">
-                            <v-btn
+                    </VCol>
+                </VRow>
+                <VRow class="pb-4 px-4">
+                    <VCol>
+                        <div class="text-right">
+                            <VBtn
                                 class="mr-4"
                                 :disabled="loading"
                                 prepend-icon="mdi-close"
                                 @click="cancelCreateMeeting">
                                 {{ $t('Cancel') }}
-                            </v-btn>
-                            <v-btn
+                            </VBtn>
+                            <VBtn
                                 :loading="loading"
                                 :disabled="loading"
                                 type="submit"
@@ -144,25 +151,64 @@
                                 prepend-icon="mdi-content-save"
                                 color="deep-orange">
                                 {{ $t('Save') }}
-                            </v-btn>
-                            <v-btn
+                            </VBtn>
+                            <VBtn
                                 v-if="id"
                                 :disabled="loading"
                                 color="error"
                                 prepend-icon="mdi-trash-can"
                                 @click="deleteMeeting">
                                 {{ $t('Delete') }}
-                            </v-btn>
+                            </VBtn>
                         </div>
-                    </v-col>
-                </v-row>
-            </v-form>
-        </v-card>
+                    </VCol>
+                </VRow>
+            </VForm>
+        </VCard>
+        <VCard
+            v-else
+            variant="text"
+            class="bg fill-height d-flex align-center justify-center flex-wrap">
+            <VSheet
+                color="transparent"
+                width="600"
+                class="pa-6"
+                style="z-index:100">
+                <VTextField
+                    v-model="meeting.name"
+                    density="default"
+                    variant="solo"
+                    prepend-inner-icon="mdi-text-shadow"
+                    hide-details
+                    :label="$t('Meeting name')">
+                    <template #append>
+                        <VBtn
+                            density="default"
+                            size="x-large"
+                            :loading="loading"
+                            :disabled="loading"
+                            type="submit"
+                            class="px-6"
+                            icon="mdi-send"
+                            color="deep-orange"
+                            @click="saveMeeting" />
+                        <VBtn
+                            density="default"
+                            size="x-large"
+                            class="ml-4"
+                            variant="text"
+                            :text="showMore ? $t('Simple mode') : $t('Extended mode')"
+                            icon="mdi-dots-horizontal"
+                            @click="showMore = !showMore" />
+                    </template>
+                </VTextField>
+            </VSheet>
+        </VCard>
 
         <ConfirmationDialog
             ref="deleteDialog"
             color="error" />
-    </v-col>
+    </VCol>
 </template>
 
 <script>
@@ -184,6 +230,7 @@ export default {
     },
     data() {
         return {
+            ready: false,
             layout: 'VIDEO_FOCUS',
             guestPolicy: 'ALWAYS_ACCEPT',
             date: null,
@@ -264,6 +311,7 @@ export default {
                 toast.error(this.$t('Error getting meeting'))
             })
             this.date = this.meeting.date
+            this.showMore = true
         } else {
             this.$store.commit('clearMeetingState')
             this.date = m(new Date()).add(3, 'hours').toDate()
@@ -271,6 +319,7 @@ export default {
         }
         this.layout = this.meeting.meetingLayout
         this.guestPolicy = this.meeting.guestPolicy
+        this.ready = true
     },
     methods: {
         async saveMeeting(event) {
@@ -282,16 +331,20 @@ export default {
             this.meeting.meetingLayout = this.layout
             const data = this.meeting.toObject()
             if (this.id === null) {
-                this.$store.dispatch('addMeeting', data)
-                    .then(() => {
-                        this.$router.push({ name: 'meetings.my' })
-                    })
+                const res = await this.$store.dispatch('addMeeting', data)
                     .catch(e => {
                         toast.error(e.response.data.message)
                     })
                     .finally(() => {
                         this.loading = false
                     })
+                if (res) {
+                    this.$router.push({
+                        name: 'meeting_page', params: {
+                            id: res.id
+                        }
+                    })
+                }
             } else {
                 this.$store.dispatch('editMeeting', data)
                     .then(() => {
@@ -345,6 +398,25 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.bg {
+    position: relative;
+
+    &:before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        z-index: 11;
+        background-image: url("../../img/meeting-bg.jpg");
+        background-position: center;
+        background-size: cover;
+        overflow: hidden;
+        opacity: 0.3;
+    }
+}
+
 .actions {
     display: flex;
     justify-content: space-between;
