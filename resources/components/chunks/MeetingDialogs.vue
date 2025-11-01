@@ -231,7 +231,7 @@ export default {
         }
     },
     created() {
-        this.visibleName = `${this.meetingUser.lastname} ${this.meetingUser.firstname}`
+        this.visibleName = `${this.meetingUser?.lastname} ${this.meetingUser?.firstname}`
         this.records = this.meeting?.records
     },
     methods: {

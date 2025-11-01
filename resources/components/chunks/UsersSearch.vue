@@ -149,6 +149,10 @@ export default {
         }
 
     },
+    created() {
+        this.selectedUsers = this.participants
+
+    },
     methods: {
         async onSearchUsers() {
             this.users = await this.$store.dispatch('searchUsers', this.query).finally(() => {

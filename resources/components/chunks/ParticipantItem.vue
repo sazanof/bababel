@@ -6,7 +6,7 @@
             :class="{'bg-blue-grey-lighten-5': isModerator && !isOrganizer,'bg-yellow-lighten-5': isOrganizer, 'pa-2 rounded-xl': true}">
             <div class="avatar">
                 <Avatar
-                    :user="user"
+                    :user="participant"
                     :size="48" />
             </div>
             <div class="info">
@@ -14,13 +14,13 @@
                     {{ fullName }}
                 </div>
                 <div class="who">
-                    {{ user.position }}, {{ user.department }}
+                    {{ participant.position }}, {{ participant.department }}
                 </div>
                 <div class="who">
-                    {{ user.email }}
+                    {{ participant.email }}
                 </div>
                 <div class="who">
-                    {{ user.phone }}
+                    {{ participant.phone }}
                 </div>
                 <div class="roles text-overline">
                     <span v-if="isOrganizer">
@@ -59,7 +59,7 @@ export default {
     },
     computed: {
         fullName() {
-            return `${this.user.lastname} ${this.participant.firstname}`
+            return `${this.participant.lastname} ${this.participant.firstname}`
         },
         isModerator() {
             return this.participant.isModerator
