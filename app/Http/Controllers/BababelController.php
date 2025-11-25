@@ -79,9 +79,19 @@ class BababelController extends Controller
         }
 
         // ok: user is User, guest policy is ALWAYS ACCEPT
-
         $res = BababelHelper::joinMeeting($meeting, $request->get('visibleName'), $request->user());
         if ($res->isSuccessful()) {
+            try {
+                Log::info(sprintf(
+                    'BBB-JOIN-MEETING meeting - %d (%s), visibleName - %s,  DB username - %s',
+                    $meeting->id,
+                    $meeting->name,
+                    $request->get('visibleName'),
+                    $user?->username
+                ));
+            } catch (\Exception $exception) {
+                Log::error($exception);
+            }
             $data = $res->getData();
             $url = $data->join->url;
             $data->join->mid = $meeting->id;
