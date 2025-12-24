@@ -1,44 +1,36 @@
 <template>
-    <v-app-bar
+    <VAppBar
         class="bg-blue-grey-lighten-5"
         :elevation="0">
         <template #append>
-            <v-tooltip :text="$t('Leave request')">
-                <template #activator="{ props }">
-                    <v-btn
-                        class="mr-2"
-                        v-bind="props"
-                        icon="mdi-bullhorn-variant"
-                        color="success"
-                        @click="openRequestWindow" />
-                </template>
-            </v-tooltip>
-            <v-tooltip :text="$t('Service running in development mode')">
-                <template #activator="{ props }">
-                    <v-btn
-                        class="mr-2"
-                        v-bind="props"
-                        icon="mdi-alert"
-                        color="error" />
-                </template>
-            </v-tooltip>
-            <TopSearch />
-            <v-btn
+
+            <VBtn v-tooltip="$t('Leave request')"
+                  class="mr-2"
+                  icon="mdi-bullhorn-variant"
+                  color="success"
+                  @click="openRequestWindow"/>
+            <VBtn
+                v-tooltip="$t('Service running in development mode')"
+                class="mr-2"
+                icon="mdi-alert"
+                color="error"/>
+            <TopSearch/>
+            <VBtn
                 class="mr-2"
                 icon="mdi-account"
-                @click="account" />
-            <v-btn
+                @click="account"/>
+            <VBtn
                 class="mr-2"
                 icon="mdi-logout"
                 :disabled="loading.logout"
                 :loading="loading.logout"
-                @click="logout" />
+                @click="logout"/>
         </template>
         <template #prepend>
-            <v-btn
+            <VBtn
                 :icon="rail ? 'mdi-menu-close' : 'mdi-menu-open'"
                 variant="text"
-                @click="$emit('on-menu-click', $event)" />
+                @click="$emit('on-menu-click', $event)"/>
         </template>
         <AppDialog
             ref="leaveRequest"
@@ -49,11 +41,11 @@
                     v-model="subject"
                     class="mb-4"
                     :loading="loading.feedback"
-                    :label="$t('Subject')" />
+                    :label="$t('Subject')"/>
                 <VTextarea
                     v-model="message"
                     :loading="loading.feedback"
-                    :label="$t('Message')" />
+                    :label="$t('Message')"/>
                 <VFileInput
                     class="mb-4"
                     :loading="loading.feedback"
@@ -62,7 +54,7 @@
                     :chips="true"
                     accept="image/*"
                     :multiple="true"
-                    @update:model-value="files = $event" />
+                    @update:model-value="files = $event"/>
                 <VBtn
                     :loading="loading.feedback"
                     :disabled="disabled"
@@ -74,15 +66,15 @@
                 </VBtn>
             </VForm>
         </AppDialog>
-        <ConfirmationDialog ref="confirmLogout" />
-    </v-app-bar>
+        <ConfirmationDialog ref="confirmLogout"/>
+    </VAppBar>
 </template>
 
 <script>
 import AppDialog from './AppDialog.vue'
 import ConfirmationDialog from './ConfirmationDialog.vue'
 import TopSearch from './TopSearch.vue'
-import { createErrorNotification, createSuccessNotification } from '../../js/helpers/notifications.js'
+import {createErrorNotification, createSuccessNotification} from '../../js/helpers/notifications.js'
 
 export default {
     name: 'AppHeader',
@@ -91,7 +83,7 @@ export default {
         ConfirmationDialog,
         AppDialog
     },
-    emits: [ 'on-menu-click' ],
+    emits: ['on-menu-click'],
     data() {
         return {
             loading: {
@@ -131,7 +123,7 @@ export default {
 
         },
         account() {
-            this.$router.push({ name: 'account' })
+            this.$router.push({name: 'account'})
         },
         openRequestWindow() {
             this.$refs.leaveRequest.show()

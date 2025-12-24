@@ -1,6 +1,5 @@
 <template>
     <VNavigationDrawer
-        id="sidebar"
         v-model="drawer"
         rounded="0"
         :rail="opened"
@@ -16,7 +15,7 @@
                 <Avatar
                     class="avatar"
                     :size="!rail ? 64 : 42"
-                    :user="user" />
+                    :user="user"/>
                 <div
                     v-if="!rail"
                     class="name">
@@ -38,7 +37,7 @@
                 base-color="deep-orange"
                 prepend-icon="mdi-plus-circle"
                 :title="$t('Create meeting')"
-                @click="openCreateMeeting" />
+                @click="openCreateMeeting"/>
             <VListItem
                 v-for="[icon, text, path] in links"
                 :key="icon"
@@ -50,7 +49,7 @@
                 :active="$route.path === path"
                 color="blue-grey-darken-1"
                 link
-                @click="$router.push(path)" />
+                @click="$router.push(path)"/>
         </VList>
     </VNavigationDrawer>
 </template>
@@ -60,7 +59,7 @@ import Avatar from './Avatar.vue'
 
 export default {
     name: 'Sidebar',
-    components: { Avatar },
+    components: {Avatar},
     props: {
         rail: {
             type: Boolean,
@@ -71,7 +70,7 @@ export default {
             required: true
         }
     },
-    emits: [ 'on-update-rail' ],
+    emits: ['on-update-rail'],
     data() {
         return {
             drawer: true,
@@ -124,7 +123,7 @@ export default {
         },
         openCreateMeeting() {
             this.$store.commit('clearMeetingState')
-            this.$router.push({ name: 'create_meeting' })
+            this.$router.push({name: 'create_meeting'})
         }
     }
 }

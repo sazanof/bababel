@@ -1,30 +1,19 @@
 <template>
-    <v-col>
-        <v-card
+    <VCol>
+        <VCard
             :loading="loading"
             :title="title"
             :subtitle="criteriaText">
-            <template #append>
-                <v-menu>
-                    <template #activator="{ props }">
-                        <v-btn
-                            icon="mdi-dots-vertical"
-                            variant="text"
-                            v-bind="props" />
-                    </template>
-                    <v-list />
-                </v-menu>
-            </template>
             <Meetings
                 v-if="meetings"
-                :meetings="meetings" />
-        </v-card>
-    </v-col>
+                :meetings="meetings"/>
+        </VCard>
+    </VCol>
 </template>
 
 <script>
 import Meetings from '../chunks/Meetings.vue'
-import { createErrorNotification } from '../../js/helpers/notifications.js'
+import {createErrorNotification} from '../../js/helpers/notifications.js'
 
 export default {
     name: 'MeetingsPage',

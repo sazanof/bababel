@@ -60,9 +60,11 @@ class UsersController extends Controller
             $color = dechex(crc32($name . $id));
             $color = substr($color, 0, 6);
             return Avatar::create($name)
+                ->setBorderRadius(0)
                 ->setDimension($size)
                 ->setBackground($color)
                 ->setBorder(0, null)
+                ->setShape('square')
                 ->setFontSize($size * 0.5)
                 ->getImageObject()
                 ->response('png');

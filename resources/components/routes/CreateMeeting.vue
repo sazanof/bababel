@@ -16,39 +16,32 @@
                         <div
                             class="text-subtitle-1 text-grey-darken-1 text-button mb-4">
                             {{ $t('Meeting parameters') }}
-                            <VDivider />
+                            <VDivider/>
                         </div>
                         <VTextField
                             v-model="meeting.name"
                             prepend-icon="mdi-text-shadow"
                             class="mb-6"
                             hide-details
-                            :label="$t('Meeting name')" />
+                            :label="$t('Meeting name')"/>
                         <VSelect
                             v-model="layout"
                             :label="$t('Style')"
                             :items="layoutOptions"
                             prepend-icon="mdi-palette-swatch-variant"
-                            :item-props="true" />
-                        <VueDatePicker
+                            :item-props="true"/>
+                        <VDateInput
                             v-model="date"
                             :min-date="new Date()"
                             @update:model-value="meeting.date = formattedDate">
-                            <template #trigger>
-                                <VTextField
-                                    :model-value="formattedDate"
-                                    hide-details
-                                    class="mb-6"
-                                    :label="$t('Date')"
-                                    prepend-icon="mdi-calendar" />
-                            </template>
-                        </VueDatePicker>
+
+                        </VDateInput>
                         <VTextarea
                             v-model="meeting.welcome"
                             prepend-icon="mdi-text-long"
                             class="mb-6"
                             hide-details
-                            :label="$t('Welcome message or description')" />
+                            :label="$t('Welcome message or description')"/>
 
                         <VFileInput
                             hide-details
@@ -56,7 +49,7 @@
                             :chips="true"
                             :multiple="true"
                             :label="$t('Files')"
-                            @update:model-value="addFiles" />
+                            @update:model-value="addFiles"/>
 
                         <VChipGroup
                             v-if="documents"
@@ -73,14 +66,14 @@
                         <UsersSearch
                             :participants="meeting.participants"
                             :meeting="meeting"
-                            @update:participants="meeting.participants = $event" />
+                            @update:participants="meeting.participants = $event"/>
                     </VCol>
                     <VCol
                         cols="4">
                         <div
                             class="text-subtitle-1 text-grey-darken-1 text-button mb-4">
                             {{ $t('Advanced settings') }}
-                            <VDivider />
+                            <VDivider/>
                         </div>
                         <VBtn
                             block
@@ -88,49 +81,49 @@
                             :text="showMore ? $t('Simple mode') : $t('Extended mode')"
                             :prepend-icon="showMore ? 'mdi-chevron-up' : 'mdi-chevron-down'"
                             class="mb-6"
-                            @click="showMore = !showMore" />
+                            @click="showMore = !showMore"/>
                         <VSelect
                             v-model="guestPolicy"
                             :label="$t('Guest access')"
                             :items="guestPolicyOptions"
                             prepend-icon="mdi-incognito"
-                            :item-props="true" />
+                            :item-props="true"/>
                         <VSwitch
                             v-model="meeting.record"
                             color="deep-orange"
                             :value="true"
-                            :label="$t('Record')" />
+                            :label="$t('Record')"/>
                         <VSwitch
                             v-if="meeting.record"
                             v-model="meeting.autoStartRecording"
                             color="deep-orange"
                             :value="true"
-                            :label="$t('Auto start recording')" />
+                            :label="$t('Auto start recording')"/>
                         <VSwitch
                             v-model="meeting.webcamsOnlyForModerator"
                             color="deep-orange"
                             :value="true"
-                            :label="$t('Webcams only for moderator')" />
+                            :label="$t('Webcams only for moderator')"/>
                         <VSwitch
                             v-model="meeting.allowModsToEjectCameras"
                             color="deep-orange"
                             :value="true"
-                            :label="$t('Managing participant cameras')" />
+                            :label="$t('Managing participant cameras')"/>
                         <VSwitch
                             v-model="meeting.muteOnStart"
                             color="deep-orange"
                             :value="true"
-                            :label="$t('Mute on start')" />
+                            :label="$t('Mute on start')"/>
                         <VSwitch
                             v-model="meeting.lockSettingsDisableMic"
                             color="deep-orange"
                             :value="true"
-                            :label="$t('All participants are listeners')" />
+                            :label="$t('All participants are listeners')"/>
                         <VSwitch
                             v-model="meeting.allowModsToUnmuteUsers	"
                             color="deep-orange"
                             :value="true"
-                            :label="$t('Managing participant microphones')" />
+                            :label="$t('Managing participant microphones')"/>
                     </VCol>
                 </VRow>
                 <VRow class="pb-4 px-4">
@@ -191,7 +184,7 @@
                             class="px-6"
                             icon="mdi-send"
                             color="deep-orange"
-                            @click="saveMeeting" />
+                            @click="saveMeeting"/>
                         <VBtn
                             density="default"
                             size="x-large"
@@ -199,7 +192,7 @@
                             variant="text"
                             :text="showMore ? $t('Simple mode') : $t('Extended mode')"
                             icon="mdi-dots-horizontal"
-                            @click="showMore = !showMore" />
+                            @click="showMore = !showMore"/>
                     </template>
                 </VTextField>
             </VSheet>
@@ -207,16 +200,16 @@
 
         <ConfirmationDialog
             ref="deleteDialog"
-            color="error" />
+            color="error"/>
     </VCol>
 </template>
 
 <script>
+import {VDateInput} from 'vuetify/labs/VDateInput'
 import UsersSearch from '../chunks/UsersSearch.vue'
-import VueDatePicker from '@vuepic/vue-datepicker'
 import moment from 'moment'
 import ConfirmationDialog from '../chunks/ConfirmationDialog.vue'
-import { createErrorNotification, createSuccessNotification } from '../../js/helpers/notifications.js'
+import {createErrorNotification, createSuccessNotification} from '../../js/helpers/notifications.js'
 
 const m = moment
 
@@ -224,7 +217,7 @@ export default {
     name: 'CreateMeeting',
     components: {
         ConfirmationDialog,
-        VueDatePicker,
+        VDateInput,
         UsersSearch
     },
     data() {
@@ -307,7 +300,7 @@ export default {
         if (this.meeting.id > 0) {
             await this.getMeeting().catch(e => {
                 this.$store.commit('clearMeetingState')
-                toast.error(this.$t('Error getting meeting'))
+                this.$store.commit('addNotification', createErrorNotification(this.$t('Error getting meeting')))
             })
             this.date = this.meeting.date
             this.showMore = true
@@ -321,7 +314,7 @@ export default {
         this.ready = true
     },
     methods: {
-        async saveMeeting(event) {
+        async saveMeeting() {
             this.loading = true
             if (this.meeting.welcome === null) {
                 this.meeting.welcome = this.meeting.name
@@ -371,7 +364,7 @@ export default {
         },
         async removeDocument(id) {
             await this.$store.dispatch('removeDocument', id).then(() => {
-                toast.success(this.$t('Document deleted'))
+                this.$store.commit('addNotification', createSuccessNotification(this.$t('Document deleted')))
             })
         },
         async deleteMeeting() {
@@ -386,7 +379,7 @@ export default {
                 if (ok) {
                     const res = await this.$store.dispatch('deleteMeeting', this.id)
                     if (res) {
-                        this.$router.push({ name: 'meetings.my' })
+                        this.$router.push({name: 'meetings.my'})
                     }
                 }
             }

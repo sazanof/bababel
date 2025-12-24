@@ -1,11 +1,8 @@
 <template>
-    <v-timeline-item>
+    <VTimelineItem>
         <template #opposite>
             <div class="info">
-                <div class="text-overline date text-deep-orange">
-                    <v-icon icon="mdi-clock" />
-                    <span>{{ dateMod }}</span>
-                </div>
+                <VChip color="deep-orange" prepend-icon="mdi-clock" :text="dateMod"/>
                 <div class="position text-caption text-grey-darken-1">
                     {{ $t('Organizer') }}:
                 </div>
@@ -15,45 +12,45 @@
                 <div class="position text-caption text-grey-darken-1">
                     {{ owner.position }}, {{ owner.department }}
                 </div>
-                <v-btn
+                <VBtn
                     v-if="meeting.status === 1 || meeting.status === 2"
                     prepend-icon="mdi-account-voice"
                     color="deep-orange"
                     class="mt-4"
                     @click="$emit('on-join-click', meeting)">
                     {{ $t('Join') }}
-                </v-btn>
+                </VBtn>
             </div>
         </template>
         <template #icon>
             <Avatar
                 :size="48"
-                :user="meeting.owner" />
+                :user="meeting.owner"/>
         </template>
 
-        <v-card
+        <VCard
             :class="{'text-blue-grey-lighten-2': isPast, 'text-grey bg-grey-lighten-4': !isPast && meeting.status === 3}"
             :color="isPast ? 'blue-grey-lighten-5': isUpcoming ? 'yellow-accent-1' : ''">
             <template #title>
                 <div class="status mb-1">
-                    <v-chip
+                    <VChip
                         :color="color">
                         {{ status }}
-                    </v-chip>
-                    <v-chip
+                    </VChip>
+                    <VChip
                         :color="copied ? 'primary' : 'default'"
                         class="ml-4"
                         :prepend-icon="copied ? 'mdi-check' : 'mdi-link'"
                         @click="copyLink">
                         {{ copied ? $t('Copied') : $t('Copy link') }}
-                    </v-chip>
-                    <v-chip
+                    </VChip>
+                    <VChip
                         color="info"
                         class="ml-4"
                         prepend-icon="mdi-send"
                         @click="goTo(meeting)">
                         {{ $t('Go') }}
-                    </v-chip>
+                    </VChip>
                 </div>
                 <div
                     v-if="isPast"
@@ -62,39 +59,39 @@
                 </div>
                 {{ meeting.name }}
             </template>
-            <v-card-text>
+            <VCardText>
                 <p>
                     {{ meeting.welcome }}
                 </p>
-            </v-card-text>
-            <v-card-actions>
-                <v-btn
+            </VCardText>
+            <VCardActions>
+                <VBtn
                     v-if="recordingsCount > 0"
                     color="red"
                     prepend-icon="mdi-record"
                     @click="$emit('info-dialog-open', meeting)">
                     {{ $t('{count} records', {count: recordingsCount}) }}
-                </v-btn>
-                <v-btn
+                </VBtn>
+                <VBtn
                     v-if="participantsCount > 0"
                     prepend-icon="mdi-account-multiple"
                     @click="$emit('info-dialog-open', meeting)">
                     {{ $t('{count} participants', {count: participantsCount}) }}
-                </v-btn>
-                <v-btn
+                </VBtn>
+                <VBtn
                     prepend-icon="mdi-eye"
                     @click="$emit('info-dialog-open', meeting)">
                     {{ $t('More') }}
-                </v-btn>
-                <v-btn
+                </VBtn>
+                <VBtn
                     v-if="isOwner"
                     prepend-icon="mdi-pencil"
                     @click="$router.push(`/meetings/${meeting.id}`)">
                     {{ $t('Edit') }}
-                </v-btn>
-            </v-card-actions>
-        </v-card>
-    </v-timeline-item>
+                </VBtn>
+            </VCardActions>
+        </VCard>
+    </VTimelineItem>
 </template>
 
 <script>
@@ -116,7 +113,7 @@ export default {
             required: true
         }
     },
-    emits: [ 'info-dialog-open', 'info-dialog-close', 'on-join-click' ],
+    emits: ['info-dialog-open', 'info-dialog-close', 'on-join-click'],
     data() {
         return {
             duplicate: false,
