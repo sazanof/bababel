@@ -162,10 +162,9 @@
 
 <script>
 import RecordItem from './RecordItem.vue'
-import { useToast } from 'vue-toastification'
 import ParticipantsList from './ParticipantsList.vue'
+import { createErrorNotification } from '../../js/helpers/notifications.js'
 
-const toast = useToast()
 export default {
     name: 'MeetingDialogs',
     components: {
@@ -268,7 +267,7 @@ export default {
                 .catch(e => {
                     this.duplicate = true
                     this.link = e.response.data.link
-                    toast.error(e.response.data.message)
+                    this.$store.commit('addNotification', createErrorNotification(e.response.data.message))
                 })
                 .finally(() => {
                     this.loading = false
@@ -291,7 +290,7 @@ export default {
                     this.joinLoader = true
                 })
                 .catch(e => {
-                    alert(e.response.data.message)
+                    this.$store.commit('addNotification', createErrorNotification(e.response.data.message))
                 })
                 .finally(() => {
                     this.loading = false

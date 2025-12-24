@@ -98,7 +98,6 @@ class BababelController extends Controller
             // let's find that user is participant of meeting
             if ($user instanceof User) {
                 $participant = Participant::where('meetingId', $meeting->id)->where('userId', $user->id)->first();
-
                 if (!is_null($participant)) {
                     $data->join->pid = $participant->id;
                     $participant->link = $url;

@@ -16,16 +16,19 @@
                 v-else
                 :user="user" />
         </div>
+        <AppNotifications />
     </div>
 </template>
 
 <script>
 import Index from './pages/Index.vue'
 import Login from './pages/Login.vue'
+import AppNotifications from './chunks/AppNotifications.vue'
 
 export default {
     name: 'App',
     components: {
+        AppNotifications,
         Login,
         Index
     },

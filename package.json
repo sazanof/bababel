@@ -2,6 +2,7 @@
     "private": true,
     "type": "module",
     "scripts": {
+        "update-packages": "npx npm-check-updates -u && npm i",
         "dev": "vite",
         "build": "vite build",
         "fix": "eslint --fix resources/**/*.{js,vue}"
@@ -29,7 +30,6 @@
         "vue-advanced-cropper": "^2.8.8",
         "vue-i18n": "11.1.10",
         "vue-router": "^4.2.5",
-        "vue-toastification": "^2.0.0-rc.5",
         "vuex": "^4.0.2"
     }
 }

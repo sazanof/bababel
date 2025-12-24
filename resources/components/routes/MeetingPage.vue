@@ -143,7 +143,7 @@
             class="text-no-wrap pa-2"
             :loading="loading">
             <MessageDialog
-                v-if="isGuest && !isModerator"
+                v-if="isGuest && !isModerator && !isParticipant"
                 :model="isGuest === true"
                 :title="$t('You are not invited to this meeting')"
                 :text="$t('You are not a participant in this meeting, but you can join it because it has guest access enabled')"
@@ -271,12 +271,11 @@
 <script>
 import VueCountdown from '@chenfengyuan/vue-countdown'
 import MessageDialog from '../chunks/MessageDialog.vue'
-import { useToast } from 'vue-toastification'
 import moment from 'moment'
 import MeetingOwner from '../chunks/MeetingOwner.vue'
 
-const toast = useToast()
 import Avatar from '../chunks/Avatar.vue'
+import { createErrorNotification } from '../../js/helpers/notifications.js'
 
 export default {
     name: 'MeetingPage',
@@ -387,7 +386,7 @@ export default {
             })
                 .catch(e => {
                     if (e.response.status === 500) {
-                        toast.error(e.response.data.message)
+                        this.$store.commit('addNotification', createErrorNotification(e.response.data.message))
                     } else {
                         this.duplicate = true
                         this.link = e.response.data.link

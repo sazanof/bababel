@@ -2,6 +2,7 @@ import Meeting from '../../js/models/meeting.js'
 
 export default {
     authenticated: false,
+    notifications: [],
     user: null,
     settings: {
         rail: false,

@@ -5,6 +5,9 @@ export default {
     getUser(state) {
         return state.user
     },
+    getNotifications(state) {
+        return state.notifications
+    },
     getSettings(state) {
         return state.settings
     },

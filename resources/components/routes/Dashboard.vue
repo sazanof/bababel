@@ -1,6 +1,6 @@
 <template>
     <VCol class="dashboard">
-        <VRow class="fill-height">
+        <VRow>
             <VCol
                 cols="12"
                 md="6">

@@ -212,14 +212,13 @@
 </template>
 
 <script>
-import { useToast } from 'vue-toastification'
 import UsersSearch from '../chunks/UsersSearch.vue'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import moment from 'moment'
 import ConfirmationDialog from '../chunks/ConfirmationDialog.vue'
+import { createErrorNotification, createSuccessNotification } from '../../js/helpers/notifications.js'
 
 const m = moment
-const toast = useToast()
 
 export default {
     name: 'CreateMeeting',
@@ -333,7 +332,7 @@ export default {
             if (this.id === null) {
                 const res = await this.$store.dispatch('addMeeting', data)
                     .catch(e => {
-                        toast.error(e.response.data.message)
+                        this.$store.commit('addNotification', createErrorNotification(e.response.data.message))
                     })
                     .finally(() => {
                         this.loading = false
@@ -348,10 +347,10 @@ export default {
             } else {
                 this.$store.dispatch('editMeeting', data)
                     .then(() => {
-                        toast.success(this.$t('Meeting saved'))
+                        this.$store.commit('addNotification', createSuccessNotification(this.$t('Meeting saved')))
                     })
                     .catch(e => {
-                        toast.error(e.response.data.message)
+                        this.$store.commit('addNotification', createErrorNotification(e.response.data.message))
                     })
                     .finally(() => {
                         this.loading = false

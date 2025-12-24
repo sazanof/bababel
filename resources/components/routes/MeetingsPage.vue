@@ -23,16 +23,12 @@
 </template>
 
 <script>
-import { useToast } from 'vue-toastification'
 import Meetings from '../chunks/Meetings.vue'
-import ConfirmationDialog from '../chunks/ConfirmationDialog.vue'
-
-const toast = useToast()
+import { createErrorNotification } from '../../js/helpers/notifications.js'
 
 export default {
     name: 'MeetingsPage',
     components: {
-        ConfirmationDialog,
         Meetings
     },
     props: {
@@ -101,7 +97,7 @@ export default {
             this.loading = true
             await this.$store.dispatch('getMeetings', this.filter)
                 .catch((e) => {
-                    toast.error(e.response.data.message)
+                    this.$store.commit('addNotification', createErrorNotification(e.response.data.message))
                 })
                 .finally(() => {
                     this.loading = false

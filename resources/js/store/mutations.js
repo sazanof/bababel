@@ -1,4 +1,10 @@
 export default {
+    addNotification(state, notification) {
+        state.notifications.push(notification)
+    },
+    removeNotification(state) {
+        state.notifications = state.notifications.filter(n => n.active === true)
+    },
     logIn(state, data) {
         state.authenticated = true
         state.user = data

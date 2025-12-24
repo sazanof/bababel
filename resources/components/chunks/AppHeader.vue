@@ -79,12 +79,10 @@
 </template>
 
 <script>
-import { useToast } from 'vue-toastification'
 import AppDialog from './AppDialog.vue'
 import ConfirmationDialog from './ConfirmationDialog.vue'
 import TopSearch from './TopSearch.vue'
-
-const toast = useToast()
+import { createErrorNotification, createSuccessNotification } from '../../js/helpers/notifications.js'
 
 export default {
     name: 'AppHeader',
@@ -150,9 +148,9 @@ export default {
                 this.message = ''
                 this.files = null
                 this.$refs.leaveRequest.close()
-                toast.success(this.$t('Feedback send'))
+                this.$store.commit('addNotification', createSuccessNotification(this.$t('Feedback send')))
             }).catch(() => {
-                toast.error(this.$t('Error sending feedback'))
+                this.$store.commit('addNotification', createErrorNotification(this.$t('Error sending feedback')))
             }).finally(() => {
                 this.loading.feedback = false
             })

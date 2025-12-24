@@ -40,12 +40,11 @@
 </template>
 
 <script>
-import { useToast } from 'vue-toastification'
 import ConfirmationDialog from './ConfirmationDialog.vue'
 import moment from 'moment'
+import { createErrorNotification, createSuccessNotification } from '../../js/helpers/notifications.js'
 
 const m = moment
-const toast = useToast()
 
 export default {
     name: 'RecordItem',
@@ -105,10 +104,10 @@ export default {
             })
             if (ok) {
                 await this.$store.dispatch('deleteRecord', this.record.id).then(() => {
-                    toast.success(this.$t('Record deleted'))
+                    this.$store.commit('addNotification', createSuccessNotification(this.$t('Record deleted')))
                     this.$emit('on-record-deleted', this.record)
                 }).catch(() => {
-                    toast.error(this.$t('Error deleting record'))
+                    this.$store.commit('addNotification', createErrorNotification(this.$t('Error deleting record')))
                 })
 
             }

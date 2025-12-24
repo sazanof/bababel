@@ -100,9 +100,6 @@
 <script>
 import moment from 'moment'
 import Avatar from './Avatar.vue'
-import { useToast } from 'vue-toastification'
-
-const toast = useToast()
 
 export default {
     name: 'MeetingItem',

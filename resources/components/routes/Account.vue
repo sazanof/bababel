@@ -50,7 +50,7 @@
                             color="deep-orange"
                             :value="n.id"
                             :label="n.title"
-                            @update:modelValue="updateNotificationSetting(n, $event)" />
+                            @update:model-value="updateNotificationSetting(n, $event)" />
                     </v-sheet>
                 </div>
             </v-card-text>
@@ -63,11 +63,10 @@
 </template>
 
 <script>
-import { useToast } from 'vue-toastification'
 import ImageCropper from '../chunks/ImageCropper.vue'
 import Avatar from '../chunks/Avatar.vue'
+import { createErrorNotification, createSuccessNotification } from '../../js/helpers/notifications.js'
 
-const toast = useToast()
 export default {
     name: 'Account',
     components: {
@@ -107,9 +106,9 @@ export default {
             if (val.indexOf(notification.id) !== -1) {
                 this.$store.dispatch('addNotification', notification.id)
                     .then(() => {
-                        toast.success(this.$t('Notification enabled'))
+                        this.$store.commit('addNotification', createSuccessNotification(this.$t('Notification enabled')))
                     }).catch(e => {
-                    toast.error(e.response.data.message)
+                    this.$store.commit('addNotification', createErrorNotification(e.response.data.message))
                     this.enabledNotifications = this.enabledNotifications.filter(n => {
                         return n !== notification.id
                     })
@@ -117,10 +116,10 @@ export default {
             } else {
                 this.$store.dispatch('deleteNotification', notification.id)
                     .then(() => {
-                        toast.success(this.$t('Notification disabled'))
+                        this.$store.commit('addNotification', createSuccessNotification(this.$t('Notification disabled')))
                     })
                     .catch(e => {
-                        toast.error(e.response.data.message)
+                        this.$store.commit('addNotification', createErrorNotification(e.response.data.message))
                         this.enabledNotifications = this.enabledNotifications.push(notification.id)
                     })
             }

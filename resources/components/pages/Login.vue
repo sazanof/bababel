@@ -39,9 +39,8 @@
 </template>
 
 <script>
-import { useToast } from 'vue-toastification'
+import { createErrorNotification } from '../../js/helpers/notifications.js'
 
-const toast = useToast()
 export default {
     name: 'Login',
     data() {
@@ -63,7 +62,7 @@ export default {
                 username: this.username,
                 password: this.password
             }).catch(err => {
-                toast.error(err.response.data.message)
+                this.$store.commit('addNotification', createErrorNotification(err.response.data.message))
             }).finally(() => {
                 this.loading = false
             })
