@@ -2,18 +2,18 @@
     <div
         v-if="!authenticated"
         class="meeting-page">
-        <v-sheet
+        <VSheet
             v-if="meeting && hasAccessToJoinMeeting"
             elevation="12"
             max-width="800"
             rounded="lg"
             width="100%"
             class="pa-4 text-center mx-auto meeting-view">
-            <div class="img">
+            <div class="img" :style="`background-image: url('${background}')`">
                 <div
                     v-if="loading"
                     class="loading">
-                    <v-progress-circular
+                    <VProgressCircular
                         :size="140"
                         :width="6"
                         indeterminate
@@ -22,55 +22,55 @@
                             <div
                                 v-if="user ===null"
                                 class="icon-empty">
-                                <v-icon
+                                <VIcon
                                     color="blue-grey-darken-1"
                                     icon="mdi-account"
-                                    :size="100" />
+                                    :size="100"/>
                             </div>
                             <Avatar
                                 v-else
                                 :user="user"
-                                :size="130" />
+                                :size="130"/>
                         </template>
-                    </v-progress-circular>
+                    </VProgressCircular>
                 </div>
                 <div
                     v-else
                     class="join-info">
                     <div class="icon-empty">
-                        <v-icon
+                        <VIcon
                             v-if="user === null"
                             color="blue-grey-darken-1"
                             icon="mdi-account"
-                            :size="100" />
+                            :size="100"/>
                         <Avatar
                             v-else
                             :user="user"
-                            :size="130" />
+                            :size="130"/>
                     </div>
-                    <v-text-field
+                    <VTextField
                         v-model="fullName"
                         class="mt-4 w-75"
                         :label="$t('Name')"
-                        variant="solo" />
+                        variant="solo"/>
                 </div>
             </div>
-            <v-alert
+            <VAlert
                 v-if="time <=0 && isStarted && !loading"
                 color="success"
                 class="my-2">
                 {{ $t('The meeting has begun. You can join') }}
-            </v-alert>
-            <v-alert
+            </VAlert>
+            <VAlert
                 v-else-if="time <=0 && !isStarted"
                 color="primary"
                 class="my-2">
                 {{ $t('Wait for the organizer to start the meeting') }}
-            </v-alert>
+            </VAlert>
             <h2 class="text-h6 text-deep-orange my-4">
                 {{ date }}
             </h2>
-            <vue-countdown
+            <VueCountdown
                 v-if="time > 0"
                 v-slot="{ days, hours, minutes, seconds }"
                 :time="time"
@@ -94,7 +94,7 @@
                         <span class="text-grey">{{ $t('{count} seconds', {count: seconds}) }}</span>
                     </div>
                 </div>
-            </vue-countdown>
+            </VueCountdown>
             <h2 class="text-h5 mb-6">
                 {{ meeting.meeting.name }}
             </h2>
@@ -109,8 +109,8 @@
                 target="_blank">
                 {{ $t('If you have not been redirected, click here') }}
             </a>
-            <v-divider class="mb-4" />
-            <v-btn
+            <VDivider class="mb-4"/>
+            <VBtn
                 v-if="canJoin && !loading"
                 :disabled="(fullName === null || fullName.length < 3) || joinLoader"
                 :loading="joinLoader"
@@ -118,14 +118,14 @@
                 prepend-icon="mdi-send"
                 @click="joinMeeting">
                 {{ $t('Join') }}
-            </v-btn>
+            </VBtn>
             <div
                 v-if="loading"
                 class="loading">
                 <span class="mt-2 ml-4 text-button text-deep-orange">{{ $t('Waiting for connection') }}</span>
             </div>
-        </v-sheet>
-        <v-sheet
+        </VSheet>
+        <VSheet
             v-else
             elevation="12"
             max-width="800"
@@ -133,11 +133,11 @@
             width="100%"
             class="pa-4 text-center mx-auto meeting-view">
             {{ $t('You have not access to meeting') }}
-        </v-sheet>
+        </VSheet>
     </div>
     <!-- IF USER AUTHENTICATED -->
-    <v-col v-else>
-        <v-card
+    <VCol v-else>
+        <VCard
             v-if="meeting"
             width="100%"
             class="text-no-wrap pa-2"
@@ -147,36 +147,36 @@
                 :model="isGuest === true"
                 :title="$t('You are not invited to this meeting')"
                 :text="$t('You are not a participant in this meeting, but you can join it because it has guest access enabled')"
-                :btn-text="$t('I am understand')" />
+                :btn-text="$t('I am understand')"/>
             <MessageDialog
                 v-else-if="!isGuest && !isModerator && !isParticipant"
                 :model="!isGuest"
                 :title="$t('You are not invited to this meeting')"
                 :text="$t('You are not a participant in this meeting')"
                 btn-icon="mdi-emoticon-sad-outline"
-                :btn-text="$t('Very sad')" />
+                :btn-text="$t('Very sad')"/>
             <MessageDialog
                 v-else-if="!isStarted && !isModerator"
                 :model="!isStarted && !isModerator"
                 :title="$t('Meeting not running')"
                 :text="$t('Administrator has not started the meeting yet. Please wait until it starts, and then you can join')"
                 btn-icon="mdi-check"
-                :btn-text="$t('OK')" />
+                :btn-text="$t('OK')"/>
             <MessageDialog
                 v-if="hasAccessToJoinMeeting"
                 :model="!hasAccessToJoinMeeting"
                 :title="$t('You have not access to meeting')"
                 :text="$t('You do not have access to this meeting. Contact the organizer')"
                 btn-icon="mdi-check"
-                :btn-text="$t('OK')" />
+                :btn-text="$t('OK')"/>
             <template #title>
-                <v-chip
+                <VChip
                     class="mr-2"
                     color="blue"
                     prepend-icon="mdi-clock">
                     {{ date }}
-                </v-chip>
-                <v-chip
+                </VChip>
+                <VChip
                     color="primary"
                     prepend-icon="mdi-account"
                     @click="showOwner = !showOwner">
@@ -186,14 +186,14 @@
                             firstname: meeting.meeting?.owner?.firstname
                         })
                     }}
-                </v-chip>
-                <v-sheet
+                </VChip>
+                <VSheet
                     v-if="showOwner"
                     class="user pa-2 my-4"
                     rounded="lg"
                     color="blue-grey-lighten-5">
-                    <MeetingOwner :user="meeting.meeting.owner" />
-                </v-sheet>
+                    <MeetingOwner :user="meeting.meeting.owner"/>
+                </VSheet>
                 <div class="title mt-2">
                     {{ meeting.meeting.name }}
                 </div>
@@ -201,11 +201,11 @@
             <template #subtitle>
                 {{ meeting.meeting.welcome }}
             </template>
-            <v-card-text>
+            <VCardText>
                 <div
                     v-if="loading"
                     class="card-countdown-wrapper">
-                    <vue-countdown
+                    <VueCountdown
                         v-if="time > 0"
                         v-slot="{ days, hours, minutes, seconds }"
                         :time="time"
@@ -229,14 +229,14 @@
                                 <span>{{ $t('{count} seconds', {count: seconds}) }}</span>
                             </div>
                         </div>
-                    </vue-countdown>
+                    </VueCountdown>
                 </div>
                 <div
                     v-else
                     class="join-info">
-                    <v-text-field
+                    <VTextField
                         v-model="fullName"
-                        :label="$t('Name')" />
+                        :label="$t('Name')"/>
                 </div>
                 <a
                     v-if="url"
@@ -245,9 +245,9 @@
                     target="_blank">
                     {{ $t('If you have not been redirected, click here') }}
                 </a>
-            </v-card-text>
-            <v-card-actions>
-                <v-btn
+            </VCardText>
+            <VCardActions>
+                <VBtn
                     v-if="canJoin || (!loading && isStarted)"
                     :disabled="(fullName === null || fullName.length < 3) || joinLoader"
                     :loading="joinLoader"
@@ -255,17 +255,17 @@
                     prepend-icon="mdi-send"
                     @click="joinMeeting">
                     {{ $t('Join') }}
-                </v-btn>
-                <v-btn
+                </VBtn>
+                <VBtn
                     v-if="canStart"
                     color="deep-orange"
                     prepend-icon="mdi-send"
                     @click="startMeeting">
                     {{ $t('Start') }}
-                </v-btn>
-            </v-card-actions>
-        </v-card>
-    </v-col>
+                </VBtn>
+            </VCardActions>
+        </VCard>
+    </VCol>
 </template>
 
 <script>
@@ -275,7 +275,10 @@ import moment from 'moment'
 import MeetingOwner from '../chunks/MeetingOwner.vue'
 
 import Avatar from '../chunks/Avatar.vue'
-import { createErrorNotification } from '../../js/helpers/notifications.js'
+import {createErrorNotification} from '../../js/helpers/notifications.js'
+
+import * as logo from '/resources/img/lot.png';
+import * as bg from '/resources/img/meeting-bg.jpg';
 
 export default {
     name: 'MeetingPage',
@@ -298,7 +301,13 @@ export default {
     },
     computed: {
         id() {
-            return this.$route.params.id
+            return parseInt(this.$route.params.id)
+        },
+        background() {
+            if (this.id === 369) {
+                return logo.default
+            }
+            return bg.default
         },
         user() {
             return this.$store.getters['getUser']
@@ -459,8 +468,8 @@ export default {
         right: -10px;
         bottom: -10px;
         z-index: 2;
-        background: url("/resources/img/meeting-bg.jpg") center center;
         background-size: cover;
+        background: url("/resources/img/meeting-bg.jpg") center center;
         opacity: 0.4;
         filter: blur(15px);
     }
@@ -491,8 +500,8 @@ export default {
     .img {
         margin: -16px -16px 10px -16px;
         height: 300px;
-        background: url("/resources/img/meeting-bg.jpg") center center;
         background-size: cover;
+        background-position: top center;
         border-radius: 6px 6px 0 0;
         padding: 16px;
         display: flex;
