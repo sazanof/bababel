@@ -350,8 +350,6 @@ export default {
   },
   async created() {
     this.meeting.id = this.id
-    this.time = m().add(30,'minutes').format('HH:mm')
-    this.updateDateTime(new Date(), this.time)
     if (this.meeting.id > 0) {
       await this.getMeeting().catch(e => {
         this.$store.commit('clearMeetingState')
@@ -364,6 +362,14 @@ export default {
       this.date = m(new Date()).add(3, 'hours').toDate()
       this.meeting.date = this.formattedDate
     }
+    if (this.meeting.date !== null){
+      this.date = m(this.meeting.date).toDate()
+      this.time = m(this.meeting.date).format('HH:mm')
+    } else {
+      this.time = m().add(30,'minutes').format('HH:mm')
+    }
+
+    this.updateDateTime(new Date(), this.time)
     this.layout = this.meeting.meetingLayout
     this.guestPolicy = this.meeting.guestPolicy
     this.ready = true
