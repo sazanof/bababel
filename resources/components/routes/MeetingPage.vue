@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="!authenticated"
-    class="meeting-page"
+    class="meeting-page fill-height"
   >
     <VSheet
       v-if="meeting && hasAccessToJoinMeeting"
@@ -486,12 +486,6 @@ export default {
 <style scoped lang="scss">
 .meeting-page {
     background: rgba(0, 0, 0, 0.4);
-    position: fixed;
-    top: -10px;
-    left: -10px;
-    right: -10px;
-    bottom: -10px;
-    z-index: 1;
     display: flex;
     align-items: center;
     justify-content: center;
